@@ -6,6 +6,7 @@ from datetime import datetime
 
 from alignclf.utils import *
 from alignclf.constants import *
+from alignclf.experiments import *
 
 
 if __name__ == '__main__':
@@ -45,6 +46,9 @@ if __name__ == '__main__':
     setup_logging(logdir=outdir, default_path=args.logging_json)
     print('Finished setting up logger')
 
-    if configs[EXPERIMENT_NAME] == 'minimal':
-        print('Hello world!')
-        print('Finished running minimal configuration')
+    # if configs[EXPERIMENT_NAME] == 'minimal':
+    #     print('Hello world!')
+    #     print('Finished running minimal configuration')
+
+    runner = RunnerFactory().build_runner(configs)
+    runner.run()

@@ -1,7 +1,16 @@
 #!/usr/bin/env python3
 
 
-import os, logging, sys, subprocess
+import os, logging, sys, subprocess, json
+
+
+from alignclf.constants import *
+
+
+__all__ = [
+    'ProMPluginExecutor',
+    'RunnerFactory'
+]
 
 
 logger = logging.getLogger(__name__)
@@ -45,7 +54,7 @@ class ProMPluginExecutor:
         command = 'java -classpath {classpath} ' \
                   '-Djava.library.path={prom_pkg} ' \
                   '-Djava.util.Arrays.useLegacyMergeSort=true ' \
-                  '-Xmx{memory}G -XX:MaxPermSize=256m ' \
+                  '-Xmx{memory}G ' \
                   '{main_class} {configs_fpath}'.format(
             classpath=classpath,
             prom_pkg=self.prom_pkg,
@@ -61,3 +70,94 @@ class ProMPluginExecutor:
             subprocess.call(command, shell=True)
         else:
             subprocess.call(command, shell=True, stdout=self.logfile)
+
+
+class RunnerFactory:
+    MINIMAL = 'minimal'
+
+    def build_runner(self, configs):
+        if RUNNER_TYPE not in configs:
+            logger.error('Runner type not in {}'.format(configs))
+            exit(1)
+
+        _map = {
+            RunnerFactory.MINIMAL: MinimalRunner
+        }
+
+        return _map[configs[RUNNER_TYPE]](configs)
+
+
+class MinimalRunner:
+
+    def __init__(self, configs):
+        self.configs = configs
+
+    def run(self):
+
+        logger.info('Running minimal runner...')
+
+        data_list = list()
+        to_run_fp = os.path.join(self.configs[BASEDIR],
+                                 self.configs[DATA_TO_RUN])
+
+        with open(to_run_fp, 'r') as f:
+            cnt = 0
+
+            for line in f:
+                model, log = line.split(',')
+                model = model.strip()
+                log = log.strip()
+
+                logger.debug('Model {}: {}, Log {}: {}'.format(cnt, model,
+                                                               cnt, log))
+
+                data_list.append((model, log))
+                cnt += 1
+
+        data_dir = os.path.join(self.configs[BASEDIR], self.configs[DATA_DIR])
+
+        for _id, to_run in enumerate(data_list):
+            model, log = to_run
+            model_fp = '.'.join([model, self.configs[MODEL_EXT]])
+            model_fp = os.path.join(data_dir, model_fp)
+            log_fp = '.'.join([log, self.configs[LOG_EXT]])
+            log_fp = os.path.join(data_dir, log_fp)
+
+            # create the ProM configuration json
+            outdir = os.path.join(self.configs[OUTDIR], str(_id))
+            os.makedirs(outdir)
+
+            outfile_fp = os.path.join(outdir, 'results.txt')
+
+            prom_configs = {
+                'netPath': model_fp,
+                'logPath': log_fp,
+                'outFile': outfile_fp
+            }
+
+            prom_configs_fn = 'configs{}.json'.format(_id)
+            prom_configs_fp = os.path.join(outdir, prom_configs_fn)
+
+            with open(prom_configs_fp, 'w') as f:
+                json.dump(prom_configs, f)
+
+            # make and run prom executor
+            logfile_fn = '{}.log'.format(_id)
+            logfile_fp = os.path.join(outdir, logfile_fn)
+
+            with open(logfile_fp, 'w') as f:
+
+                executor = ProMPluginExecutor(
+                    basedir=self.configs[BASEDIR],
+                    configs_fp=prom_configs_fp,
+                    mem=self.configs[MEMORY],
+                    prom_jar=self.configs[PROM_JAR],
+                    prom_pkg=self.configs[PROM_PKG],
+                    plugin_jar=self.configs[PLUGIN_JAR],
+                    main_class=self.configs[MAIN_CLASS],
+                    logfile=f
+                )
+
+                executor.execute()
+
+        logger.info('All done!')
