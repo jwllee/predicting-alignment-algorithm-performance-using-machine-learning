@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 
-import os, logging, sys, subprocess, json
+import os, logging, sys, subprocess, json, time
 
 
 from alignclf.constants import *
@@ -117,6 +117,8 @@ class MinimalRunner:
         data_dir = os.path.join(self.configs[BASEDIR], self.configs[DATA_DIR])
 
         for _id, to_run in enumerate(data_list):
+            start = time.time()
+
             model, log = to_run
             model_fp = '.'.join([model, self.configs[MODEL_EXT]])
             model_fp = os.path.join(data_dir, model_fp)
@@ -159,5 +161,8 @@ class MinimalRunner:
                 )
 
                 executor.execute()
+
+            end = time.time()
+            logger.info('[time] Run {} took {} seconds.'.format(_id, end - start))
 
         logger.info('All done!')

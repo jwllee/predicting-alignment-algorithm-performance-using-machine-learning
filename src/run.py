@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-import argparse, json, os
+import argparse, json, os, time
 from datetime import datetime
 
 from alignclf.utils import *
@@ -10,6 +10,8 @@ from alignclf.experiments import *
 
 
 if __name__ == '__main__':
+    start_all = time.time()
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-c', action='store',
@@ -51,4 +53,13 @@ if __name__ == '__main__':
     #     print('Finished running minimal configuration')
 
     runner = RunnerFactory().build_runner(configs)
+
+    # in seconds
+    start = time.time()
     runner.run()
+    end = time.time()
+
+    end_all = time.time()
+
+    print('[time] runner took {} seconds.'.format(end - start))
+    print('[time] run.py took {} seconds.'.format(end_all - start_all))
