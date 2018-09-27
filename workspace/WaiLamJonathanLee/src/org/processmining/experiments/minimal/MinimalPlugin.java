@@ -63,12 +63,9 @@ public class MinimalPlugin implements HTMLToString {
 	public MinimalPlugin(final PluginContext context, final AcceptingPetriNet apn,
 			final XLog xlog, final MinimalParameters parameters) {
 		
-		File outFile = new File(parameters.outFile);
 		StringFileWriter fileWriter = new StringFileWriter();
 		List<String> toWrite = new ArrayList<String>();
-		
-		if (!outFile.exists())
-			toWrite.add("Hello world!");
+		toWrite.add("Hello world!");
 		
 		fileWriter.writeStringListToFile(toWrite, parameters.outFile);
 	}
