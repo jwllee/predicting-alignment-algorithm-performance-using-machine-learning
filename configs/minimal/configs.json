@@ -1,5 +1,16 @@
 {
-  "basedir": ".",
+  "runner_type": "minimal",
+  "basedir": "..",
   "result_dir": "results",
-  "experiment_name": "minimal"
+  "data_dir": "data/test/net1",
+  "data_to_run": "configs/minimal/toRun.txt",
+  "experiment_name": "minimal",
+
+  "memory": 6,
+  "prom_jar": "ProM651.jar",
+  "plugin_jar": "minimal-test.jar",
+  "prom_pkg": "ProM651_lib",
+  "main_class": "org.processmining.experiments.minimal.MinimalBoot",
+  "model_ext": "apnml",
+  "log_ext": "xes.gz"
 }
