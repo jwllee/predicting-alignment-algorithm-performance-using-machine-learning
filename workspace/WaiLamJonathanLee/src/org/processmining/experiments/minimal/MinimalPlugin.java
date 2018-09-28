@@ -3,6 +3,8 @@ package org.processmining.experiments.minimal;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.deckfour.xes.in.XUniversalParser;
 import org.deckfour.xes.model.XLog;
@@ -21,13 +23,16 @@ import org.processmining.framework.util.HTMLToString;
 		parameterLabels = { "Parameters" },
 		returnLabels = { "Report" }, returnTypes = { HTMLToString.class })
 public class MinimalPlugin implements HTMLToString {
-
+	private static final Logger LOGGER = Logger.getLogger( MinimalBoot.class.getName() );
+	
 	private StringBuffer buf = new StringBuffer();
 	private static ImportAcceptingPetriNetPlugin apnImporter = new ImportAcceptingPetriNetPlugin();
 	
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "Jonathan Lee", email = "walee@uc.cl", pack = "JonathanLee")
 	@PluginVariant(variantLabel = "Default", requiredParameterLabels = { 0 })
 	public static HTMLToString run(final PluginContext context, MinimalParameters parameters) {
+		LOGGER.log(Level.INFO, "At Minimal plugin");
+		long start = System.nanoTime();
 		
 		AcceptingPetriNet apn;
 		XLog xlog = null;
@@ -49,6 +54,10 @@ public class MinimalPlugin implements HTMLToString {
 			else
 				System.out.println(cname + "Cannot import log file: " + parameters.logPath);
 		
+			long end = System.nanoTime();
+			long taken = (end - start) / 1000000;
+			LOGGER.log(Level.INFO, "Running Minimal plugin took " + taken + " ms.");
+			
 			return new MinimalPlugin(context, apn, xlog, parameters);
 			
 		} catch (Exception e) {
