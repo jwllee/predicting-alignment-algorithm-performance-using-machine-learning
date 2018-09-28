@@ -19,7 +19,8 @@ logger = logging.getLogger(__name__)
 class ProMPluginExecutor:
 
     def __init__(self, basedir, configs_fp, mem,
-                 prom_jar, prom_pkg, plugin_jar, main_class, logfile=None):
+                 prom_jar, prom_pkg, plugin_jar, main_class,
+                 prom_logfile, logfile=None):
         self.basedir = basedir
         self.configs_fp = configs_fp
         self.mem = mem
@@ -27,6 +28,7 @@ class ProMPluginExecutor:
         self.prom_pkg = prom_pkg
         self.plugin_jar = plugin_jar
         self.main_class = main_class
+        self.prom_logfile = prom_logfile
         self.logfile = logfile
 
     def make_classpath(self):
@@ -55,11 +57,12 @@ class ProMPluginExecutor:
                   '-Djava.library.path={prom_pkg} ' \
                   '-Djava.util.Arrays.useLegacyMergeSort=true ' \
                   '-Xmx{memory}G ' \
-                  '{main_class} {configs_fpath}'.format(
+                  '{main_class} {prom_logfile} {configs_fpath}'.format(
             classpath=classpath,
             prom_pkg=self.prom_pkg,
             memory=self.mem,
             main_class=self.main_class,
+            prom_logfile=self.prom_logfile,
             configs_fpath=self.configs_fp
         )
 
@@ -137,7 +140,7 @@ class MinimalRunner:
                 'outFile': outfile_fp
             }
 
-            prom_configs_fn = 'configs{}.json'.format(_id)
+            prom_configs_fn = 'configs-{}.json'.format(_id)
             prom_configs_fp = os.path.join(outdir, prom_configs_fn)
 
             with open(prom_configs_fp, 'w') as f:
@@ -146,6 +149,8 @@ class MinimalRunner:
             # make and run prom executor
             logfile_fn = '{}.log'.format(_id)
             logfile_fp = os.path.join(outdir, logfile_fn)
+            prom_logfile_fn = 'prom-{}.log'.format(_id)
+            prom_logfile_fp = os.path.join(outdir, prom_logfile_fn)
 
             with open(logfile_fp, 'w') as f:
 
@@ -157,6 +162,7 @@ class MinimalRunner:
                     prom_pkg=self.configs[PROM_PKG],
                     plugin_jar=self.configs[PLUGIN_JAR],
                     main_class=self.configs[MAIN_CLASS],
+                    prom_logfile=prom_logfile_fp,
                     logfile=f
                 )
 
