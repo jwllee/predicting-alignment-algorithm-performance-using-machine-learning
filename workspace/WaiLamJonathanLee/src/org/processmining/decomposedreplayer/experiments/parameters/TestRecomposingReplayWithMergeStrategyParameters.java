@@ -1,10 +1,14 @@
 package org.processmining.decomposedreplayer.experiments.parameters;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TestRecomposingReplayWithMergeStrategyParameters {
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+public class TestRecomposingReplayWithMergeStrategyParameters {
+	
 	// log and model names
 	public String log = "";
 	public String model = "";
@@ -14,6 +18,7 @@ public class TestRecomposingReplayWithMergeStrategyParameters {
 	
 	public String iteration = "";
 	public String outFile = "";
+	public String resultDir = "";
 	
 	public int globalDuration = -1;
 	public int localDuration = -1;
@@ -40,7 +45,8 @@ public class TestRecomposingReplayWithMergeStrategyParameters {
 	
 	@Override
 	public String toString() {
-		return "Iteration: " + iteration + "\n" + 
+		return "Result directory: " + resultDir + "\n" +
+			   "Iteration: " + iteration + "\n" + 
                "Log: " + log + "\n" + 
                "Model: " + model + "\n" + 
                "Log path: " + logPath + "\n" + 
@@ -62,6 +68,30 @@ public class TestRecomposingReplayWithMergeStrategyParameters {
                "Add conflicts only once: " + addConflictOnlyOnce + "\n" +
                "Recompose strategy: " + recomposeStrategy + "\n" + 
                "Log creation strategy: " + logCreationStrategy;
+	}
+	
+	public static TestRecomposingReplayWithMergeStrategyParameters readParams(String jsonString) {
+		try {
+			
+			ObjectMapper mapper = new ObjectMapper();
+			TestRecomposingReplayWithMergeStrategyParameters params = mapper.readValue(jsonString, TestRecomposingReplayWithMergeStrategyParameters.class);
+			return params;
+			
+		} catch (JsonMappingException jme) {
+			
+			String errorMsg = "Cannot map " + jsonString + " as " + TestRecomposingReplayWithMergeStrategyParameters.class.getSimpleName();
+			System.out.println(errorMsg);
+			jme.printStackTrace();
+			
+		} catch (IOException ioe) {
+			
+			String errorMsg = "Cannot map " + jsonString + " as " + TestRecomposingReplayWithMergeStrategyParameters.class.getSimpleName();
+			System.out.println(errorMsg);
+			ioe.printStackTrace();
+			
+		}
+		
+		return new TestRecomposingReplayWithMergeStrategyParameters();
 	}
 	
 }

@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.deckfour.xes.classification.XEventClass;
 import org.deckfour.xes.extension.XExtensionManager;
@@ -18,6 +20,7 @@ import org.processmining.acceptingpetrinet.models.AcceptingPetriNet;
 import org.processmining.acceptingpetrinet.plugins.ImportAcceptingPetriNetPlugin;
 import org.processmining.contexts.uitopia.annotations.UITopiaVariant;
 import org.processmining.decomposedreplayer.algorithms.replay.impl.RecomposingReplayWithRecomposeStrategyAlgorithm;
+import org.processmining.decomposedreplayer.experiments.boot.TestRecomposingReplayWithMergeStrategyBoot;
 import org.processmining.decomposedreplayer.experiments.parameters.TestRecomposingReplayWithMergeStrategyParameters;
 import org.processmining.decomposedreplayer.experiments.utils.LogImporter;
 import org.processmining.decomposedreplayer.experiments.utils.ReplayResultCsvWriter;
@@ -42,6 +45,7 @@ import org.processmining.plugins.replayer.replayresult.SyncReplayResult;
 		returnLabels = { "Report" }, returnTypes = { HTMLToString.class })
 public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToString {
 
+	private static final Logger LOGGER = Logger.getLogger(TestRecomposingReplayWithMergeStrategyBoot.class.getName());
 	private StringBuffer buf = new StringBuffer();
 	private static ImportPlugin logImporter = new OpenLogFilePlugin();
 	private static ImportAcceptingPetriNetPlugin netImporter = new ImportAcceptingPetriNetPlugin();
@@ -49,6 +53,8 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "Jonathan Lee", email = "walee@uc.cl", pack = "JonathanLee")
 	@PluginVariant(variantLabel = "Default", requiredParameterLabels = { 0 })
 	public static HTMLToString run(final PluginContext context, TestRecomposingReplayWithMergeStrategyParameters parameters) {
+		LOGGER.info("At test plugin...");
+		long start = System.nanoTime();
 		
 		XLog log;
 		AcceptingPetriNet apn;
@@ -56,17 +62,29 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 			/*
 			 * Import the event log.
 			 */
-			System.out.println("Importing " + parameters.logPath);
+			LOGGER.info("Importing " + parameters.logPath);
 			log = LogImporter.importFile(parameters.logPath);
 			/*
 			 * Import the Accepting Petri net discovered for the corresponding noise-free event log.
 			 */
-			System.out.println("Importing " + parameters.modelPath);
+			LOGGER.info("Importing " + parameters.modelPath);
 			apn = (AcceptingPetriNet) netImporter.importFile(context, parameters.modelPath);
-			return new TestRecomposingReplayWithMergeStrategyPlugin(context, log, apn, parameters);
+		
+			TestRecomposingReplayWithMergeStrategyPlugin plugin = new TestRecomposingReplayWithMergeStrategyPlugin(context, log, apn, parameters);
+			
+			long end = System.nanoTime();
+			long taken = (end - start) / 1000000;
+			LOGGER.info("Running test recomposing plugin took " + taken + " ms.");
+			
+			return plugin;
+			
 		} catch (Exception e) {
+			
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			e.printStackTrace();
+		
 		}
+		
 		return null;
 	}
 
@@ -108,7 +126,7 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 				if (parameters.initialDecompositionSet.contains(activity.getId())) {
 					// add initial decomposition activity
 					initialDecompositionActivities.add(activity);
-					System.out.println("Add initial decomposition activity: " + activity.getId());
+					LOGGER.info("Add initial decomposition activity: " + activity.getId());
 				}
 			}
 			
@@ -118,30 +136,30 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 			} 
 			
 			
-			System.out.println("GlobalDuration: " + replayParameters.getGlobalDuration());
-			System.out.println("LocalDuration: " + replayParameters.getLocalDuration());
-			System.out.println("MoveOnLogCosts: " + replayParameters.getMoveOnLogCosts());
-			System.out.println("MoveOnModelCosts: " + replayParameters.getMoveOnModelCosts());
-			System.out.println("IntervalRelative: " + replayParameters.getIntervalRelative());
-			System.out.println("IntervalAbsolute: " + replayParameters.getIntervalAbsolute());
-			System.out.println("MaxConflicts: " + replayParameters.getMaxConflicts());
-			System.out.println("AlignmentPercentage: " + replayParameters.getAlignmentPercentage());
-			System.out.println("NofIterations: " + replayParameters.getNofIterations());
+			LOGGER.info("GlobalDuration: " + replayParameters.getGlobalDuration());
+			LOGGER.info("LocalDuration: " + replayParameters.getLocalDuration());
+			LOGGER.info("MoveOnLogCosts: " + replayParameters.getMoveOnLogCosts());
+			LOGGER.info("MoveOnModelCosts: " + replayParameters.getMoveOnModelCosts());
+			LOGGER.info("IntervalRelative: " + replayParameters.getIntervalRelative());
+			LOGGER.info("IntervalAbsolute: " + replayParameters.getIntervalAbsolute());
+			LOGGER.info("MaxConflicts: " + replayParameters.getMaxConflicts());
+			LOGGER.info("AlignmentPercentage: " + replayParameters.getAlignmentPercentage());
+			LOGGER.info("NofIterations: " + replayParameters.getNofIterations());
 			
 			RecomposingReplayWorkspace workspace = new RecomposingReplayWorkspace(log, replayParameters);
 			
-			long time = -System.currentTimeMillis();
+			long time = System.nanoTime();
 			
 			// create replayer and replay
 			RecomposingReplayWithRecomposeStrategyAlgorithm replayer = new RecomposingReplayWithRecomposeStrategyAlgorithm(
 					context, log, apn, workspace, replayParameters, parameters.recomposeStrategy, 
 					parameters.logCreationStrategy);
 			PNRepResult repResult = replayer.apply();
-			time += System.currentTimeMillis();
+			time -= System.nanoTime();
+			time /= 1000000;
 			
-			System.out.println("Finished recomposing replay in " + time + " millis.");
-			
-			System.out.println(parameters.toString());
+			LOGGER.info("Finished recomposing replay in " + time + " ms.");
+			LOGGER.info(parameters.toString());
 			
 			boolean isReliable = true;
 			int numOfTraces = repResult.size();
@@ -162,95 +180,23 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 			for (SyncReplayResult rejected: workspace.pseudoAlignments) {
 
 				// print out the indexes of the rejected alignments
-				System.out.println("[" + getClass().getSimpleName() + "] Rejected alignments "
-						+ "trace indexes: " + rejected.getTraceIndex());
+				
+				LOGGER.info("Rejected alignments trace indexes: " + rejected.getTraceIndex());
 				for (int index: rejected.getTraceIndex()) {
 					// print the trace concept:name
 					XTrace trace = log.get(index);
-					System.out.println("[" + getClass().getSimpleName() + "] Rejected trace "
-							+ " concept:name: " + trace.getAttributes().get("concept:name").toString());
+					LOGGER.info("Rejected trace concept:name: " + trace.getAttributes().get("concept:name").toString());
 				}
 
 			}
 			
-			// Save all the fitness cost per alignment in one csv
-			String dirname = "./test_results";
-			File dir = new File(dirname);
-			if (!(dir.exists() || dir.isDirectory())) 
+			// trace alignment folder
+			String alignResultDir = parameters.resultDir + File.separator + "alignments";
+			File dir = new File (alignResultDir);
+			if (!(dir.exists() || dir.isDirectory()))
 				dir.mkdirs();
-			String filepath = dirname + "/per_alignment_results.csv";
-			List<String> repResultPerAlignment = new LinkedList<>();
-			String header = "Raw Fitness Cost Lo, Raw Fitness Cost Hi, Case Id";
-			repResultPerAlignment.add(header);
-			for (SyncReplayResult alignment: repResult) {
-				String fitnessLo = alignment.getInfo().get("Raw Fitness Cost Lo") + "";
-				String fitnessHi = alignment.getInfo().get("Raw Fitness Cost Hi") + "";
-				String caseIds = "";
-				for (int index: alignment.getTraceIndex()) {
-					XTrace trace = log.get(index);
-					String caseId = trace.getAttributes().get("concept:name").toString();
-					if (caseIds.equals(""))
-						caseIds = caseIds + caseId;
-					else
-						caseIds = caseIds + "; " + caseId;
-				}
-				String row = fitnessLo + ", " + fitnessHi + ", " + caseIds;
-				repResultPerAlignment.add(row);
-			}
-			StringFileWriter writer = new StringFileWriter();
-//			writer.writeStringListToFile(repResultPerAlignment, filepath);
-			
-			String[] outPathSplit = parameters.outFile.split(File.separator);
-			String outdir = outPathSplit[0];
-			String statsFilePath = outPathSplit[0];
-			String toCopy;
-			for (int i = 1; i < outPathSplit.length; i++) {
-				toCopy = outPathSplit[i];
-				if (i == outPathSplit.length - 1)
-					toCopy = toCopy.replace("results", "stats");
-				statsFilePath += (File.separator + toCopy);
-				if (i != outPathSplit.length - 1)
-					// only add to the out directory if it is not the final filename
-					outdir += (File.separator + toCopy);
-			}
-			System.out.println("[" + getClass().getSimpleName() + "] Printing performance stats to " + statsFilePath);
-			
-			// output the performance stats
-			List<String> statsStringList = new ArrayList<>();
-			// add header if need be
-			if (!(new File(statsFilePath)).exists())
-				statsStringList.add("Model, Log, " + IterationStats.HEADER);
-			else
-				statsStringList.add("\n");
-			for (IterationStats stats: replayer.getPerformanceStats()) {
-				statsStringList.add(parameters.model + ", " + parameters.log + ", " + stats.toRowString());
-			}
-			writer.writeStringListToFile(statsStringList, statsFilePath, true);
 
-			// write out the log alignments per iteration
-			// make a directory for all the alignments
-			outdir += (File.separator + parameters.iteration);
-			boolean madeDir = new File(outdir).mkdirs();
-			System.out.printf("[%s] Created directory for alignments at %s: %b", 
-					getClass().getSimpleName(), outdir, madeDir);
-			String alignmentFilePath;
-//			for (int i = 0; i != replayer.getLogAlignments().size(); ++i) {
-//				LogAlignmentJson logAlignmentIter = replayer.getLogAlignments().get(i);
-//				alignmentFilePath = String.format("%s%s%s%d.json", 
-//						outdir, File.separator, "alignments", i);
-//				logAlignmentIter.writeToFile(alignmentFilePath);
-//			}
-			
-			// print alignments as csv
-			TransEvClassMapping mapping = replayParameters.getMapping();
-			
-			int i = 0;
-			for (SyncReplayResult alignment: repResult) {
-				alignmentFilePath = String.format("%s%s%s%d.csv", 
-						outdir, File.separator, "alignments", i);
-				ReplayResultCsvWriter.writeReplayResultToCsv(alignment, alignmentFilePath, mapping);
-				i += 1;
-			}
+			List<String> replayResultTrace = new LinkedList<>();
 			
 			// print out the state information
 			double logStateCount = 0.0;
@@ -261,9 +207,31 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 			double avgLogTraversedArcs = 0.0;
 			int logSize = 0;
 			
+			TransEvClassMapping mapping = replayParameters.getMapping();
+			int i = 0;
+			String alignmentFp;
+			
 			for (SyncReplayResult alignment : repResult) {
+				alignmentFp = "alignment-" + i + ".csv";
+				alignmentFp = alignmentFp + File.separator + alignmentFp;
+				
+				// write out the alignment
+				ReplayResultCsvWriter.writeReplayResultToCsv(alignment, alignmentFp, mapping);
+				
 				int nofTraces = alignment.getTraceIndex().size();
 				logSize += nofTraces;
+				
+				// caseids related to the alignment				
+				String caseIds = "";
+				for (int index: alignment.getTraceIndex()) {
+					XTrace trace = log.get(index);
+					String caseId = trace.getAttributes().get("concept:name").toString();
+					if (caseIds.equals(""))
+						caseIds = caseIds + caseId;
+					else
+						caseIds = caseIds + ";" + caseId;
+				}
+				
 				double costLo = alignment.getInfo().get("Raw Fitness Cost Lo");
 				double costHi = alignment.getInfo().get("Raw Fitness Cost Hi");
 				double maxCosts = alignment.getInfo().get("Raw Fitness Cost Max");
@@ -271,6 +239,9 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 				sumMaxCosts += nofTraces * maxCosts;
 				sumHiCosts += nofTraces * costHi;
 				sumWeight += nofTraces;
+				
+				String row  = costLo + ", " + costHi + ", " + caseIds;
+				replayResultTrace.add(row);
 				
 				double stateCount = alignment.getInfo().get(PNRepResult.NUMSTATEGENERATED);
 				double queuedStates = alignment.getInfo().get(PNRepResult.QUEUEDSTATE);
@@ -285,11 +256,12 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 				XTrace xtrace = log.get(index);
 				String caseId = xtrace.getAttributes().get("concept:name").toString();
 				
-				System.out.printf("[%s] Alignment of caseid %s: "
+				LOGGER.info(String.format("Alignment of caseid %s: "
 						+ "No. of generated states: %.2f, "
 						+ "No. of queued states: %.2f, "
 						+ "No. of traversed arcs: %.2f%n", 
-						getClass().getSimpleName(), caseId, stateCount, queuedStates, traversedArcs);
+						caseId, stateCount, queuedStates, traversedArcs));
+				
 			}
 			
 			if (logSize > 0) {
@@ -298,15 +270,33 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 				avgLogTraversedArcs = logTraversedArcs / logSize;
 			}
 			
-			System.out.printf("[%s] (Log level average) No. of generated states: %.2f, "
+			LOGGER.info(String.format("(Log level average) No. of generated states: %.2f, "
 					+ "No. of queued states: %.2f, No. of traversed arcs: %.2f%n", 
-					getClass().getSimpleName(), logStateCount, logQueuedStates, logTraversedArcs);
+					logStateCount, logQueuedStates, logTraversedArcs));
 			
 			double costLo = sumLoCosts / sumWeight;
 			double costHi = sumHiCosts / sumWeight;
 			double percLo = (1.0 - sumHiCosts / sumMaxCosts);
 			double percHi = (1.0 - sumLoCosts / sumMaxCosts);
 			
+			// output the statistics per iteration
+			String statsFp = "stats.csv";
+			statsFp = parameters.resultDir + File.separator + statsFp;
+			
+			// output the performance stats
+			List<String> statsStringList = new ArrayList<>();
+			// add header if need be
+			if (!(new File(statsFp)).exists())
+				statsStringList.add("Model, Log, " + IterationStats.HEADER);
+			else
+				statsStringList.add("\n");
+			for (IterationStats stats: replayer.getPerformanceStats()) {
+				statsStringList.add(parameters.model + ", " + parameters.log + ", " + stats.toRowString());
+			}
+			
+			StringFileWriter writer = new StringFileWriter();
+			writer.writeStringListToFile(statsStringList, statsFp, true);
+
 			// Save results as a CSV format
 			buf.append(parameters.iteration + ", ");
 			buf.append(parameters.logPath + ", ");
