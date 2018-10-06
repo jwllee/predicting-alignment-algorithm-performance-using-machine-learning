@@ -231,6 +231,7 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 			double avgLogQueuedStates = 0.0;
 			double avgLogTraversedArcs = 0.0;
 			int logSize = 0;
+			double totalAlignTime = 0;
 			
 			TransEvClassMapping mapping = replayParameters.getMapping();
 			int i = 0;
@@ -256,10 +257,11 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 				logStateCount += stateCount * nofCases;
 				logQueuedStates += queuedStates * nofCases;
 				logTraversedArcs += traversedArcs * nofCases;
+				totalAlignTime += alignTime;
 				
 				// write out the alignment
 				String alignmentFp = "alignment-" + i + ".csv";
-				alignmentFp = alignmentFp + File.separator + alignmentFp;
+				alignmentFp = alignResultDir + File.separator + alignmentFp;
 				
 				ReplayResultCsvWriter.writeReplayResultToCsv(alignment, alignmentFp, mapping);
 				
@@ -345,6 +347,7 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 			buf.append(nofTraces + ", ");
 			buf.append(nofRecompSteps + ", ");
 			buf.append(time + ", ");
+			buf.append(totalAlignTime + ", ");
 			buf.append(logStateCount + ", ");
 			buf.append(logQueuedStates + ", ");
 			buf.append(logTraversedArcs + ", ");
@@ -356,7 +359,7 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 			buf.append(parameters.logPath + ", ");
 			buf.append(parameters.iteration + ", ");
 			buf.append("na, na, na, na, na, na, na, na, na, na, na, na, na, "
-					+ "na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na");
+					+ "na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na");
 		}
 	}
 	
