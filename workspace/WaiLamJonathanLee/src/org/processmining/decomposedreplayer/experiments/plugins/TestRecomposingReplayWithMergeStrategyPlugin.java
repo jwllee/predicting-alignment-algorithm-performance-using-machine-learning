@@ -135,7 +135,6 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 				replayParameters.setUnsplittableActivities(unsplittableActivities);
 			} 
 			
-			
 			LOGGER.info("GlobalDuration: " + replayParameters.getGlobalDuration());
 			LOGGER.info("LocalDuration: " + replayParameters.getLocalDuration());
 			LOGGER.info("MoveOnLogCosts: " + replayParameters.getMoveOnLogCosts());
@@ -161,14 +160,14 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 			LOGGER.info("Finished recomposing replay in " + time + " ms.");
 			LOGGER.info(parameters.toString());
 			
-			boolean isReliable = true;
-			int numOfTraces = repResult.size();
-			int numOfAligned = workspace.alignments.size();
-			int numOfToAlign = workspace.openAlignments.size();
-			int numOfRejected = workspace.pseudoAlignments.size();
 			
+			//----------------------------Recording experiment results-----------------------------------//
+			int nofTraces = repResult.size();
+			int nofAligned = workspace.alignments.size();
+			int nofToAlign = workspace.openAlignments.size();
+			int nofRejected = workspace.pseudoAlignments.size();
 			// getting the number of recomposition steps taken
-			int numOfRecompositionSteps = workspace.nofIterations;
+			int nofRecompSteps = workspace.nofIterations;
 			
 			double sumLoCosts = 0;
 			double sumHiCosts = 0;
@@ -190,13 +189,39 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 
 			}
 			
+			//-------------------------Write out statistics per recomposition iteration----------------------------------------------//
+			
+			// output the statistics per iteration
+			String statsFp = "stats.csv";
+			statsFp = parameters.resultDir + File.separator + parameters.iteration + File.separator + statsFp;
+			
+			// output the performance stats
+			List<String> statsStringList = new ArrayList<>();
+			// add header if need be
+			if (!(new File(statsFp)).exists())
+				statsStringList.add("Model, Log, " + IterationStats.HEADER);
+			else
+				statsStringList.add("\n");
+			for (IterationStats stats: replayer.getPerformanceStats()) {
+				statsStringList.add(parameters.model + ", " + parameters.log + ", " + stats.toRowString());
+			}
+			
+			StringFileWriter writer = new StringFileWriter();
+			writer.writeStringListToFile(statsStringList, statsFp, true);
+			
+			//-------------------------Write the alignments to file and getting aggregate results--------------------------------------//
 			// trace alignment folder
-			String alignResultDir = parameters.resultDir + File.separator + "alignments";
+			String alignResultDir = parameters.resultDir + File.separator + parameters.iteration + File.separator + "alignments";
 			File dir = new File (alignResultDir);
 			if (!(dir.exists() || dir.isDirectory()))
 				dir.mkdirs();
 
-			List<String> replayResultTrace = new LinkedList<>();
+			// alignment level info
+			String alignInfoFp = "alignment-info.csv";
+			alignInfoFp = parameters.resultDir + File.separator + parameters.iteration + File.separator + alignInfoFp;
+			List<String> alignInfo = new LinkedList<>();
+			String header = "time, generated_state, queued_state, traversed_arc, fitness_cost_lo, fitness_cost_hi, trace_length, case_id";
+			alignInfo.add(header);
 			
 			// print out the state information
 			double logStateCount = 0.0;
@@ -209,60 +234,66 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 			
 			TransEvClassMapping mapping = replayParameters.getMapping();
 			int i = 0;
-			String alignmentFp;
 			
 			for (SyncReplayResult alignment : repResult) {
-				alignmentFp = "alignment-" + i + ".csv";
-				alignmentFp = alignmentFp + File.separator + alignmentFp;
+				double costLo = alignment.getInfo().get("Raw Fitness Cost Lo");
+				double costHi = alignment.getInfo().get("Raw Fitness Cost Hi");
+				double maxCosts = alignment.getInfo().get("Raw Fitness Cost Max");
+				double stateCount = alignment.getInfo().get(PNRepResult.NUMSTATEGENERATED);
+				double queuedStates = alignment.getInfo().get(PNRepResult.QUEUEDSTATE);
+				double traversedArcs = alignment.getInfo().get(PNRepResult.TRAVERSEDARCS);
+				double alignTime = alignment.getInfo().get(PNRepResult.TIME);
+				int nofCases = alignment.getTraceIndex().size();
+				int traceLength = 0;
+				String caseId0 = "";
+				
+				// update aggregate statistics
+				logSize += nofCases;
+				sumLoCosts += nofCases * costLo;
+				sumMaxCosts += nofCases * maxCosts;
+				sumHiCosts += nofCases * costHi;
+				sumWeight += nofCases;
+				logStateCount += stateCount * nofCases;
+				logQueuedStates += queuedStates * nofCases;
+				logTraversedArcs += traversedArcs * nofCases;
 				
 				// write out the alignment
-				ReplayResultCsvWriter.writeReplayResultToCsv(alignment, alignmentFp, mapping);
+				String alignmentFp = "alignment-" + i + ".csv";
+				alignmentFp = alignmentFp + File.separator + alignmentFp;
 				
-				int nofTraces = alignment.getTraceIndex().size();
-				logSize += nofTraces;
+				ReplayResultCsvWriter.writeReplayResultToCsv(alignment, alignmentFp, mapping);
 				
 				// caseids related to the alignment				
 				String caseIds = "";
 				for (int index: alignment.getTraceIndex()) {
 					XTrace trace = log.get(index);
+					traceLength = trace.size();
 					String caseId = trace.getAttributes().get("concept:name").toString();
 					if (caseIds.equals(""))
 						caseIds = caseIds + caseId;
 					else
 						caseIds = caseIds + ";" + caseId;
+					
+					// get the first case id
+					if (caseId0.equals(""))
+						caseId0 = caseId;
 				}
 				
-				double costLo = alignment.getInfo().get("Raw Fitness Cost Lo");
-				double costHi = alignment.getInfo().get("Raw Fitness Cost Hi");
-				double maxCosts = alignment.getInfo().get("Raw Fitness Cost Max");
-				sumLoCosts += nofTraces * costLo;
-				sumMaxCosts += nofTraces * maxCosts;
-				sumHiCosts += nofTraces * costHi;
-				sumWeight += nofTraces;
-				
-				String row  = costLo + ", " + costHi + ", " + caseIds;
-				replayResultTrace.add(row);
-				
-				double stateCount = alignment.getInfo().get(PNRepResult.NUMSTATEGENERATED);
-				double queuedStates = alignment.getInfo().get(PNRepResult.QUEUEDSTATE);
-				double traversedArcs = alignment.getInfo().get(PNRepResult.TRAVERSEDARCS);
-				
-				logStateCount += stateCount * nofTraces;
-				logQueuedStates += queuedStates * nofTraces;
-				logTraversedArcs += traversedArcs * nofTraces;
+				// alignment info
+				String row = alignTime + ", " + stateCount + ", " + queuedStates + ", " + 
+						traversedArcs + ", " + costLo + ", " + costHi + ", " + traceLength + ", " + caseIds;
+				alignInfo.add(row);
 				
 				// get the caseid of the first associated trace
-				int index = alignment.getTraceIndex().first();
-				XTrace xtrace = log.get(index);
-				String caseId = xtrace.getAttributes().get("concept:name").toString();
-				
 				LOGGER.info(String.format("Alignment of caseid %s: "
 						+ "No. of generated states: %.2f, "
 						+ "No. of queued states: %.2f, "
 						+ "No. of traversed arcs: %.2f%n", 
-						caseId, stateCount, queuedStates, traversedArcs));
+						caseId0, stateCount, queuedStates, traversedArcs));
 				
 			}
+			
+			writer.writeStringListToFile(alignInfo, alignInfoFp, true);
 			
 			if (logSize > 0) {
 				avgLogStateCount = logStateCount / logSize;
@@ -278,24 +309,6 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 			double costHi = sumHiCosts / sumWeight;
 			double percLo = (1.0 - sumHiCosts / sumMaxCosts);
 			double percHi = (1.0 - sumLoCosts / sumMaxCosts);
-			
-			// output the statistics per iteration
-			String statsFp = "stats.csv";
-			statsFp = parameters.resultDir + File.separator + statsFp;
-			
-			// output the performance stats
-			List<String> statsStringList = new ArrayList<>();
-			// add header if need be
-			if (!(new File(statsFp)).exists())
-				statsStringList.add("Model, Log, " + IterationStats.HEADER);
-			else
-				statsStringList.add("\n");
-			for (IterationStats stats: replayer.getPerformanceStats()) {
-				statsStringList.add(parameters.model + ", " + parameters.log + ", " + stats.toRowString());
-			}
-			
-			StringFileWriter writer = new StringFileWriter();
-			writer.writeStringListToFile(statsStringList, statsFp, true);
 
 			// Save results as a CSV format
 			buf.append(parameters.iteration + ", ");
@@ -326,11 +339,11 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 			buf.append(costHi + ", ");
 			buf.append(percLo + ", ");
 			buf.append(percHi + ", ");
-			buf.append(numOfAligned + ", ");
-			buf.append(numOfToAlign + ", ");
-			buf.append(numOfRejected + ", ");
-			buf.append(numOfTraces + ", ");
-			buf.append(numOfRecompositionSteps + ", ");
+			buf.append(nofAligned + ", ");
+			buf.append(nofToAlign + ", ");
+			buf.append(nofRejected + ", ");
+			buf.append(nofTraces + ", ");
+			buf.append(nofRecompSteps + ", ");
 			buf.append(time + ", ");
 			buf.append(logStateCount + ", ");
 			buf.append(logQueuedStates + ", ");
