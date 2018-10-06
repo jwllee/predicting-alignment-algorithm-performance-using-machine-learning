@@ -3,6 +3,8 @@ package org.processmining.experiments.plugins;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
@@ -12,6 +14,7 @@ import org.processmining.contexts.uitopia.annotations.UITopiaVariant;
 import org.processmining.decomposedreplayer.configurations.impl.DecomposedNotDecomposedReplayConfiguration;
 import org.processmining.decomposedreplayer.parameters.DecomposedReplayParameters;
 import org.processmining.decomposedreplayer.plugins.DecomposedReplayPlugin;
+import org.processmining.experiments.boot.TestDecomposedReplayBoot;
 import org.processmining.experiments.parameters.TestDecomposedReplayParameters;
 import org.processmining.experiments.utils.LogImporter;
 import org.processmining.experiments.utils.ReplayResultCsvWriter;
@@ -28,7 +31,8 @@ import org.processmining.plugins.replayer.replayresult.SyncReplayResult;
 
 @Plugin(name = "Evaluate Decomposed Replay", parameterLabels = { "Parameters"  }, returnLabels = { "Report" }, returnTypes = { HTMLToString.class })
 public class TestDecomposedReplayPlugin implements HTMLToString {
-
+	
+	private static final Logger LOGGER = Logger.getLogger(TestDecomposedReplayBoot.class.getName());
 	private StringBuffer buf = new StringBuffer();
 	private DecomposedReplayPlugin replayer = new DecomposedReplayPlugin();
 	private static ImportPlugin logImporter = new OpenLogFilePlugin();
@@ -37,6 +41,9 @@ public class TestDecomposedReplayPlugin implements HTMLToString {
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W. Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "EricVerbeek")
 	@PluginVariant(variantLabel = "Default", requiredParameterLabels = { 0 })
 	public static HTMLToString run(final PluginContext context, TestDecomposedReplayParameters parameters) {
+		LOGGER.info("At test plugin...");
+		long start = System.nanoTime();
+		
 		XLog log;
 		AcceptingPetriNet apn;
 		try {
@@ -54,9 +61,20 @@ public class TestDecomposedReplayPlugin implements HTMLToString {
 			/*
 			 * Run the replay.
 			 */
-			return new TestDecomposedReplayPlugin(context, log, apn, parameters);
+			
+			TestDecomposedReplayPlugin plugin = new TestDecomposedReplayPlugin(context, log, apn, parameters);
+			
+			long end = System.nanoTime();
+			long taken = (end - start) / 1000000;
+			LOGGER.info("Running test monolithic plugin took " + taken + " ms.");
+			
+			return plugin;
+			
 		} catch (Exception e) {
+			
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			e.printStackTrace();
+			
 		}
 		return null;
 	}
@@ -71,21 +89,32 @@ public class TestDecomposedReplayPlugin implements HTMLToString {
 			replayParameters.setDeadline(parameters.deadline);
 			// prefered border transition not working currently
 //			replayParameters.setPreferBorderTransitions(false);
-			long time = -System.currentTimeMillis();
-			PNRepResult repResult = replayer.apply(context, log, apn, replayParameters);
-			time += System.currentTimeMillis();
 			
-			// Save all the fitness cost per alignment in one csv
-			String dirname = "./test_results";
-			File dir = new File(dirname);
-			if (!(dir.exists() || dir.isDirectory())) 
+			long time = System.nanoTime();
+			PNRepResult repResult = replayer.apply(context, log, apn, replayParameters);
+			time -= System.nanoTime();
+			time /= 1000000;
+			
+			LOGGER.info("Finished monolithic replay in " + time + " ms.");
+			LOGGER.info(parameters.toString());
+
+			//-------------------------Write the alignments to file and getting aggregate results--------------------------------------//
+			// trace alignment folder
+			String alignResultDir = parameters.resultDir + File.separator + parameters.iteration + File.separator + "alignments";
+			File dir = new File (alignResultDir);
+			if (!(dir.exists() || dir.isDirectory()))
 				dir.mkdirs();
-			String filepath = dirname + "/per_alignment_results_monolithic.csv";
-			List<String> repResultPerAlignment = new LinkedList<>();
-			String header = "Raw Fitness Cost, Case Id";
-			repResultPerAlignment.add(header);
+
+			// alignment level info
+			String alignInfoFp = "alignment-info.csv";
+			alignInfoFp = parameters.resultDir + File.separator + parameters.iteration + File.separator + alignInfoFp;
+			List<String> alignInfo = new LinkedList<>();
+			String header = "time, generated_state, queued_state, traversed_arc, fitness_cost, trace_length, case_id";
+			alignInfo.add(header);
 			
 			// print out the state information
+			int nofReliable = 0;
+			double logCost = 0;
 			double logStateCount = 0.0;
 			double logQueuedStates = 0.0;
 			double logTraversedArcs = 0.0;
@@ -93,9 +122,41 @@ public class TestDecomposedReplayPlugin implements HTMLToString {
 			double avgLogQueuedStates = 0.0;
 			double avgLogTraversedArcs = 0.0;
 			int logSize = 0;
+			double totalAlignTime = 0;
 			
+			TransEvClassMapping mapping = replayParameters.getMapping();
+			int i = 0;
+			StringFileWriter writer = new StringFileWriter();
+
 			for (SyncReplayResult alignment: repResult) {
-				String fitnessCost = alignment.getInfo().get(PNRepResult.RAWFITNESSCOST) + "";
+				double fitnessCost = alignment.getInfo().get(PNRepResult.RAWFITNESSCOST);
+				double stateCount = alignment.getInfo().get(PNRepResult.NUMSTATEGENERATED);
+				double queuedStates = alignment.getInfo().get(PNRepResult.QUEUEDSTATE);
+				double traversedArcs = alignment.getInfo().get(PNRepResult.TRAVERSEDARCS);
+				double alignTime = alignment.getInfo().get(PNRepResult.TIME);
+				int nofCases = alignment.getTraceIndex().size();
+				int traceLength = 0;
+				String caseId0 = "";
+				
+				if (alignment.isReliable() && !alignment.getStepTypes().isEmpty()) {
+					nofReliable += 1;
+				}
+				
+				// update aggregate statistics
+				logCost += fitnessCost;
+				logSize += nofCases;
+				logStateCount += stateCount * nofCases;
+				logQueuedStates += queuedStates * nofCases;
+				logTraversedArcs += traversedArcs * nofCases;
+				totalAlignTime += alignTime;
+				
+				// write out the alignment
+				String alignmentFp = "alignment-" + i + ".csv";
+				alignmentFp = alignResultDir + File.separator + alignmentFp;
+				
+				ReplayResultCsvWriter.writeReplayResultToCsv(alignment, alignmentFp, mapping);
+				
+				// caseids related to the alignment
 				String caseIds = "";
 				for (int index: alignment.getTraceIndex()) {
 					XTrace trace = log.get(index);
@@ -104,31 +165,25 @@ public class TestDecomposedReplayPlugin implements HTMLToString {
 						caseIds = caseIds + caseId;
 					else
 						caseIds = caseIds + "; " + caseId;
+					
+					// first caseid
+					if (caseId0.equals(""))
+						caseId0 = caseId;
 				}
-				String row = fitnessCost + ", " + caseIds;
-				repResultPerAlignment.add(row);
-
-				int nofTraces = alignment.getTraceIndex().size();
-				logSize += nofTraces;
-				double stateCount = alignment.getInfo().get(PNRepResult.NUMSTATEGENERATED);
-				double queuedStates = alignment.getInfo().get(PNRepResult.QUEUEDSTATE);
-				double traversedArcs = alignment.getInfo().get(PNRepResult.TRAVERSEDARCS);
 				
-				logStateCount += stateCount * nofTraces;
-				logQueuedStates += queuedStates * nofTraces;
-				logTraversedArcs += traversedArcs * nofTraces;
+				// alignment info
+				String row = alignTime + ", " + stateCount + ", " + queuedStates + ", " + 
+						traversedArcs + ", " + fitnessCost + ", " + traceLength + ", " + caseIds;
+				alignInfo.add(row);
 				
-				// get the caseid of the first associated trace
-				int index = alignment.getTraceIndex().first();
-				XTrace xtrace = log.get(index);
-				String caseId = xtrace.getAttributes().get("concept:name").toString();
-				
-				System.out.printf("[%s] Alignment of caseid %s: "
+				LOGGER.info(String.format("Alignment of caseid %s: "
 						+ "No. of generated states: %.2f, "
 						+ "No. of queued states: %.2f, "
 						+ "No. of traversed arcs: %.2f%n", 
-						getClass().getSimpleName(), caseId, stateCount, queuedStates, traversedArcs);
+						caseId0, stateCount, queuedStates, traversedArcs));
 			}
+			
+			writer.writeStringListToFile(alignInfo, alignInfoFp, true);
 			
 			if (logSize > 0) {
 				avgLogStateCount = logStateCount / logSize;
@@ -136,49 +191,9 @@ public class TestDecomposedReplayPlugin implements HTMLToString {
 				avgLogTraversedArcs = logTraversedArcs / logSize;
 			}
 			
-			System.out.printf("[%s] (Log level) No. of generated states: %.2f, "
+			LOGGER.info(String.format("(Log level) No. of generated states: %.2f, "
 					+ "No. of queued states: %.2f, No. of traversed arcs: %.2f%n", 
-					getClass().getSimpleName(), logStateCount, logQueuedStates, logTraversedArcs);
-			
-			StringFileWriter writer = new StringFileWriter();
-			writer.writeStringListToFile(repResultPerAlignment, filepath);
-			
-			double costs = (Double) repResult.getInfo().get(PNRepResult.RAWFITNESSCOST);
-			boolean isReliable = true;
-			int numOfReliable = 0;
-			for (SyncReplayResult result : repResult) {
-				if (result.isReliable() && !result.getStepTypes().isEmpty()) {
-					numOfReliable += 1;
-				}
-			}
-			
-			// print alignments as csv
-			TransEvClassMapping mapping = replayParameters.getMapping();
-			// make a directory for all the alignments
-			String[] outPathSplit = parameters.outFile.split(File.separator);
-			String outdir = outPathSplit[0];
-			String toCopy;
-			for (int i = 1; i < outPathSplit.length; i++) {
-				toCopy = outPathSplit[i];
-				if (i == outPathSplit.length - 1)
-					toCopy = toCopy.replace("results", "stats");
-				if (i != outPathSplit.length - 1)
-					// only add to the out directory if it is not the final filename
-					outdir += (File.separator + toCopy);
-			}
-			
-			outdir += (File.separator + parameters.iteration);
-			boolean madeDir = new File(outdir).mkdirs();
-			System.out.printf("[%s] Created directory for alignments at %s: %b", 
-					getClass().getSimpleName(), outdir, madeDir);
-			String alignmentFilePath;
-			int i = 0;
-			for (SyncReplayResult alignment: repResult) {
-				alignmentFilePath = String.format("%s%s%s%d.csv", 
-						outdir, File.separator, "alignments", i);
-				ReplayResultCsvWriter.writeReplayResultToCsv(alignment, alignmentFilePath, mapping);
-				i += 1;
-			}
+					logStateCount, logQueuedStates, logTraversedArcs));
 
 			// Save results as a CSV format
 			buf.append(parameters.iteration + ", ");
@@ -198,10 +213,10 @@ public class TestDecomposedReplayPlugin implements HTMLToString {
 			// add conflict only once and use hide and reduce abstraction
 			buf.append("na, na, ");
 			buf.append("na, na, na, na, na, na, na, na, na, ");
-			buf.append(costs + ", ");
-			buf.append(costs + ", ");
+			buf.append(logCost + ", ");
+			buf.append(logCost + ", ");
 			buf.append("na, na, ");
-			buf.append(numOfReliable + ", ");
+			buf.append(nofReliable + ", ");
 			// number of to align and rejected: na
 			buf.append("na, na, ");
 			// total number of traces in log
@@ -209,6 +224,7 @@ public class TestDecomposedReplayPlugin implements HTMLToString {
 			// number of recomposition steps: na
 			buf.append("na, ");
 			buf.append(time + ", ");
+			buf.append(totalAlignTime + ", ");
 			buf.append(logStateCount + ", ");
 			buf.append(logQueuedStates + ", ");
 			buf.append(logTraversedArcs + ", ");
@@ -222,7 +238,7 @@ public class TestDecomposedReplayPlugin implements HTMLToString {
 			// if monolithic
 			buf.append((parameters.configuration.equals(DecomposedNotDecomposedReplayConfiguration.NAME)) + ", ");
 			buf.append("na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, "
-					+ "na, na, na, na, na, na, na, na, na, na, na, na");
+					+ "na, na, na, na, na, na, na, na, na, na, na, na, na");
 		}
 	}
 	
