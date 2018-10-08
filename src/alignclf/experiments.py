@@ -79,6 +79,7 @@ class ProMPluginExecutor:
 class RunnerFactory:
     MINIMAL = 'minimal'
     RECOMPOSING = 'recomposing'
+    MONOLITHIC = 'monolithic'
 
     def build_runner(self, configs):
         if RUNNER_TYPE not in configs:
@@ -87,7 +88,8 @@ class RunnerFactory:
 
         _map = {
             RunnerFactory.MINIMAL: MinimalRunner,
-            RunnerFactory.RECOMPOSING: RecomposingReplayRunner
+            RunnerFactory.RECOMPOSING: RecomposingReplayRunner,
+            RunnerFactory.MONOLITHIC: MonolithicReplayRunner
         }
 
         return _map[configs[RUNNER_TYPE]](configs)
@@ -265,6 +267,115 @@ class RecomposingReplayRunner:
                 'logCreationStrategy': self.configs[LOG_CREATION_STRATEGY],
                 'preferBorderTransitions': self.configs[PREFER_BORDER_TRANS],
                 'addConflictOnlyOnce': self.configs[ADD_CONFLICT_ONLY_ONCE]
+            }
+
+            prom_configs_fn = 'configs.json'
+            prom_configs_fp = os.path.join(outdir_i, prom_configs_fn)
+
+            with open(prom_configs_fp, 'w') as f:
+                json.dump(prom_configs, f)
+
+            # make and run prom executor
+            logfile_fn = '{}.log'.format('python')
+            logfile_fp = os.path.join(outdir_i, logfile_fn)
+            prom_logfile_fn = 'prom.log'
+            prom_logfile_fp = os.path.join(outdir_i, prom_logfile_fn)
+
+            with open(logfile_fp, 'w') as f:
+
+                executor = ProMPluginExecutor(
+                    basedir=self.configs[BASEDIR],
+                    configs_fp=prom_configs_fp,
+                    mem=self.configs[MEMORY],
+                    prom_jar=self.configs[PROM_JAR],
+                    prom_pkg=self.configs[PROM_PKG],
+                    plugin_jar=self.configs[PLUGIN_JAR],
+                    main_class=self.configs[MAIN_CLASS],
+                    prom_logfile=prom_logfile_fp,
+                    logfile=f
+                )
+
+                executor.execute()
+
+            end = time.time()
+            logger.info('[time] Run {} took {} seconds.'.format(_id, end - start))
+
+        logger.info('All done!')
+
+
+class MonolithicReplayRunner:
+    HEADER = ['_id', 'log_path', 'model_path', 'log', 'model', 'monolithic', 'decomposition',
+              'recompose_strategy', 'log_creation_strategy', 'prefer_border_trans', 'add_conflict_only_once',
+              'use_hide_n_reduce', 'global_duration', 'local_duration', 'log_move_cost', 'model_move_cost',
+              'relative_interval', 'absolute_interval', 'max_conflict', 'cost_interval_lo', 'cost_interval_hi',
+              'fitness_lo', 'fitness_hi', 'aligned', 'to_align', 'rejected', 'total_traces',
+              'recomposition_steps_taken', 'total_time_taken', 'total_align_time', 'total_generated_states',
+              'total_queued_states', 'total_traversed_arcs', 'avg_generated_states', 'avg_queued_states',
+              'avg_traversed_arcs']
+
+    def __init__(self, configs):
+        self.configs = configs
+
+    def run(self):
+
+        logger.info('Running monolithic replay runner...')
+
+        data_list = list()
+        to_run_fp = os.path.join(self.configs[BASEDIR],
+                                 self.configs[DATA_TO_RUN])
+
+        with open(to_run_fp, 'r') as f:
+            cnt = 0
+
+            for line in f:
+                model_dir, model, log = line.split(',')
+                model_dir = None if model_dir.strip() == '' else model_dir.strip()
+                model = model.strip()
+                log = log.strip()
+
+                logger.debug('Model {}: {}, Log {}: {}'.format(cnt, model,
+                                                               cnt, log))
+
+                data_list.append((model_dir, model, log))
+                cnt += 1
+
+        data_dir = os.path.join(self.configs[BASEDIR], self.configs[DATA_DIR])
+
+        outfile_fp = os.path.join(self.configs[OUTDIR], 'results.txt')
+        utils.writeheader(outfile_fp, MonolithicReplayRunner.HEADER)
+
+        for _id, to_run in enumerate(data_list):
+            start = time.time()
+
+            model_dir, model, log = to_run
+            model_fp = '.'.join([model, self.configs[MODEL_EXT]])
+            log_fp = '.'.join([log, self.configs[LOG_EXT]])
+
+            if model_dir is not None:
+                model_fp = os.path.join(data_dir, model_dir, model_fp)
+                log_fp = os.path.join(data_dir, model_dir, log_fp)
+            else:
+                model_fp = os.path.join(data_dir, model_fp)
+                log_fp = os.path.join(data_dir, log_fp)
+
+            # create the ProM configuration json
+            outdir_i = os.path.join(self.configs[OUTDIR], str(_id))
+            os.makedirs(outdir_i)
+
+            prom_configs = {
+                'log': log,
+                'model': model,
+                'modelPath': model_fp,
+                'logPath': log_fp,
+                'iteration': _id,
+                'outFile': outfile_fp,
+                'resultDir': self.configs[OUTDIR],
+
+                # replay params
+                'configuration': self.configs[REPLAY_CONFIG],
+                'moveOnLogCosts': self.configs[MOVE_ON_LOG_COSTS],
+                'moveOnModelCosts': self.configs[MOVE_ON_MODEL_COSTS],
+                'deadline': self.configs[DEADLINE]
             }
 
             prom_configs_fn = 'configs.json'

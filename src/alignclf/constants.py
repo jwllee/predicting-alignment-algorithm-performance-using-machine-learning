@@ -33,7 +33,9 @@ __all__ = [
     'PREFER_BORDER_TRANS',
     'ADD_CONFLICT_ONLY_ONCE',
     'RECOMPOSE_STRATEGY',
-    'LOG_CREATION_STRATEGY'
+    'LOG_CREATION_STRATEGY',
+
+    'DEADLINE'
 ]
 
 
@@ -71,3 +73,6 @@ PREFER_BORDER_TRANS = 'prefer_border_trans'
 ADD_CONFLICT_ONLY_ONCE = 'add_conflict_only_once'
 RECOMPOSE_STRATEGY = 'recompose_strategy'
 LOG_CREATION_STRATEGY = 'log_creation_strategy'
+
+# monolithic replay configurations
+DEADLINE = 'deadline'
