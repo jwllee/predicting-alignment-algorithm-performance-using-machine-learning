@@ -341,7 +341,7 @@ class MonolithicReplayRunner:
 
         data_dir = os.path.join(self.configs[BASEDIR], self.configs[DATA_DIR])
 
-        outfile_fp = os.path.join(self.configs[OUTDIR], 'results.txt')
+        outfile_fp = os.path.join(self.configs[OUTDIR], 'results.csv')
         utils.writeheader(outfile_fp, MonolithicReplayRunner.HEADER)
 
         for _id, to_run in enumerate(data_list):
