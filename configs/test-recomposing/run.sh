@@ -21,7 +21,7 @@ N=1
 for i in $(seq 1 $N)
 do
     echo "Iteration $i"
-    ../scripts/time -v -a -o ${TIME_FILE} -f "Command: %C\n[mm:ss.ms]: %E\n" $PYTHON $RUN -c "${CONFIG}" -l "${LOGGINGCONFIGS}"
+    ../scripts/time -a -o ${TIME_FILE} -f "Command: %C\n[mm:ss.ms]: %E\n" $PYTHON $RUN -c "${CONFIG}" -l "${LOGGINGCONFIGS}"
     sleep 5
 done
 

@@ -14,7 +14,6 @@
   "model_ext": "apnml",
   "log_ext": "xes.gz",
 
-  "is_monolithic": false,
   "replay_config": "Decompose",
   "move_on_log_costs": 10,
   "move_on_model_costs": 4,
