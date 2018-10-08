@@ -16,7 +16,24 @@ __all__ = [
     'PROM_JAR',
     'PROM_PKG',
     'PLUGIN_JAR',
-    'MAIN_CLASS'
+    'MAIN_CLASS',
+
+    'REPLAY_CONFIG',
+    'MOVE_ON_LOG_COSTS',
+    'MOVE_ON_MODEL_COSTS',
+    'GLOBAL_DURATION',
+    'LOCAL_DURATION',
+    'INTERVAL_RELATIVE',
+    'INTERVAL_ABSOLUTE',
+    'MAX_CONFLICTS',
+    'ALIGNMENT_PERCENTAGE',
+    'NOF_ITERATIONS',
+    'USE_HIDE_N_REDUCE',
+    'DECOMPOSITION',
+    'PREFER_BORDER_TRANS',
+    'ADD_CONFLICT_ONLY_ONCE',
+    'RECOMPOSE_STRATEGY',
+    'LOG_CREATION_STRATEGY'
 ]
 
 
@@ -36,3 +53,21 @@ PROM_JAR = 'prom_jar'
 PROM_PKG = 'prom_pkg'
 PLUGIN_JAR = 'plugin_jar'
 MAIN_CLASS = 'main_class'
+
+# recomposing replay configurations
+REPLAY_CONFIG = 'replay_config'
+MOVE_ON_LOG_COSTS = 'move_on_log_costs'
+MOVE_ON_MODEL_COSTS = 'move_on_model_costs'
+GLOBAL_DURATION = 'global_duration'
+LOCAL_DURATION = 'local_duration'
+INTERVAL_RELATIVE = 'interval_relative'
+INTERVAL_ABSOLUTE = 'interval_absolute'
+MAX_CONFLICTS = 'max_conflicts'
+ALIGNMENT_PERCENTAGE = 'alignment_percentage'
+NOF_ITERATIONS = 'nof_iterations'
+USE_HIDE_N_REDUCE = 'use_hide_n_reduce'
+DECOMPOSITION = 'decomposition'
+PREFER_BORDER_TRANS = 'prefer_border_trans'
+ADD_CONFLICT_ONLY_ONCE = 'add_conflict_only_once'
+RECOMPOSE_STRATEGY = 'recompose_strategy'
+LOG_CREATION_STRATEGY = 'log_creation_strategy'

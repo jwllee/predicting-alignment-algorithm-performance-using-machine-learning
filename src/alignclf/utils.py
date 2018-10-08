@@ -1,12 +1,18 @@
 #!/usr/bin/env python
 
 
-import os, sys, logging, json, logging.config
+import os, sys, logging, json, logging.config, csv
 
 
 __all__ = [
     'setup_logging'
 ]
+
+
+def writeheader(fp, header):
+    with open(fp, 'w') as f:
+        writer = csv.writer(f)
+        writer.writerow(header)
 
 
 def __get_keypath(key, _dict, level=None, paths=None):
