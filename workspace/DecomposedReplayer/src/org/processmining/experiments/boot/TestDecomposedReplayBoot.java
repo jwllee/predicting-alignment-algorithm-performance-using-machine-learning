@@ -81,7 +81,7 @@ public class TestDecomposedReplayBoot {
 
 	public static void main(String[] args) throws Throwable {
 		
-		LOGGER.info("Arguments: " + args);
+		LOGGER.info("Arguments: " + args[0] + ", " + args[1]);
 		
 		// set up the logger handler
 		try {

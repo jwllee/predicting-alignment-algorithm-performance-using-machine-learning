@@ -93,7 +93,7 @@ public class TestRecomposingReplayWithMergeStrategyBoot {
 	
 	public static void main(String[] args) throws Throwable {
 		
-		LOGGER.log(Level.INFO, "Arguments: " + args);
+		LOGGER.log(Level.INFO, "Arguments: " + args[0] + ", " + args[1]);
 		
 		// set up the logger handler
 		try {

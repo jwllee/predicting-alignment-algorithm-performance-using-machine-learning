@@ -153,6 +153,7 @@ public class TestDecomposedReplayPlugin implements HTMLToString {
 				// write out the alignment
 				String alignmentFp = "alignment-" + i + ".csv";
 				alignmentFp = alignResultDir + File.separator + alignmentFp;
+				i += 1;
 				
 				ReplayResultCsvWriter.writeReplayResultToCsv(alignment, alignmentFp, mapping);
 				

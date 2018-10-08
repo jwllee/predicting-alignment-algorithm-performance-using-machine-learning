@@ -135,15 +135,13 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 				replayParameters.setUnsplittableActivities(unsplittableActivities);
 			} 
 			
-			LOGGER.info("GlobalDuration: " + replayParameters.getGlobalDuration());
-			LOGGER.info("LocalDuration: " + replayParameters.getLocalDuration());
-			LOGGER.info("MoveOnLogCosts: " + replayParameters.getMoveOnLogCosts());
-			LOGGER.info("MoveOnModelCosts: " + replayParameters.getMoveOnModelCosts());
-			LOGGER.info("IntervalRelative: " + replayParameters.getIntervalRelative());
-			LOGGER.info("IntervalAbsolute: " + replayParameters.getIntervalAbsolute());
-			LOGGER.info("MaxConflicts: " + replayParameters.getMaxConflicts());
-			LOGGER.info("AlignmentPercentage: " + replayParameters.getAlignmentPercentage());
-			LOGGER.info("NofIterations: " + replayParameters.getNofIterations());
+			LOGGER.info(String.format("GlobalDuration: %s \nLocalDuration: %s \nMoveOnLogCosts: %s \nMoveOnModelCosts: %s "
+					+ "\nIntervalRelative: %s \nIntervalAbsolute: %s \nMaxConflicts: %s \nAlignmentPercentage: %s "
+					+ "\nNofIterations: %s", replayParameters.getGlobalDuration(), replayParameters.getLocalDuration(),
+					replayParameters.getMoveOnLogCosts(), replayParameters.getMoveOnModelCosts(), 
+					replayParameters.getIntervalRelative(), replayParameters.getIntervalAbsolute(),
+					replayParameters.getMaxConflicts(), replayParameters.getAlignmentPercentage(),
+					replayParameters.getNofIterations()));
 			
 			RecomposingReplayWorkspace workspace = new RecomposingReplayWorkspace(log, replayParameters);
 			
@@ -262,6 +260,7 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 				// write out the alignment
 				String alignmentFp = "alignment-" + i + ".csv";
 				alignmentFp = alignResultDir + File.separator + alignmentFp;
+				i += 1;
 				
 				ReplayResultCsvWriter.writeReplayResultToCsv(alignment, alignmentFp, mapping);
 				
