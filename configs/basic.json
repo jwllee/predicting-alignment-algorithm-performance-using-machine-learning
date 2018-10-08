@@ -1,0 +1,13 @@
+{
+  "basedir": "..",
+  "result_dir": "results",
+  "memory": 16,
+  "prom_jar": "ProM651.jar",
+  "prom_pkg": "ProM651_lib",
+
+  "model_ext": "apnml",
+  "log_ext": "xes.gz",
+
+  "move_on_log_costs": 10,
+  "move_on_model_costs": 4
+}

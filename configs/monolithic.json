@@ -1,0 +1,7 @@
+{
+  "runner_type": "monolithic",
+  "plugin_jar": "2018-10-06_monolithic-replay.jar",
+  "main_class": "org.processmining.experiments.boot.TestDecomposedReplayBoot",
+  "replay_config": "Do not decompose",
+  "deadline": 900000
+}
