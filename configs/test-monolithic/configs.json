@@ -1,0 +1,21 @@
+{
+  "basedir": "..",
+  "result_dir": "results",
+  "data_dir": "data/test",
+  "data_to_run": "configs/test-monolithic/data.txt",
+  "experiment_name": "test-monolithic",
+  "runner_type": "monolithic",
+
+  "memory": 6,
+  "prom_jar": "ProM651.jar",
+  "plugin_jar": "2018-10-06_monolithic-replay.jar",
+  "prom_pkg": "ProM651_lib",
+  "main_class": "org.processmining.experiments.boot.TestDecomposedReplayBoot",
+  "model_ext": "apnml",
+  "log_ext": "xes.gz",
+
+  "replay_config": "Do not decompose",
+  "move_on_log_costs": 10,
+  "move_on_model_costs": 4,
+  "deadline": 900000
+}
