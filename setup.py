@@ -19,6 +19,6 @@ setup(
     py_module=[splitext(basename(path))[0] for path in glob('src/*.py')],
     entry_points='''
         [console_scripts]
-        make_run_script=alignclf.configuration:make_run_script
+        make-configs=alignclf.configuration:make_configs
     '''
 )
