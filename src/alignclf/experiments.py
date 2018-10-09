@@ -183,7 +183,8 @@ class RecomposingReplayRunner:
     HEADER = ['_id', 'log_path', 'model_path', 'log', 'model', 'monolithic', 'decomposition',
               'recompose_strategy', 'log_creation_strategy', 'prefer_border_trans', 'add_conflict_only_once',
               'use_hide_n_reduce', 'global_duration', 'local_duration', 'log_move_cost', 'model_move_cost',
-              'relative_interval', 'absolute_interval', 'max_conflict', 'cost_interval_lo', 'cost_interval_hi',
+              'relative_interval', 'absolute_interval', 'max_conflict', 'alignment_percentage',
+              'max_iteration', 'cost_interval_lo', 'cost_interval_hi',
               'fitness_lo', 'fitness_hi', 'aligned', 'to_align', 'rejected', 'total_traces',
               'recomposition_steps_taken', 'total_time_taken', 'total_align_time', 'total_generated_states',
               'total_queued_states', 'total_traversed_arcs', 'avg_generated_states', 'avg_queued_states',
@@ -217,7 +218,7 @@ class RecomposingReplayRunner:
 
         data_dir = os.path.join(self.configs[BASEDIR], self.configs[DATA_DIR])
 
-        outfile_fp = os.path.join(self.configs[OUTDIR], 'results.txt')
+        outfile_fp = os.path.join(self.configs[OUTDIR], 'results.csv')
         utils.writeheader(outfile_fp, RecomposingReplayRunner.HEADER)
 
         for _id, to_run in enumerate(data_list):
@@ -307,7 +308,8 @@ class MonolithicReplayRunner:
     HEADER = ['_id', 'log_path', 'model_path', 'log', 'model', 'monolithic', 'decomposition',
               'recompose_strategy', 'log_creation_strategy', 'prefer_border_trans', 'add_conflict_only_once',
               'use_hide_n_reduce', 'global_duration', 'local_duration', 'log_move_cost', 'model_move_cost',
-              'relative_interval', 'absolute_interval', 'max_conflict', 'cost_interval_lo', 'cost_interval_hi',
+              'relative_interval', 'absolute_interval', 'max_conflict', 'alignment_percentage',
+              'max_iteration', 'cost_interval_lo', 'cost_interval_hi',
               'fitness_lo', 'fitness_hi', 'aligned', 'to_align', 'rejected', 'total_traces',
               'recomposition_steps_taken', 'total_time_taken', 'total_align_time', 'total_generated_states',
               'total_queued_states', 'total_traversed_arcs', 'avg_generated_states', 'avg_queued_states',
