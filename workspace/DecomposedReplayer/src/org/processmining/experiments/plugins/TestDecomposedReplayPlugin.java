@@ -90,9 +90,9 @@ public class TestDecomposedReplayPlugin implements HTMLToString {
 			// prefered border transition not working currently
 //			replayParameters.setPreferBorderTransitions(false);
 			
-			long time = System.nanoTime();
+			long time = -System.nanoTime();
 			PNRepResult repResult = replayer.apply(context, log, apn, replayParameters);
-			time -= System.nanoTime();
+			time += System.nanoTime();
 			time /= 1000000;
 			
 			LOGGER.info("Finished monolithic replay in " + time + " ms.");

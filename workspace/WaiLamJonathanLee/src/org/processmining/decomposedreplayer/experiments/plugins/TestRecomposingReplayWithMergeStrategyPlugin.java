@@ -145,14 +145,14 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 			
 			RecomposingReplayWorkspace workspace = new RecomposingReplayWorkspace(log, replayParameters);
 			
-			long time = System.nanoTime();
+			long time = -System.nanoTime();
 			
 			// create replayer and replay
 			RecomposingReplayWithRecomposeStrategyAlgorithm replayer = new RecomposingReplayWithRecomposeStrategyAlgorithm(
 					context, log, apn, workspace, replayParameters, parameters.recomposeStrategy, 
 					parameters.logCreationStrategy);
 			PNRepResult repResult = replayer.apply();
-			time -= System.nanoTime();
+			time += System.nanoTime();
 			time /= 1000000;
 			
 			LOGGER.info("Finished recomposing replay in " + time + " ms.");
