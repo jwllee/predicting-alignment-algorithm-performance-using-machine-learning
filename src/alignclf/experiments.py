@@ -46,6 +46,19 @@ class ProMPluginExecutor:
                 classpath += '{pathsep}{jar}'.format(pathsep=os.pathsep,
                                                      jar=jar_fp)
 
+        # add packages jars
+        for d in os.listdir('packages'):
+            dirpath = os.path.join('.', 'packages', d)
+
+            if not os.path.isdir(dirpath):
+                continue
+
+            for f in os.listdir(dirpath):
+                if '.jar' in f:
+                    jar_fp = os.path.join(dirpath, f)
+                    classpath += '{pathsep}{jar}'.format(pathsep=os.pathsep,
+                                                         jar=jar_fp)
+
         logger.debug('Classpath: {}'.format(classpath))
 
         return classpath
