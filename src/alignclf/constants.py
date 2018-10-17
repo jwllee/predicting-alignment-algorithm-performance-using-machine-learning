@@ -35,7 +35,9 @@ __all__ = [
     'RECOMPOSE_STRATEGY',
     'LOG_CREATION_STRATEGY',
 
-    'DEADLINE'
+    'DEBUG',
+    'DEADLINE',
+    'TIMEOUT_PER_TRACE_IN_SEC'
 ]
 
 
@@ -75,4 +77,6 @@ RECOMPOSE_STRATEGY = 'recompose_strategy'
 LOG_CREATION_STRATEGY = 'log_creation_strategy'
 
 # monolithic replay configurations
+DEBUG = 'debug'
 DEADLINE = 'deadline'
+TIMEOUT_PER_TRACE_IN_SEC = 'timeout_per_trace_in_sec'

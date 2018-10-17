@@ -404,10 +404,11 @@ class MonolithicReplayRunner:
                 'resultDir': self.configs[OUTDIR],
 
                 # replay params
+                'debug': self.configs[DEBUG],
                 'configuration': self.configs[REPLAY_CONFIG],
                 'moveOnLogCosts': self.configs[MOVE_ON_LOG_COSTS],
                 'moveOnModelCosts': self.configs[MOVE_ON_MODEL_COSTS],
-                'deadline': self.configs[DEADLINE]
+                'timeoutPerTraceInSec': self.configs[TIMEOUT_PER_TRACE_IN_SEC]
             }
 
             prom_configs_fn = 'configs.json'
