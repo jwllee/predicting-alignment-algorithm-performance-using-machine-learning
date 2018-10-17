@@ -46,7 +46,7 @@ class ProMPluginExecutor:
                 classpath += '{pathsep}{jar}'.format(pathsep=os.pathsep,
                                                      jar=jar_fp)
 
-        # add packages jars
+        # add packages jars, might need to go two levels down
         for d in os.listdir('packages'):
             dirpath = os.path.join('.', 'packages', d)
 
@@ -54,10 +54,22 @@ class ProMPluginExecutor:
                 continue
 
             for f in os.listdir(dirpath):
+                dirpath1 = os.path.join(dirpath, f)
+
                 if '.jar' in f:
                     jar_fp = os.path.join(dirpath, f)
                     classpath += '{pathsep}{jar}'.format(pathsep=os.pathsep,
                                                          jar=jar_fp)
+
+                # this might be another directory containing jars
+                elif os.path.isdir(dirpath1):
+
+                    for f1 in os.listdir(dirpath1):
+
+                        if '.jar' in f1:
+                            jar_fp = os.path.join(dirpath1, f1)
+                            classpath += '{pathsep}{jar}'.format(pathsep=os.pathsep,
+                                                                 jar=jar_fp)
 
         logger.debug('Classpath: {}'.format(classpath))
 
@@ -66,18 +78,23 @@ class ProMPluginExecutor:
     def execute(self):
         logger.info('Executing...')
 
+        # need to add the dynamic library links (DLL) of lpsolve to library path!!
+        lpsolve = os.path.join('.', 'packages', 'lpsolve-5.5.4', 'lib', 'ux64')
+
         classpath = self.make_classpath()
         command = 'java -classpath {classpath} ' \
-                  '-Djava.library.path={prom_pkg} ' \
+                  '-Djava.library.path={prom_pkg}{pathsep}{lpsolve} ' \
                   '-Djava.util.Arrays.useLegacyMergeSort=true ' \
                   '-Xmx{memory}G ' \
                   '{main_class} {prom_logfile} {configs_fpath}'.format(
             classpath=classpath,
             prom_pkg=self.prom_pkg,
+            lpsolve=lpsolve,
             memory=self.mem,
             main_class=self.main_class,
             prom_logfile=self.prom_logfile,
-            configs_fpath=self.configs_fp
+            configs_fpath=self.configs_fp,
+            pathsep=os.pathsep
         )
 
         logger.info('Calling: {}'.format(command))
