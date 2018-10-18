@@ -36,6 +36,7 @@ __all__ = [
     'LOG_CREATION_STRATEGY',
 
     'DEBUG',
+    'PRINT_ALIGNMENT',
     'DEADLINE',
     'TIMEOUT_PER_TRACE_IN_SEC'
 ]
@@ -78,5 +79,6 @@ LOG_CREATION_STRATEGY = 'log_creation_strategy'
 
 # monolithic replay configurations
 DEBUG = 'debug'
+PRINT_ALIGNMENT = 'print_alignment'
 DEADLINE = 'deadline'
 TIMEOUT_PER_TRACE_IN_SEC = 'timeout_per_trace_in_sec'

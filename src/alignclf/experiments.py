@@ -404,6 +404,7 @@ class MonolithicReplayRunner:
                 'resultDir': self.configs[OUTDIR],
 
                 # replay params
+                'printAlignment': self.configs[PRINT_ALIGNMENT],
                 'debug': self.configs[DEBUG],
                 'configuration': self.configs[REPLAY_CONFIG],
                 'moveOnLogCosts': self.configs[MOVE_ON_LOG_COSTS],
