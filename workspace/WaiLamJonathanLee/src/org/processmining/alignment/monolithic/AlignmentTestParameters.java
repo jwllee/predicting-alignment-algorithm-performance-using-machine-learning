@@ -22,6 +22,8 @@ public class AlignmentTestParameters {
 	public int moveOnLogCosts = 0;
 	public int moveOnModelCosts = 0;
 	public int timeoutPerTraceInSec = 0;
+	
+	public boolean printAlignment = false;
 
 	@Override
 	public String toString() {
@@ -34,7 +36,8 @@ public class AlignmentTestParameters {
                 "Model: " + model + "\n" + 
                 "Log path: " + logPath + "\n" + 
                 "Model path: " + modelPath + "\n" + 
-                "Out file: " + outFile;
+                "Out file: " + outFile + "\n" +
+                "Print alignment: " + printAlignment;
 	}
 	
 	public static AlignmentTestParameters readParams(String jsonString) {

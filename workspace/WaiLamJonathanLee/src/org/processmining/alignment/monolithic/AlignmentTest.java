@@ -5,11 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import org.deckfour.xes.classification.XEventClass;
 import org.deckfour.xes.classification.XEventClasses;
@@ -21,6 +23,7 @@ import org.deckfour.xes.model.XLog;
 import org.jbpt.petri.Flow;
 import org.jbpt.petri.NetSystem;
 import org.jbpt.petri.io.PNMLSerializer;
+import org.processmining.alignment.utils.AlignUtils;
 import org.processmining.alignment.utils.StringFileReader;
 import org.processmining.models.graphbased.directed.petrinet.Petrinet;
 import org.processmining.models.graphbased.directed.petrinet.PetrinetGraph;
@@ -74,7 +77,9 @@ public class AlignmentTest {
 		try {
 			
 			fh = new FileHandler(logFp, false);
-			
+			fh.setFormatter(new SimpleFormatter());
+			LOGGER.addHandler(fh);
+
 		} catch (SecurityException | IOException e) {
 			
 			e.printStackTrace();
@@ -190,7 +195,7 @@ public class AlignmentTest {
 		return mapping;
 	}
 	
-	private static void doReplayExperiment(Debug debug, String folder, Petrinet net, Marking initialMarking, 
+	private static void doReplayExperiment(AlignmentTestParameters params, Debug debug, String folder, Petrinet net, Marking initialMarking, 
 			Marking finalMarking, XLog log, XEventClassifier eventClassifier, String configuration, 
 			int timeoutPerTraceInSec) throws FileNotFoundException, InterruptedException, ExecutionException {
 		
@@ -223,27 +228,27 @@ public class AlignmentTest {
 			case ASTAR:
 				parameters = new ReplayerParameters.AStar(moveSort, queueSort, preferExact, threads, useInt, debug,
 							timeout, maxNumberOfStates, Integer.MAX_VALUE, partialOrder);
-				doReplay(debug, folder, "AStar", net, initialMarking, finalMarking, log, mapping, classes,
+				doReplay(params, debug, folder, "AStar", net, initialMarking, finalMarking, log, mapping, classes,
 							parameters);
 				break;
 
 			case INC0 :
 				parameters = new ReplayerParameters.IncementalAStar(moveSort, threads, useInt, debug, timeout,
 							maxNumberOfStates, Integer.MAX_VALUE, partialOrder, 0);
-				doReplay(debug, folder, "Incre0", net, initialMarking, finalMarking, log, mapping, classes,
+				doReplay(params, debug, folder, "Incre0", net, initialMarking, finalMarking, log, mapping, classes,
 							parameters);
 				break;
 			case INC3 :
 				parameters = new ReplayerParameters.IncementalAStar(moveSort, threads, useInt, debug, timeout,
 							maxNumberOfStates, Integer.MAX_VALUE, partialOrder, 3);
-				doReplay(debug, folder, "Incre3", net, initialMarking, finalMarking, log, mapping, classes,
+				doReplay(params, debug, folder, "Incre3", net, initialMarking, finalMarking, log, mapping, classes,
 							parameters);
 				break;
 
 			case INC_PLUS :
 				parameters = new ReplayerParameters.IncementalAStar(moveSort, threads, useInt, debug, timeout,
 							maxNumberOfStates, Integer.MAX_VALUE, partialOrder, true);
-				doReplay(debug, folder, "Incre++", net, initialMarking, finalMarking, log, mapping, classes,
+				doReplay(params, debug, folder, "Incre++", net, initialMarking, finalMarking, log, mapping, classes,
 							parameters);
 				break;
 			
@@ -283,15 +288,15 @@ public class AlignmentTest {
 		return costLM;
 	}
 	
-	private static void doReplay(Debug debug, String folder, String postfix, PetrinetGraph net, 
+	private static void doReplay(AlignmentTestParameters params, Debug debug, String folder, String postfix, PetrinetGraph net, 
 			Marking initialMarking, Marking finalMarking, XLog log, TransEvClassMapping mapping,
 			XEventClasses classes, ReplayerParameters parameters) throws FileNotFoundException, InterruptedException, ExecutionException {
 		PrintStream stream;
 		
 		if (debug == Debug.STATS) {
-			stream = new PrintStream(new File(folder + "/" + postfix + ".csv"));
+			stream = new PrintStream(new File(folder + "/" + params.iteration + "/" + postfix + ".csv"));
 		} else if (debug == Debug.DOT) {
-			stream = new PrintStream(new File(folder + "/" + postfix + ".dot"));
+			stream = new PrintStream(new File(folder + "/" + params.iteration + "/" + postfix + ".dot"));
 		} else {
 			stream = System.out;
 		}
@@ -309,7 +314,8 @@ public class AlignmentTest {
 		PNRepResult result = replayer.computePNRepResult(Progress.INVISIBLE, log);
 		long end = System.nanoTime();
 		
-		int cost = (int) Double.parseDouble((String) result.getInfo().get(Replayer.MAXMODELMOVECOST));
+//		int cost = (int) Double.parseDouble((String) result.getInfo().get(Replayer.MAXMODELMOVECOST));
+		int cost = 0;
 		int timeout = 0;
 		double time = 0;
 		int mem = 0;
@@ -317,6 +323,17 @@ public class AlignmentTest {
 		double pretime = 0;
 		int weight = 0;
 		double avgCost = 0;
+		
+		String alignDirpath = folder + "/" + params.iteration + "/alignment";
+		File alignmentDir = new File(alignDirpath);
+		
+		if (!alignmentDir.exists() && params.printAlignment) {
+			alignmentDir.mkdirs();
+		}
+		
+		File alignFp;
+		PrintStream alignStream;
+		String traceId;
 		
 		for (SyncReplayResult res : result) {
 			weight += res.getTraceIndex().size();
@@ -326,6 +343,19 @@ public class AlignmentTest {
 			pretime += res.getInfo().get(Replayer.PREPROCESSTIME);
 			lps += res.getInfo().get(Replayer.HEURISTICSCOMPUTED);
 			mem = Math.max(mem, res.getInfo().get(Replayer.MEMORYUSED).intValue());
+			
+			// output alignment
+			if (params.printAlignment) {
+				Iterator<Integer> iterator = res.getTraceIndex().iterator();
+				while (iterator.hasNext()) {
+					traceId = iterator.next().toString();
+					alignFp = new File(alignDirpath + "/" + traceId + ".csv");
+					alignStream = new PrintStream(alignFp);
+					AlignUtils.toCsv(res, mapping, alignStream);
+					
+					alignStream.close();
+				}
+			}
 		}
 		
 		avgCost = cost * 1.0 / weight;
@@ -335,15 +365,15 @@ public class AlignmentTest {
 		}
 
 		LOGGER.info(String.format(
-				"Timeout: %d" + "\n" +
-				"Clock time: %.3f" + "\n" +
-				"CPU time: %.3f" + "\n" +
-				"Preprocess time: %.3f" + "\n" +
-				"Max memory: %d" + "\n" +
+				"\nTimeout: %d" + "\n" +
+				"Clock time (ms): %.3f" + "\n" +
+				"CPU time (ms): %.3f" + "\n" +
+				"Preprocess time (ms): %.3f" + "\n" +
+				"Max memory (kb): %d" + "\n" +
 				"LPs: %d" + "\n" +
 				"Total costs: %d" + "\n" + 
 				"Avg. costs: %.3f" + "\n" +
-				"Aligned: %d" + "\n"
+				"Aligned: %d"
 				, timeout, (end - start) / 1000000.0, time, pretime, mem, lps,
 				cost, avgCost, weight));
 //		
@@ -415,7 +445,8 @@ public class AlignmentTest {
 		
 		try {
 			
-			doReplayExperiment(debug, params.resultDir, net, initialMarking, finalMarking, log, eventClassifier, params.configuration, params.timeoutPerTraceInSec);
+			doReplayExperiment(params, debug, params.resultDir, net, initialMarking, finalMarking, 
+					log, eventClassifier, params.configuration, params.timeoutPerTraceInSec);
 		
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
