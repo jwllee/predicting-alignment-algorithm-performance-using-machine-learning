@@ -1,0 +1,2 @@
+ModelPath, Number of ANDs, Number of XORs, Number of arcs, Number of duplicated transitions, Number of invisible transitions, Number of places, Number of transitions
+../data/synthetic/2018-05-01_small/net2/net2.apnml, 11.0, 51.0, 510.0, 3.0, 25.0, 166.0, 243.0

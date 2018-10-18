@@ -1,0 +1,6 @@
+ModelPath, Number of ANDs, Number of XORs,Number of loops, Number of arcs, Number of duplicated transitions, Number of invisible transitions, Number of places, Number of transitions
+../data/synthetic/2018-05-01_small/net1/net1.apnml,11,51,17,502,3,25,163,239
+../data/synthetic/2018-05-01_small/net2/net2.apnml,11,52,17,510,3,25,166,243
+../data/synthetic/2018-05-01_small/net3/net3.apnml,14,53,17,536,3,30,178,253
+../data/synthetic/2018-05-01_small/net4/net4.apnml,14,54,17,546,3,30,181,258
+../data/synthetic/2018-05-01_small/net5/net5.apnml,15,54,18,560,3,32,187,264
