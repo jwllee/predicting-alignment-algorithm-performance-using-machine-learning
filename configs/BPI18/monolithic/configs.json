@@ -1,9 +1,9 @@
 {
     "basedir": "..",
-    "data_dir": "data/test",
-    "data_to_run": "configs/net1/monolithic/data.txt",
+    "data_dir": "data/synthetic/BPI18",
+    "data_to_run": "configs/BPI18/monolithic/data.txt",
     "debug": "stats",
-    "experiment_name": "net1-monolithic",
+    "experiment_name": "BPI18-monolithic",
     "log_ext": "xes.gz",
     "main_class": "org.processmining.alignment.monolithic.AlignmentTest",
     "memory": 16,

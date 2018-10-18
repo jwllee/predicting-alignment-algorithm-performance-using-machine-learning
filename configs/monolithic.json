@@ -4,5 +4,6 @@
   "main_class": "org.processmining.alignment.monolithic.AlignmentTest",
   "replay_config": "inc+",
   "debug": "stats",
+  "print_alignment": true,
   "timeout_per_trace_in_sec": 60
 }
