@@ -21,6 +21,7 @@ public class AlignmentTestParameters {
 	
     public String debug = "";
     public String configuration = "";
+    public int threads = 1;
     public boolean moveSort = false;
     public boolean useInt = false;
     public boolean partialOrder = false;
@@ -42,6 +43,7 @@ public class AlignmentTestParameters {
 		return  "Result directory: " + resultDir + "\n" +
 				"Debug: " + debug + "\n" +
 				"Configurations: " + configuration + "\n" + 
+				"Threads: " + threads + "\n" +
                 "Time out per trace in sec: " + timeoutPerTraceInSec + "\n" + 
 				"Move sort: " + moveSort + "\n" +
                 "Use ILP: " + useInt + "\n" +

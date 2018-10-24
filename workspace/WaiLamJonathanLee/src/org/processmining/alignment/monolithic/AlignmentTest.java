@@ -197,18 +197,7 @@ public class AlignmentTest {
 		TransEvClassMapping mapping = constructMapping(net, log, dummyEvClass, eventClassifier);
 		XLogInfo summary = XLogInfoFactory.createLogInfo(log, eventClassifier);
 		XEventClasses classes = summary.getEventClasses();
-		
-		int threads;
-		if (debug == Debug.STATS) {
-			threads = THREADS;
-		} else if (debug == Debug.DOT) {
-			threads = 1;
-		} else {
-			threads = THREADS;
-		}
-		
-		LOGGER.info("Number of threads: " + threads);
-		
+
 		// timeout per trace
 		int timeout = log.size() * timeoutPerTraceInSec * 1000 / 10;
 		int maxNumberOfStates = Integer.MAX_VALUE;
@@ -218,26 +207,26 @@ public class AlignmentTest {
 		switch (configuration) {
 			case AlignmentTestParameters.ASTAR:
 				parameters = new ReplayerParameters.AStar(params.moveSort, params.queueSort, params.preferExact, 
-						threads, params.useInt, debug, timeout, maxNumberOfStates, Integer.MAX_VALUE, params.partialOrder);
+						params.threads, params.useInt, debug, timeout, maxNumberOfStates, Integer.MAX_VALUE, params.partialOrder);
 				doReplay(params, debug, folder, "alignment", net, initialMarking, finalMarking, log, mapping, classes,
 							parameters);
 				break;
 
 			case AlignmentTestParameters.INC0 :
-				parameters = new ReplayerParameters.IncementalAStar(params.moveSort, threads, params.useInt, 
+				parameters = new ReplayerParameters.IncementalAStar(params.moveSort, params.threads, params.useInt, 
 						debug, timeout, maxNumberOfStates, Integer.MAX_VALUE, params.partialOrder, 0);
 				doReplay(params, debug, folder, "alignment", net, initialMarking, finalMarking, log, mapping, classes,
 							parameters);
 				break;
 			case AlignmentTestParameters.INC3 :
-				parameters = new ReplayerParameters.IncementalAStar(params.moveSort, threads, params.useInt, 
+				parameters = new ReplayerParameters.IncementalAStar(params.moveSort, params.threads, params.useInt, 
 						debug, timeout, maxNumberOfStates, Integer.MAX_VALUE, params.partialOrder, 3);
 				doReplay(params, debug, folder, "alignment", net, initialMarking, finalMarking, log, mapping, classes,
 							parameters);
 				break;
 
 			case AlignmentTestParameters.INC_PLUS :
-				parameters = new ReplayerParameters.IncementalAStar(params.moveSort, threads, params.useInt, 
+				parameters = new ReplayerParameters.IncementalAStar(params.moveSort, params.threads, params.useInt, 
 						debug, timeout, maxNumberOfStates, Integer.MAX_VALUE, params.partialOrder, true);
 				doReplay(params, debug, folder, "alignment", net, initialMarking, finalMarking, log, mapping, classes,
 							parameters);
