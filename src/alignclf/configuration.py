@@ -142,20 +142,6 @@ def make_configs(dir, data_dir, data, name, basic, monolithic, recompose, prefix
 
         run_scripts.append(write_run_script(monolithic_dir, venv, prefix, name, dirname, n))
 
-    # monolithic_dir = os.path.join(base_dir, 'monolithic')
-    # os.makedirs(monolithic_dir)
-    #
-    # monolithic_data = os.path.join(monolithic_dir, DATA_FILE)
-    # copyfile(data, monolithic_data)
-    # monolithic_dict[DATA_TO_RUN] = monolithic_data
-    #
-    # monolithic_configs = os.path.join(monolithic_dir, CONFIGS_FILE)
-    # with open(monolithic_configs, 'w') as f:
-    #     json.dump(monolithic_dict, f, indent=4, sort_keys=True)
-
-    # # add the run script
-    # run_scripts.append(write_run_script(monolithic_dir, venv, prefix, name, 'monolithic', n))
-
     # make recomposing configurations
     decompositions = recompose_dict[DECOMPOSITION]
     merge_strategy = recompose_dict[RECOMPOSE_STRATEGY]
