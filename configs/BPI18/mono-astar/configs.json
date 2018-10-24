@@ -21,6 +21,7 @@
     "replay_config": "astar",
     "result_dir": "results",
     "runner_type": "monolithic",
+    "threads": 1,
     "timeout_per_trace_in_sec": 90,
     "use_int": false
 }
