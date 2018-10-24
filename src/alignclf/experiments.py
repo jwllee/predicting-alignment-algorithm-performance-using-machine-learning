@@ -414,7 +414,8 @@ class MonolithicReplayRunner:
                 'useInt': self.configs[USE_INT],
                 'partialOrder': self.configs[PARTIAL_ORDER],
                 'preferExact': self.configs[PREFER_EXACT],
-                'queueSort': self.configs[QUEUE_SORT]
+                'queueSort': self.configs[QUEUE_SORT],
+                'threads': self.configs[THREADS]
             }
 
             prom_configs_fn = 'configs.json'

@@ -10,5 +10,6 @@
   "use_int": false,
   "partial_order": false,
   "prefer_exact": true,
-  "queue_sort": true
+  "queue_sort": true,
+  "threads": 1
 }

@@ -43,7 +43,8 @@ __all__ = [
     'USE_INT',
     'PARTIAL_ORDER',
     'PREFER_EXACT',
-    'QUEUE_SORT'
+    'QUEUE_SORT',
+    'THREADS'
 ]
 
 
@@ -92,3 +93,4 @@ USE_INT = 'use_int'
 PARTIAL_ORDER = 'partial_order'
 PREFER_EXACT = 'prefer_exact'
 QUEUE_SORT = 'queue_sort'
+THREADS = 'threads'
