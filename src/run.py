@@ -31,11 +31,23 @@ if __name__ == '__main__':
     with open(args.config_json, 'r') as f:
         configs = json.load(f)
 
+    basedir = configs[BASEDIR]
+    result_dir = os.path.join(basedir, configs[RESULT_DIR])
+
+    date = datetime.now().strftime('%Y-%m-%d')
+    cnt = 0
+
+    get_dirname = lambda cnt: os.path.join(result_dir, '{}-{}'.format(date, cnt))
+
+    while os.path.isdir(get_dirname(cnt)):
+        cnt += 1
+
+    # get an overall result directory
+    result_dir = get_dirname(cnt)
+
     dt = datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f')
 
     # make the out directory for this run
-    basedir = configs[BASEDIR]
-    result_dir = os.path.join(basedir, configs[RESULT_DIR])
     outdir = '_'.join([dt, configs[EXPERIMENT_NAME]])
     outdir = os.path.join(result_dir, outdir)
 
