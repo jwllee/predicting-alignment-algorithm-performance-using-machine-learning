@@ -120,19 +120,41 @@ def make_configs(dir, data_dir, data, name, basic, monolithic, recompose, prefix
     recompose_dict[DATA_DIR] = data_dir
 
     # make monolithic configuration
-    monolithic_dir = os.path.join(base_dir, 'monolithic')
-    os.makedirs(monolithic_dir)
+    algorithms = monolithic_dict[REPLAY_CONFIG]
 
-    monolithic_data = os.path.join(monolithic_dir, DATA_FILE)
-    copyfile(data, monolithic_data)
-    monolithic_dict[DATA_TO_RUN] = monolithic_data
+    del monolithic_dict[REPLAY_CONFIG]
 
-    monolithic_configs = os.path.join(monolithic_dir, CONFIGS_FILE)
-    with open(monolithic_configs, 'w') as f:
-        json.dump(monolithic_dict, f, indent=4, sort_keys=True)
+    for algo in algorithms:
+        dirname = 'mono-{}'.format(algo)
+        monolithic_dir = os.path.join(base_dir, dirname)
+        os.makedirs(monolithic_dir)
 
-    # add the run script
-    run_scripts.append(write_run_script(monolithic_dir, venv, prefix, name, 'monolithic', n))
+        monolithic_dict[REPLAY_CONFIG] = algo
+
+        # copy the data.txt
+        monolithic_data = os.path.join(monolithic_dir, DATA_FILE)
+        copyfile(data, monolithic_data)
+        monolithic_dict[DATA_TO_RUN] = monolithic_data
+
+        monolithic_configs = os.path.join(monolithic_dir, CONFIGS_FILE)
+        with open(monolithic_configs, 'w') as f:
+            json.dump(monolithic_dict, f, indent=4, sort_keys=True)
+
+        run_scripts.append(write_run_script(monolithic_dir, venv, prefix, name, dirname, n))
+
+    # monolithic_dir = os.path.join(base_dir, 'monolithic')
+    # os.makedirs(monolithic_dir)
+    #
+    # monolithic_data = os.path.join(monolithic_dir, DATA_FILE)
+    # copyfile(data, monolithic_data)
+    # monolithic_dict[DATA_TO_RUN] = monolithic_data
+    #
+    # monolithic_configs = os.path.join(monolithic_dir, CONFIGS_FILE)
+    # with open(monolithic_configs, 'w') as f:
+    #     json.dump(monolithic_dict, f, indent=4, sort_keys=True)
+
+    # # add the run script
+    # run_scripts.append(write_run_script(monolithic_dir, venv, prefix, name, 'monolithic', n))
 
     # make recomposing configurations
     decompositions = recompose_dict[DECOMPOSITION]
