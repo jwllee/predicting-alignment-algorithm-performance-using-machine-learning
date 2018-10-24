@@ -179,7 +179,7 @@ class MinimalRunner:
             prom_configs_fp = os.path.join(outdir, prom_configs_fn)
 
             with open(prom_configs_fp, 'w') as f:
-                json.dump(prom_configs, f)
+                json.dump(prom_configs, f, indent=4)
 
             # make and run prom executor
             logfile_fn = '{}.log'.format(_id)
@@ -304,7 +304,7 @@ class RecomposingReplayRunner:
             prom_configs_fp = os.path.join(outdir_i, prom_configs_fn)
 
             with open(prom_configs_fp, 'w') as f:
-                json.dump(prom_configs, f)
+                json.dump(prom_configs, f, indent=4)
 
             # make and run prom executor
             logfile_fn = '{}.log'.format('python')
@@ -422,7 +422,7 @@ class MonolithicReplayRunner:
             prom_configs_fp = os.path.join(outdir_i, prom_configs_fn)
 
             with open(prom_configs_fp, 'w') as f:
-                json.dump(prom_configs, f)
+                json.dump(prom_configs, f, indent=4)
 
             # make and run prom executor
             logfile_fn = '{}.log'.format('python')
