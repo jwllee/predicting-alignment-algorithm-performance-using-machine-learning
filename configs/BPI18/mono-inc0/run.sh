@@ -11,7 +11,7 @@ cd prom-nightly
 
 PYTHON=python
 RUN=../src/run.py
-CONFIG=../configs/BPI18/monolithic/configs.json
+CONFIG=../configs/BPI18/mono-inc0/configs.json
 LOGGINGCONFIGS=../src/logging.json
 TIME_FILE="../times.txt"
 N=1

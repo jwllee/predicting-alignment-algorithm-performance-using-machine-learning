@@ -2,8 +2,13 @@
   "runner_type": "monolithic",
   "plugin_jar": "2018-10-17_monolithic-replay.jar",
   "main_class": "org.processmining.alignment.monolithic.AlignmentTest",
-  "replay_config": "inc+",
+  "replay_config": [ "inc+", "astar", "inc0", "inc3" ],
   "debug": "stats",
   "print_alignment": true,
-  "timeout_per_trace_in_sec": 60
+  "timeout_per_trace_in_sec": 90,
+  "move_sort": false,
+  "use_int": false,
+  "partial_order": false,
+  "prefer_exact": true,
+  "queue_sort": true
 }
