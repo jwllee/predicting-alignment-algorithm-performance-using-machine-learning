@@ -49,12 +49,6 @@ public class AlignmentTest {
 	private static String SEP = Utils.SEP;
 	private static final Logger LOGGER = Logger.getLogger(AlignmentTest.class.getName());
 	private static FileHandler fh = null;
-
-	public static final String ASTAR = "astar";
-	public static final String INC0 = "inc0";
-	public static final String INC3 = "inc3";
-	public static final String INC_PLUS = "inc+";
-	public static final String PLANNING = "planning";
 	
 	static {
 		
@@ -213,41 +207,38 @@ public class AlignmentTest {
 			threads = THREADS;
 		}
 		
+		LOGGER.info("Number of threads: " + threads);
+		
 		// timeout per trace
 		int timeout = log.size() * timeoutPerTraceInSec * 1000 / 10;
 		int maxNumberOfStates = Integer.MAX_VALUE;
 		
-		boolean moveSort = false;
-		boolean useInt = false;
-		boolean partialOrder = false;
-		boolean preferExact = true;
-		boolean queueSort = true;
 		ReplayerParameters parameters;
-		
+ 		
 		switch (configuration) {
-			case ASTAR:
-				parameters = new ReplayerParameters.AStar(moveSort, queueSort, preferExact, threads, useInt, debug,
-							timeout, maxNumberOfStates, Integer.MAX_VALUE, partialOrder);
+			case AlignmentTestParameters.ASTAR:
+				parameters = new ReplayerParameters.AStar(params.moveSort, params.queueSort, params.preferExact, 
+						threads, params.useInt, debug, timeout, maxNumberOfStates, Integer.MAX_VALUE, params.partialOrder);
 				doReplay(params, debug, folder, "AStar", net, initialMarking, finalMarking, log, mapping, classes,
 							parameters);
 				break;
 
-			case INC0 :
-				parameters = new ReplayerParameters.IncementalAStar(moveSort, threads, useInt, debug, timeout,
-							maxNumberOfStates, Integer.MAX_VALUE, partialOrder, 0);
+			case AlignmentTestParameters.INC0 :
+				parameters = new ReplayerParameters.IncementalAStar(params.moveSort, threads, params.useInt, 
+						debug, timeout, maxNumberOfStates, Integer.MAX_VALUE, params.partialOrder, 0);
 				doReplay(params, debug, folder, "Incre0", net, initialMarking, finalMarking, log, mapping, classes,
 							parameters);
 				break;
-			case INC3 :
-				parameters = new ReplayerParameters.IncementalAStar(moveSort, threads, useInt, debug, timeout,
-							maxNumberOfStates, Integer.MAX_VALUE, partialOrder, 3);
+			case AlignmentTestParameters.INC3 :
+				parameters = new ReplayerParameters.IncementalAStar(params.moveSort, threads, params.useInt, 
+						debug, timeout, maxNumberOfStates, Integer.MAX_VALUE, params.partialOrder, 3);
 				doReplay(params, debug, folder, "Incre3", net, initialMarking, finalMarking, log, mapping, classes,
 							parameters);
 				break;
 
-			case INC_PLUS :
-				parameters = new ReplayerParameters.IncementalAStar(moveSort, threads, useInt, debug, timeout,
-							maxNumberOfStates, Integer.MAX_VALUE, partialOrder, true);
+			case AlignmentTestParameters.INC_PLUS :
+				parameters = new ReplayerParameters.IncementalAStar(params.moveSort, threads, params.useInt, 
+						debug, timeout, maxNumberOfStates, Integer.MAX_VALUE, params.partialOrder, true);
 				doReplay(params, debug, folder, "Incre++", net, initialMarking, finalMarking, log, mapping, classes,
 							parameters);
 				break;

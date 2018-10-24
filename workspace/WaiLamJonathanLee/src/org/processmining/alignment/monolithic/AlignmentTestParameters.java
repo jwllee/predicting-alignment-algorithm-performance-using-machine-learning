@@ -7,14 +7,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AlignmentTestParameters {
 
+	public static final String ASTAR = "astar";
+	public static final String INC0 = "inc0";
+	public static final String INC3 = "inc3";
+	public static final String INC_PLUS = "inc+";
+	public static final String PLANNING = "planning";
+
 	public String log = "";
 	public String model = "";
 
 	public String logPath = "";
     public String modelPath = "";
-
+	
     public String debug = "";
     public String configuration = "";
+    public boolean moveSort = false;
+    public boolean useInt = false;
+    public boolean partialOrder = false;
+    public boolean preferExact = true;
+    public boolean queueSort = true;
+    
 	public String iteration = "";
 	public String outFile = "";
 	public String resultDir = "";
@@ -31,6 +43,11 @@ public class AlignmentTestParameters {
 				"Debug: " + debug + "\n" +
 				"Configurations: " + configuration + "\n" + 
                 "Time out per trace in sec: " + timeoutPerTraceInSec + "\n" + 
+				"Move sort: " + moveSort + "\n" +
+                "Use ILP: " + useInt + "\n" +
+				"Partial order events: " + partialOrder + "\n" +
+                "Prefer exact heuristics: " + preferExact + "\n" +
+				"Queue sort: " + queueSort + "\n" +
                 "Iteration: " + iteration + "\n" + 
                 "Log: " + log + "\n" + 
                 "Model: " + model + "\n" + 
