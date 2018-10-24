@@ -38,7 +38,12 @@ __all__ = [
     'DEBUG',
     'PRINT_ALIGNMENT',
     'DEADLINE',
-    'TIMEOUT_PER_TRACE_IN_SEC'
+    'TIMEOUT_PER_TRACE_IN_SEC',
+    'MOVE_SORT',
+    'USE_INT',
+    'PARTIAL_ORDER',
+    'PREFER_EXACT',
+    'QUEUE_SORT'
 ]
 
 
@@ -82,3 +87,8 @@ DEBUG = 'debug'
 PRINT_ALIGNMENT = 'print_alignment'
 DEADLINE = 'deadline'
 TIMEOUT_PER_TRACE_IN_SEC = 'timeout_per_trace_in_sec'
+MOVE_SORT = 'move_sort'
+USE_INT = 'use_int'
+PARTIAL_ORDER = 'partial_order'
+PREFER_EXACT = 'prefer_exact'
+QUEUE_SORT = 'queue_sort'

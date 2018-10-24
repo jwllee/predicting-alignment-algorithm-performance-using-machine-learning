@@ -409,7 +409,12 @@ class MonolithicReplayRunner:
                 'configuration': self.configs[REPLAY_CONFIG],
                 'moveOnLogCosts': self.configs[MOVE_ON_LOG_COSTS],
                 'moveOnModelCosts': self.configs[MOVE_ON_MODEL_COSTS],
-                'timeoutPerTraceInSec': self.configs[TIMEOUT_PER_TRACE_IN_SEC]
+                'timeoutPerTraceInSec': self.configs[TIMEOUT_PER_TRACE_IN_SEC],
+                'moveSort': self.configs[MOVE_SORT],
+                'useInt': self.configs[USE_INT],
+                'partialOrder': self.configs[PARTIAL_ORDER],
+                'preferExact': self.configs[PREFER_EXACT],
+                'queueSort': self.configs[QUEUE_SORT]
             }
 
             prom_configs_fn = 'configs.json'
