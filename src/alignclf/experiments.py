@@ -279,7 +279,7 @@ class RecomposingReplayRunner:
                 'logPath': log_fp,
                 'iteration': _id,
                 'outFile': outfile_fp,
-                'resultDir': self.configs[OUTDIR],
+                'resultDir': outdir_i,
 
                 # replay params
                 'globalDuration': self.configs[GLOBAL_DURATION],
@@ -297,7 +297,23 @@ class RecomposingReplayRunner:
                 'recomposeStrategy': self.configs[RECOMPOSE_STRATEGY],
                 'logCreationStrategy': self.configs[LOG_CREATION_STRATEGY],
                 'preferBorderTransitions': self.configs[PREFER_BORDER_TRANS],
-                'addConflictOnlyOnce': self.configs[ADD_CONFLICT_ONLY_ONCE]
+                'addConflictOnlyOnce': self.configs[ADD_CONFLICT_ONLY_ONCE],
+
+                # new alignment package
+                'algorithmType': self.configs[ALGORITHM_TYPE],
+                'moveSort': self.configs[MOVE_SORT],
+                'queueSort': self.configs[QUEUE_SORT],
+                'preferExact': self.configs[PREFER_EXACT],
+                'nThreads': self.configs[N_THREADS],
+                'useInt': self.configs[USE_INT],
+                'debug': self.configs[DEBUG],
+                'timeoutPerTraceInSecs': self.configs[TIMEOUT_PER_TRACE_IN_SECS],
+                'maximumNumberOfStates': self.configs[MAX_N_STATES],
+                'costUpperBound': self.configs[COST_UPPER_BOUND],
+                'partiallyOrderEvents': self.configs[PARTIAL_ORDER],
+                'preProcessUsingPlaceBasedConstraints': self.configs[PREPROCESS_USING_PLACE_BASED_CONSTRAINTS],
+                'initialSplits': self.configs[INITIAL_SPLITS],
+                'printAlignments': self.configs[PRINT_ALIGNMENTS]
             }
 
             prom_configs_fn = 'configs.json'
@@ -404,18 +420,18 @@ class MonolithicReplayRunner:
                 'resultDir': self.configs[OUTDIR],
 
                 # replay params
-                'printAlignment': self.configs[PRINT_ALIGNMENT],
+                'printAlignment': self.configs[PRINT_ALIGNMENTS],
                 'debug': self.configs[DEBUG],
                 'configuration': self.configs[REPLAY_CONFIG],
                 'moveOnLogCosts': self.configs[MOVE_ON_LOG_COSTS],
                 'moveOnModelCosts': self.configs[MOVE_ON_MODEL_COSTS],
-                'timeoutPerTraceInSec': self.configs[TIMEOUT_PER_TRACE_IN_SEC],
+                'timeoutPerTraceInSec': self.configs[TIMEOUT_PER_TRACE_IN_SECS],
                 'moveSort': self.configs[MOVE_SORT],
                 'useInt': self.configs[USE_INT],
                 'partialOrder': self.configs[PARTIAL_ORDER],
                 'preferExact': self.configs[PREFER_EXACT],
                 'queueSort': self.configs[QUEUE_SORT],
-                'threads': self.configs[THREADS]
+                'threads': self.configs[N_THREADS]
             }
 
             prom_configs_fn = 'configs.json'

@@ -143,6 +143,7 @@ def make_configs(dir, data_dir, data, name, basic, monolithic, recompose, prefix
         run_scripts.append(write_run_script(monolithic_dir, venv, prefix, name, dirname, n))
 
     # make recomposing configurations
+    algorithms = recompose_dict[ALGORITHM_TYPE]
     decompositions = recompose_dict[DECOMPOSITION]
     merge_strategy = recompose_dict[RECOMPOSE_STRATEGY]
     log_strategy = recompose_dict[LOG_CREATION_STRATEGY]
@@ -155,18 +156,19 @@ def make_configs(dir, data_dir, data, name, basic, monolithic, recompose, prefix
         'Strict exclude by conflicts': 'strict'
     }
 
+    del recompose_dict[ALGORITHM_TYPE]
     del recompose_dict[DECOMPOSITION]
     del recompose_dict[RECOMPOSE_STRATEGY]
     del recompose_dict[LOG_CREATION_STRATEGY]
 
-    combos = itls.product(decompositions, merge_strategy, log_strategy)
+    combos = itls.product(algorithms, decompositions, merge_strategy, log_strategy)
 
-    for decomposition, merge, log in combos:
+    for algorithm, decomposition, merge, log in combos:
         d = rename[decomposition] if decomposition in rename else decomposition
         m = rename[merge] if merge in rename else merge
         l = rename[log] if log in rename else log
 
-        dirname = '{}-{}-{}'.format(d, m, l)
+        dirname = '{}-{}-{}-{}'.format(algorithm, d, m, l)
         recompose_dir = os.path.join(base_dir, dirname)
         os.makedirs(recompose_dir)
 
@@ -174,6 +176,7 @@ def make_configs(dir, data_dir, data, name, basic, monolithic, recompose, prefix
         copyfile(data, recompose_data)
         recompose_dict[DATA_TO_RUN] = recompose_data
 
+        recompose_dict[ALGORITHM_TYPE] = algorithm
         recompose_dict[EXPERIMENT_NAME] = '{}-{}'.format(name, dirname)
         recompose_dict[DECOMPOSITION] = decomposition
         recompose_dict[RECOMPOSE_STRATEGY] = merge

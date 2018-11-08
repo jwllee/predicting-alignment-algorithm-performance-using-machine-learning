@@ -36,15 +36,20 @@ __all__ = [
     'LOG_CREATION_STRATEGY',
 
     'DEBUG',
-    'PRINT_ALIGNMENT',
+    'PRINT_ALIGNMENTS',
     'DEADLINE',
-    'TIMEOUT_PER_TRACE_IN_SEC',
+    'TIMEOUT_PER_TRACE_IN_SECS',
     'MOVE_SORT',
     'USE_INT',
     'PARTIAL_ORDER',
     'PREFER_EXACT',
     'QUEUE_SORT',
-    'THREADS'
+    'N_THREADS',
+    'ALGORITHM_TYPE',
+    'PREPROCESS_USING_PLACE_BASED_CONSTRAINTS',
+    'INITIAL_SPLITS',
+    'MAX_N_STATES',
+    'COST_UPPER_BOUND'
 ]
 
 
@@ -83,14 +88,20 @@ ADD_CONFLICT_ONLY_ONCE = 'add_conflict_only_once'
 RECOMPOSE_STRATEGY = 'recompose_strategy'
 LOG_CREATION_STRATEGY = 'log_creation_strategy'
 
+ALGORITHM_TYPE = 'algorithm_type'
+PREPROCESS_USING_PLACE_BASED_CONSTRAINTS = 'preprocess_using_place_based_constraints'
+INITIAL_SPLITS = 'initial_splits'
+MAX_N_STATES = 'max_n_states'
+COST_UPPER_BOUND = 'cost_upper_bound'
+
 # monolithic replay configurations
 DEBUG = 'debug'
-PRINT_ALIGNMENT = 'print_alignment'
+PRINT_ALIGNMENTS = 'print_alignments'
 DEADLINE = 'deadline'
-TIMEOUT_PER_TRACE_IN_SEC = 'timeout_per_trace_in_sec'
+TIMEOUT_PER_TRACE_IN_SECS = 'timeout_per_trace_in_secs'
 MOVE_SORT = 'move_sort'
 USE_INT = 'use_int'
 PARTIAL_ORDER = 'partial_order'
 PREFER_EXACT = 'prefer_exact'
 QUEUE_SORT = 'queue_sort'
-THREADS = 'threads'
+N_THREADS = 'n_threads'
