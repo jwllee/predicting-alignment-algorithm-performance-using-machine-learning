@@ -3,7 +3,6 @@ package org.processmining.decomposedreplayer.experiments.plugins;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -23,7 +22,6 @@ import org.processmining.decomposedreplayer.algorithms.replay.impl.RecomposingRe
 import org.processmining.decomposedreplayer.experiments.boot.TestRecomposingReplayWithMergeStrategyBoot;
 import org.processmining.decomposedreplayer.experiments.parameters.TestRecomposingReplayWithMergeStrategyParameters;
 import org.processmining.decomposedreplayer.experiments.utils.LogImporter;
-import org.processmining.decomposedreplayer.experiments.utils.ReplayResultCsvWriter;
 import org.processmining.decomposedreplayer.experiments.utils.StringFileWriter;
 import org.processmining.decomposedreplayer.models.stats.IterationStats;
 import org.processmining.decomposedreplayer.parameters.RecomposingReplayParameters;
@@ -34,10 +32,13 @@ import org.processmining.framework.plugin.annotations.Plugin;
 import org.processmining.framework.plugin.annotations.PluginCategory;
 import org.processmining.framework.plugin.annotations.PluginVariant;
 import org.processmining.framework.util.HTMLToString;
+import org.processmining.logalignment.parameters.ReplayEventLogArrayOnAcceptingPetriNetArrayParameters.Type;
 import org.processmining.plugins.connectionfactories.logpetrinet.TransEvClassMapping;
 import org.processmining.plugins.log.OpenLogFilePlugin;
 import org.processmining.plugins.petrinet.replayresult.PNRepResult;
 import org.processmining.plugins.replayer.replayresult.SyncReplayResult;
+
+import nl.tue.alignment.algorithms.ReplayAlgorithm.Debug;
 
 @Plugin(name = "Evaluate Recomposing Replay with Merge", 
 		categories = { PluginCategory.ConformanceChecking }, 
@@ -103,6 +104,58 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 			replayParameters.setAlignmentPercentage(parameters.alignmentPercentage);
 			replayParameters.setNofIterations(parameters.nofIterations);
 			replayParameters.setPlanB(false);
+			
+			switch (parameters.algorithmType) {
+				case TestRecomposingReplayWithMergeStrategyParameters.ASTAR:
+					replayParameters.setAlgorithmType(Type.ASTAR);
+					break;
+				case TestRecomposingReplayWithMergeStrategyParameters.INC0:
+					replayParameters.setAlgorithmType(Type.INC0);
+					break;
+				case TestRecomposingReplayWithMergeStrategyParameters.INC3:
+					replayParameters.setAlgorithmType(Type.INC3);
+					break;
+				case TestRecomposingReplayWithMergeStrategyParameters.INC:
+					replayParameters.setAlgorithmType(Type.INC);
+					break;
+				case TestRecomposingReplayWithMergeStrategyParameters.INC_PLUS:
+					replayParameters.setAlgorithmType(Type.INC_PLUS);
+					break;
+				default:
+					System.out.println("Do not recognize algorithm type: " + parameters.algorithmType);
+					System.exit(1);;
+			}
+			
+			switch (parameters.debug) {
+				case TestRecomposingReplayWithMergeStrategyParameters.STATS:
+					replayParameters.setDebug(Debug.STATS);
+					break;
+				case TestRecomposingReplayWithMergeStrategyParameters.DOT:
+					replayParameters.setDebug(Debug.DOT);
+					break;
+				default:
+					System.out.println("Do not recognize debug type: " + parameters.debug);
+					System.exit(1);
+			}
+			
+			replayParameters.setMoveSort(parameters.moveSort);
+			replayParameters.setQueueSort(parameters.queueSort);
+			replayParameters.setPreferExact(parameters.preferExact);
+			replayParameters.setnThreads(parameters.nThreads);
+			replayParameters.setUseInt(parameters.useInt);
+			replayParameters.setOutputDir(parameters.resultDir);
+			replayParameters.setTimeoutPerTraceInSecs(parameters.timeoutPerTraceInSecs);
+			replayParameters.setMaximumNumberOfStates(parameters.maximumNumberOfStates);
+			replayParameters.setCostUpperBound(parameters.costUpperBound);
+			replayParameters.setPartiallyOrderEvents(parameters.partiallyOrderEvents);
+			replayParameters.setPreProcessUsingPlaceBasedConstraints(parameters.preProcessUsingPlaceBasedConstraints);
+			replayParameters.setInitialSplits(parameters.initialSplits);
+			replayParameters.setPrintAlignments(parameters.printAlignments);
+
+			if (parameters.maximumNumberOfStates < 0) 
+				replayParameters.setMaximumNumberOfStates(Integer.MAX_VALUE);
+			if (parameters.costUpperBound < 0)
+				replayParameters.setCostUpperBound(Integer.MAX_VALUE);
 			
 			// set unsplittable activity list
 			Set<XEventClass> unsplittableActivities = new HashSet<>();
@@ -209,17 +262,17 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 			
 			//-------------------------Write the alignments to file and getting aggregate results--------------------------------------//
 			// trace alignment folder
-			String alignResultDir = parameters.resultDir + File.separator + parameters.iteration + File.separator + "alignments";
-			File dir = new File (alignResultDir);
-			if (!(dir.exists() || dir.isDirectory()))
-				dir.mkdirs();
-
-			// alignment level info
-			String alignInfoFp = "alignment-info.csv";
-			alignInfoFp = parameters.resultDir + File.separator + parameters.iteration + File.separator + alignInfoFp;
-			List<String> alignInfo = new LinkedList<>();
-			String header = "time, generated_state, queued_state, traversed_arc, fitness_cost_lo, fitness_cost_hi, trace_length, case_id";
-			alignInfo.add(header);
+//			String alignResultDir = parameters.resultDir + File.separator + "alignments";
+//			File dir = new File (alignResultDir);
+//			if (!(dir.exists() || dir.isDirectory()))
+//				dir.mkdirs();
+//
+//			// alignment level info
+//			String alignInfoFp = "alignment-info.csv";
+//			alignInfoFp = parameters.resultDir + File.separator + parameters.iteration + File.separator + alignInfoFp;
+//			List<String> alignInfo = new LinkedList<>();
+//			String header = "time, generated_state, queued_state, traversed_arc, fitness_cost_lo, fitness_cost_hi, trace_length, case_id";
+//			alignInfo.add(header);
 			
 			// print out the state information
 			double logStateCount = 0.0;
@@ -258,11 +311,11 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 				totalAlignTime += alignTime;
 				
 				// write out the alignment
-				String alignmentFp = "alignment-" + i + ".csv";
-				alignmentFp = alignResultDir + File.separator + alignmentFp;
-				i += 1;
-				
-				ReplayResultCsvWriter.writeReplayResultToCsv(alignment, alignmentFp, mapping);
+//				String alignmentFp = "alignment-" + i + ".csv";
+//				alignmentFp = alignResultDir + File.separator + alignmentFp;
+//				i += 1;
+//				
+//				ReplayResultCsvWriter.writeReplayResultToCsv(alignment, alignmentFp, mapping);
 				
 				// caseids related to the alignment				
 				String caseIds = "";
@@ -281,9 +334,9 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 				}
 				
 				// alignment info
-				String row = alignTime + ", " + stateCount + ", " + queuedStates + ", " + 
-						traversedArcs + ", " + costLo + ", " + costHi + ", " + traceLength + ", " + caseIds;
-				alignInfo.add(row);
+//				String row = alignTime + ", " + stateCount + ", " + queuedStates + ", " + 
+//						traversedArcs + ", " + costLo + ", " + costHi + ", " + traceLength + ", " + caseIds;
+//				alignInfo.add(row);
 				
 				// get the caseid of the first associated trace
 				LOGGER.info(String.format("Alignment of caseid %s: "
@@ -294,7 +347,7 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 				
 			}
 			
-			writer.writeStringListToFile(alignInfo, alignInfoFp, true);
+//			writer.writeStringListToFile(alignInfo, alignInfoFp, true);
 			
 			if (logSize > 0) {
 				avgLogStateCount = logStateCount / logSize;

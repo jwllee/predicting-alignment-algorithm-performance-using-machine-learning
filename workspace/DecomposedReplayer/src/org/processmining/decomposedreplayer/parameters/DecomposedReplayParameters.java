@@ -13,9 +13,12 @@ import org.processmining.basicutils.parameters.impl.PluginParametersImpl;
 import org.processmining.decomposedreplayer.configurations.DecomposedReplayConfigurationManager;
 import org.processmining.log.parameters.ClassifierParameter;
 import org.processmining.log.utils.XUtils;
+import org.processmining.logalignment.parameters.ReplayEventLogArrayOnAcceptingPetriNetArrayParameters.Type;
 import org.processmining.plugins.connectionfactories.logpetrinet.TransEvClassMapping;
 import org.processmining.pnetreplayer.parameters.TransEvClassMappingParameter;
 import org.processmining.pnetreplayer.utils.TransEvClassMappingUtils;
+
+import nl.tue.alignment.algorithms.ReplayAlgorithm.Debug;
 
 public class DecomposedReplayParameters extends PluginParametersImpl implements ClassifierParameter, TransEvClassMappingParameter {
 
@@ -32,6 +35,46 @@ public class DecomposedReplayParameters extends PluginParametersImpl implements 
 	private long deadline;
 	private boolean addConflictOnlyOnce;
 	private boolean preferBorderTransitions;
+	
+	private Type algorithmType;
+	private boolean moveSort;
+	private boolean queueSort;
+	private boolean preferExact;
+	private int nThreads;
+	private boolean useInt;
+	private Debug debug;
+	private String outputDir;
+	private int timeoutPerTraceInSecs;
+	private int maximumNumberOfStates;
+	private int costUpperBound;
+	private boolean partiallyOrderEvents;
+	private boolean preProcessUsingPlaceBasedConstraints;
+	private int initialSplits;
+	private boolean printAlignments;
+
+	public DecomposedReplayParameters(XLog log, AcceptingPetriNet net, XEventClassifier classifier,
+			Type algorithmType, boolean moveSort, boolean queueSort, boolean preferExact, 
+			int nThreads, boolean useInt, Debug debug, String outputDir, int timeoutPerTraceInSecs,
+			int maximumNumberOfStates, int costUpperBound, boolean partiallyOrderEvents, 
+			boolean preProcessUsingPlaceBasedConstraints, int initialSplits, boolean printAlignments) {
+		this(log, net, classifier);
+		
+		setAlgorithmType(algorithmType);
+		setMoveSort(moveSort);
+		setQueueSort(queueSort);
+		setPreferExact(preferExact);
+		setnThreads(nThreads);
+		setUseInt(useInt);
+		setDebug(debug);
+		setOutputDir(outputDir);
+		setTimeoutPerTraceInSecs(timeoutPerTraceInSecs);
+		setMaximumNumberOfStates(maximumNumberOfStates);
+		setCostUpperBound(costUpperBound);
+		setPartiallyOrderEvents(partiallyOrderEvents);
+		setPreProcessUsingPlaceBasedConstraints(preProcessUsingPlaceBasedConstraints);
+		setInitialSplits(initialSplits);
+		setPrintAlignments(printAlignments);
+	}
 
 	public DecomposedReplayParameters(XLog log, AcceptingPetriNet net, XEventClassifier classifier) {
 		setClassifier(classifier);
@@ -202,6 +245,126 @@ public class DecomposedReplayParameters extends PluginParametersImpl implements 
 
 	public void setPreferBorderTransitions(boolean preferBorderTransitions) {
 		this.preferBorderTransitions = preferBorderTransitions;
+	}
+
+	public Type getAlgorithmType() {
+		return algorithmType;
+	}
+
+	public void setAlgorithmType(Type algorithmType) {
+		this.algorithmType = algorithmType;
+	}
+
+	public boolean isMoveSort() {
+		return moveSort;
+	}
+
+	public void setMoveSort(boolean moveSort) {
+		this.moveSort = moveSort;
+	}
+
+	public boolean isQueueSort() {
+		return queueSort;
+	}
+
+	public void setQueueSort(boolean queueSort) {
+		this.queueSort = queueSort;
+	}
+
+	public boolean isPreferExact() {
+		return preferExact;
+	}
+
+	public void setPreferExact(boolean preferExact) {
+		this.preferExact = preferExact;
+	}
+
+	public int getnThreads() {
+		return nThreads;
+	}
+
+	public void setnThreads(int nThreads) {
+		this.nThreads = nThreads;
+	}
+
+	public boolean isUseInt() {
+		return useInt;
+	}
+
+	public void setUseInt(boolean useInt) {
+		this.useInt = useInt;
+	}
+
+	public Debug getDebug() {
+		return debug;
+	}
+
+	public void setDebug(Debug debug) {
+		this.debug = debug;
+	}
+
+	public String getOutputDir() {
+		return outputDir;
+	}
+
+	public void setOutputDir(String outputDir) {
+		this.outputDir = outputDir;
+	}
+
+	public int getTimeoutPerTraceInSecs() {
+		return timeoutPerTraceInSecs;
+	}
+
+	public void setTimeoutPerTraceInSecs(int timeoutPerTraceInSecs) {
+		this.timeoutPerTraceInSecs = timeoutPerTraceInSecs;
+	}
+
+	public int getMaximumNumberOfStates() {
+		return maximumNumberOfStates;
+	}
+
+	public void setMaximumNumberOfStates(int maximumNumberOfStates) {
+		this.maximumNumberOfStates = maximumNumberOfStates;
+	}
+
+	public int getCostUpperBound() {
+		return costUpperBound;
+	}
+
+	public void setCostUpperBound(int costUpperBound) {
+		this.costUpperBound = costUpperBound;
+	}
+
+	public boolean isPartiallyOrderEvents() {
+		return partiallyOrderEvents;
+	}
+
+	public void setPartiallyOrderEvents(boolean partiallyOrderEvents) {
+		this.partiallyOrderEvents = partiallyOrderEvents;
+	}
+
+	public boolean isPreProcessUsingPlaceBasedConstraints() {
+		return preProcessUsingPlaceBasedConstraints;
+	}
+
+	public void setPreProcessUsingPlaceBasedConstraints(boolean preProcessUsingPlaceBasedConstraints) {
+		this.preProcessUsingPlaceBasedConstraints = preProcessUsingPlaceBasedConstraints;
+	}
+
+	public int getInitialSplits() {
+		return initialSplits;
+	}
+
+	public void setInitialSplits(int initialSplits) {
+		this.initialSplits = initialSplits;
+	}
+
+	public boolean isPrintAlignments() {
+		return printAlignments;
+	}
+
+	public void setPrintAlignments(boolean printAlignments) {
+		this.printAlignments = printAlignments;
 	}
 
 }

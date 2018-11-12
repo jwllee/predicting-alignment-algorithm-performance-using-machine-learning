@@ -8,6 +8,14 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TestRecomposingReplayWithMergeStrategyParameters {
+	public static final String ASTAR = "astar";
+	public static final String INC = "inc";
+	public static final String INC0 = "inc0";
+	public static final String INC3 = "inc3";
+	public static final String INC_PLUS = "inc+";
+
+	public static final String STATS = "stats";
+	public static final String DOT = "dot";
 	
 	// log and model names
 	public String log = "";
@@ -42,6 +50,21 @@ public class TestRecomposingReplayWithMergeStrategyParameters {
 	
 	public boolean preferBorderTransitions = false;
 	public boolean addConflictOnlyOnce = true;
+
+	public String algorithmType;
+	public boolean moveSort;
+	public boolean queueSort;
+	public boolean preferExact;
+	public int nThreads;
+	public boolean useInt;
+	public String debug;
+	public int timeoutPerTraceInSecs;
+	public int maximumNumberOfStates;
+	public int costUpperBound;
+	public boolean partiallyOrderEvents;
+	public boolean preProcessUsingPlaceBasedConstraints;
+	public int initialSplits;
+	public boolean printAlignments;
 	
 	@Override
 	public String toString() {
@@ -67,7 +90,21 @@ public class TestRecomposingReplayWithMergeStrategyParameters {
                "Prefer border transitions: " + preferBorderTransitions + "\n" + 
                "Add conflicts only once: " + addConflictOnlyOnce + "\n" +
                "Recompose strategy: " + recomposeStrategy + "\n" + 
-               "Log creation strategy: " + logCreationStrategy;
+               "Log creation strategy: " + logCreationStrategy + "\n" + 
+               "Algorithm type: " + algorithmType + "\n" + 
+               "Move sort: " + moveSort + "\n" +
+               "Queue sort: " + queueSort + "\n" + 
+               "Prefer exact: " + preferExact + "\n" + 
+               "Nb. of threads: " + nThreads + "\n" +
+               "Use ILP: " + useInt + "\n" + 
+               "Debug: " + debug + "\n" + 
+               "Timeout per trace in secs: " + timeoutPerTraceInSecs + "\n" +
+               "Maximum number of states: " + maximumNumberOfStates + "\n" +
+               "Cost upper bound: " + costUpperBound + "\n" +
+               "Partially order events: " + partiallyOrderEvents + "\n" +
+               "Preprocess using place based constraints: " + preProcessUsingPlaceBasedConstraints + "\n" +
+               "Initial splits: " + initialSplits + "\n" +
+               "Print alignments: " + printAlignments + "\n";
 	}
 	
 	public static TestRecomposingReplayWithMergeStrategyParameters readParams(String jsonString) {

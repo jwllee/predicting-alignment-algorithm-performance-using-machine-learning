@@ -1,5 +1,6 @@
 package org.processmining.decomposedreplayer.algorithms.replay.impl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -198,6 +199,31 @@ public class RecomposingReplayWithRecomposeStrategyAlgorithm extends AbstractRec
 		pars.setTryConnections(false);
 		
 		pars.setMapping(parameters.getMapping());
+		
+		// new Alignment package
+		String iterOutDirpath = parameters.getOutputDir() + File.separator + "iter-" + workspace.nofIterations;
+		File iterOutDir = new File(iterOutDirpath);
+		if (!iterOutDir.isDirectory()) {
+			iterOutDir.mkdirs();
+		}
+		
+		pars.setAlgorithmType(parameters.getAlgorithmType());
+		pars.setMoveSort(parameters.isMoveSort());
+		pars.setQueueSort(parameters.isQueueSort());
+		pars.setPreferExact(parameters.isPreferExact());
+		pars.setnThreads(parameters.getnThreads());
+		pars.setUseInt(parameters.isUseInt());
+		pars.setDebug(parameters.getDebug());
+		pars.setOutputDir(iterOutDirpath);
+		pars.setTimeoutPerTraceInSecs(parameters.getTimeoutPerTraceInSecs());
+		pars.setMaximumNumberOfStates(parameters.getMaximumNumberOfStates());
+		pars.setCostUpperBound(parameters.getCostUpperBound());
+		pars.setPartiallyOrderEvents(parameters.isPartiallyOrderEvents());
+		pars.setPreProcessUsingPlaceBasedConstraints(parameters.isPreProcessUsingPlaceBasedConstraints());
+		pars.setInitialSplits(parameters.getInitialSplits());
+		pars.setPrintAlignments(parameters.isPrintAlignments());
+		
+		System.out.println("[" + getClass().getSimpleName() + "] Algorithm type at iteration " + workspace.nofIterations + ": " + pars.getAlgorithmType());
 		
 		logAlignmentAtIteration = config.apply(context, workspace.log, net, pars, null);
 	}

@@ -1,10 +1,17 @@
 package org.processmining.decomposedreplayer.configurations.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.deckfour.xes.classification.XEventClass;
+import org.deckfour.xes.classification.XEventClassifier;
 import org.deckfour.xes.model.XLog;
+import org.deckfour.xes.model.XTrace;
 import org.processmining.acceptingpetrinet.models.AcceptingPetriNet;
 import org.processmining.acceptingpetrinet.models.AcceptingPetriNetArray;
 import org.processmining.acceptingpetrinetdecomposer.parameters.DecomposeAcceptingPetriNetUsingActivityClusterArrayParameters;
@@ -32,6 +39,8 @@ import org.processmining.decomposedreplayer.configurations.DecomposedReplayConfi
 import org.processmining.decomposedreplayer.parameters.DecomposedReplayParameters;
 import org.processmining.framework.plugin.PluginContext;
 import org.processmining.log.models.EventLogArray;
+import org.processmining.log.utils.XUtils;
+import org.processmining.logalignment.algorithms.ConvertLogAlignmentToReplayResultAlgorithm;
 import org.processmining.logalignment.models.LogAlignment;
 import org.processmining.logalignment.models.LogAlignmentArray;
 import org.processmining.logalignment.models.ReplayCostFactor;
@@ -51,7 +60,13 @@ import org.processmining.logalignment.plugins.ReplayEventLogArrayOnAcceptingPetr
 import org.processmining.logdecomposer.filters.impl.DecompositionInFilter;
 import org.processmining.logdecomposer.parameters.DecomposeEventLogUsingActivityClusterArrayParameters;
 import org.processmining.logdecomposer.plugins.DecomposeEventLogUsingActivityClusterArrayPlugin;
+import org.processmining.models.graphbased.directed.petrinet.PetrinetEdge;
+import org.processmining.models.graphbased.directed.petrinet.elements.Transition;
+import org.processmining.plugins.connectionfactories.logpetrinet.TransEvClassMapping;
 import org.processmining.plugins.petrinet.replayresult.PNRepResult;
+import org.processmining.plugins.petrinet.replayresult.StepTypes;
+import org.processmining.plugins.replayer.replayresult.SyncReplayResult;
+import org.processmining.pnetreplayer.utils.TransEvClassMappingUtils;
 
 public abstract class DecomposedAbstractReplayConfiguration implements DecomposedReplayConfiguration {
 
@@ -168,6 +183,23 @@ public abstract class DecomposedAbstractReplayConfiguration implements Decompose
 		params.setMoveOnLogCosts(parameters.getMoveOnLogCosts());
 		params.setMoveOnModelCosts(parameters.getMoveOnModelCosts());
 		params.setDeadline(parameters.getDeadline());
+		
+		// new Alignment package
+		params.setAlgorithmType(parameters.getAlgorithmType());
+		params.setMoveSort(parameters.isMoveSort());
+		params.setQueueSort(parameters.isQueueSort());
+		params.setPreferExact(parameters.isPreferExact());
+		params.setnThreads(parameters.getnThreads());
+		params.setUseInt(parameters.isUseInt());
+		params.setDebug(parameters.getDebug());
+		params.setOutputDir(parameters.getOutputDir());
+		params.setTimeoutPerTraceInSecs(parameters.getTimeoutPerTraceInSecs());
+		params.setMaximumNumberOfStates(parameters.getMaximumNumberOfStates());
+		params.setCostUpperBound(parameters.getCostUpperBound());
+		params.setPartiallyOrderEvents(parameters.isPartiallyOrderEvents());
+		params.setPreProcessUsingPlaceBasedConstraints(parameters.isPreProcessUsingPlaceBasedConstraints());
+		params.setInitialSplits(parameters.getInitialSplits());
+
 		if (parameters.isPreferBorderTransitions()) {
 			return plugin.run(context, logs, nets, clusters, factor, params);
 		}
@@ -221,5 +253,164 @@ public abstract class DecomposedAbstractReplayConfiguration implements Decompose
 		combinedClusters.addCluster(activities);
 		ActivityClusterArray results = combinedClusters;
 		return results;
+	}
+	
+	public void printNetArray(PluginContext context, AcceptingPetriNetArray nets, String outDir) {
+		for (int i = 0; i < nets.getSize(); ++i) {
+			String outFp = outDir + File.separator + i + ".txt";
+			File file = new File(outFp);
+			PrintStream stream = null;
+			
+			try {
+				stream = new PrintStream(file);
+				stream.println("Source,Target");
+				for (PetrinetEdge e: nets.getNet(i).getNet().getEdges()) {
+					stream.println(e.getSource().toString() + "," + e.getTarget().toString());
+				}
+				
+			} catch (IOException ioe) {
+				System.out.println("Cannot write to " + outFp );
+				ioe.printStackTrace();
+			} finally {
+				if (stream != null)
+					stream.close();
+			}
+		}
+	}
+	
+	public void printLogAlignmentArray(PluginContext context, LogAlignmentArray alignments, String outDir,
+			EventLogArray logs, AcceptingPetriNetArray nets, XEventClassifier classifier, TransEvClassMapping mapping) {
+		// not actually used, just for creating the submapping
+		Set<XEventClass> activities = new HashSet<XEventClass>();
+		XEventClass invisibleActivity = XUtils.INVISIBLEACTIVITY;
+		
+		for (int i = 0; i < alignments.getSize(); ++i) {
+			LogAlignment alignment = alignments.getAlignment(i);
+			XLog log = logs.getLog(i);
+			AcceptingPetriNet apn = nets.getNet(i);
+			
+			String logOutDir = outDir + File.separator + "subalign-" + i;
+			File dir = new File(logOutDir);
+			if (!dir.isDirectory()) {
+				dir.mkdirs();
+			}
+			
+			// create submapping between sublog and subnet
+			TransEvClassMapping subMapping = TransEvClassMappingUtils.getInstance().getMapping(
+					apn.getNet(), activities, classifier);
+			for (Transition subTransition : apn.getNet().getTransitions()) {
+				subMapping.put(subTransition, invisibleActivity);
+				for (Transition transition : mapping.keySet()) {
+					if (!mapping.get(transition).equals(invisibleActivity)) {
+						if (!subTransition.isInvisible() && transition.getLabel().equals(subTransition.getLabel())) {
+							subMapping.put(subTransition, mapping.get(transition));
+							continue;
+						}
+					}
+				}
+			}
+			
+			printLogAlignment(context, alignment, logOutDir, log, apn, classifier, subMapping);
+		}
+	}
+	
+	private void printLogAlignment(PluginContext context, LogAlignment alignment, String outDir, XLog log, 
+			AcceptingPetriNet net, XEventClassifier classifier, TransEvClassMapping mapping) {
+		ConvertLogAlignmentToReplayResultAlgorithm algorithm = new ConvertLogAlignmentToReplayResultAlgorithm();
+		ConvertLogAlignmentToReplayResultParameters params = new ConvertLogAlignmentToReplayResultParameters(log, net);
+		params.setClassifier(classifier);
+		params.setMapping(mapping);
+		
+		PNRepResult result = algorithm.apply(context, alignment, net, log, params);
+		
+		int cnt = 0;
+		for (SyncReplayResult traceAlignment: result) {
+			// set up print stream
+			String fp = outDir + File.separator + cnt + ".csv";
+			File file = new File(fp);
+			PrintStream stream = null;
+			
+			try {
+				stream = new PrintStream(file);
+				
+				// print list of caseids
+				List<String> caseIds = getCaseIds(traceAlignment, log);
+				stream.println("CaseIds");
+				stream.print(caseIds.get(0));
+				for (int i = 1; i < caseIds.size(); ++i) {
+					stream.print("," + caseIds.get(i));
+				}
+				
+				// print moves	
+				List<String> moves = toMoves(traceAlignment, mapping);
+				stream.println("\nMove type,Log,Model");
+				for (int i = 0; i < moves.size(); ++i) {
+					stream.println(moves.get(i));
+				}
+				
+			} catch (IOException ioe) {
+				System.out.println("Cannot write to " + fp );
+				ioe.printStackTrace();
+			} finally {
+				if (stream != null)
+					stream.close();
+			}
+			
+			++cnt;
+		}
+	}
+	
+	private List<String> getCaseIds(SyncReplayResult alignment, XLog log) {
+		List<String> caseIds = new ArrayList<>();
+		for (int index: alignment.getTraceIndex()) {
+			XTrace trace = log.get(index);
+			String caseId = trace.getAttributes().get("concept:name").toString();
+			caseIds.add(caseId);
+		}
+		return caseIds;
+	}
+
+	private boolean isMove(StepTypes stepType) {
+		return stepType == StepTypes.LMGOOD || stepType == StepTypes.L || stepType == StepTypes.MREAL
+				|| stepType == StepTypes.MINVI;
+	}
+	
+	private List<String> toMoves(SyncReplayResult result, TransEvClassMapping mapping) {
+		
+		List<String> moves = new ArrayList<>();
+		String move = "";
+		
+		for (int i = 0; i < result.getStepTypes().size(); ++i) {
+			StepTypes stepType = result.getStepTypes().get(i);
+			Object nodeInstance = result.getNodeInstance().get(i);
+			
+			if (isMove(stepType)) {
+				XEventClass eventClass = null;
+				
+				if (nodeInstance instanceof XEventClass) {
+					eventClass = (XEventClass) nodeInstance;
+				} else if (nodeInstance instanceof Transition) {
+					eventClass = mapping.get(nodeInstance);
+				} else {
+					System.err.println("Unknown node instance: " + nodeInstance);
+				}
+				
+				// add as a string
+				if (stepType == StepTypes.LMGOOD) {
+					move = "LMGOOD" + "," + eventClass.getId() + "," + eventClass.getId();
+				} else if (stepType == StepTypes.L) {
+					move = "L" + "," + eventClass.getId() + ",>>";
+				} else if (stepType == StepTypes.MREAL) {
+					move = "MREAL" + "," + ">>," + eventClass.getId();
+				} else if (stepType == StepTypes.MINVI) {
+					move = "MINVI,>>,invis";
+				}
+				
+				moves.add(move);
+			}
+		}
+		
+		return moves;
+		
 	}
 }

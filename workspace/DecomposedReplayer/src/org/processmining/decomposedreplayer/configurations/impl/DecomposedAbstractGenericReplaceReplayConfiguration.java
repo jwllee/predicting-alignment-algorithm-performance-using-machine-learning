@@ -1,5 +1,7 @@
 package org.processmining.decomposedreplayer.configurations.impl;
 
+import java.io.File;
+
 import org.deckfour.xes.model.XLog;
 import org.processmining.acceptingpetrinet.models.AcceptingPetriNet;
 import org.processmining.acceptingpetrinet.models.AcceptingPetriNetArray;
@@ -127,6 +129,29 @@ public abstract class DecomposedAbstractGenericReplaceReplayConfiguration extend
 		msecs += System.currentTimeMillis();
 		parameters.displayMessage("[DecomposedReplayPlugin] Filtering alignments took " + msecs + " milliseconds.");
 
+		if (parameters.isPrintAlignments()) {
+			String outDirpath = parameters.getOutputDir() + File.separator + "alignments";
+			File outDir = new File(outDirpath);
+			if (!outDir.isDirectory()) {
+				outDir.mkdirs();
+			}
+			
+			msecs = -System.currentTimeMillis();
+			printLogAlignmentArray(context, filteredAlignments, outDirpath, logs, filterNets, 
+					parameters.getClassifier(), parameters.getMapping());
+			
+			outDirpath = parameters.getOutputDir() + File.separator + "subnets";
+			outDir = new File(outDirpath);
+			if (!outDir.isDirectory()) {
+				outDir.mkdir();
+			}
+			
+			printNetArray(context, filterNets, outDirpath);
+			
+			msecs += System.currentTimeMillis();
+			parameters.displayError("[DecomposedReplayPlugin] Printing sub-alignments and sub-nets took " + msecs + " milliseconds.");
+		}
+		
 		msecs = -System.currentTimeMillis();
 		LogAlignment alignment = getAlignment(context, filteredAlignments, log, filterNets, parameters);
 		context.getProvidedObjectManager().createProvidedObject("Alignment", alignment, LogAlignment.class, context);

@@ -17,6 +17,8 @@ import org.processmining.plugins.connectionfactories.logpetrinet.TransEvClassMap
 import org.processmining.pnetreplayer.parameters.TransEvClassMappingParameter;
 import org.processmining.pnetreplayer.utils.TransEvClassMappingUtils;
 
+import nl.tue.alignment.algorithms.ReplayAlgorithm.Debug;
+
 public class ReplayEventLogArrayOnAcceptingPetriNetArrayParameters extends PluginParametersImpl implements ClassifierParameter, TransEvClassMappingParameter {
 
 	private XEventClassifier classifier;
@@ -25,11 +27,62 @@ public class ReplayEventLogArrayOnAcceptingPetriNetArrayParameters extends Plugi
 	private int moveOnModelCosts;
 	private long deadline;
 	
+	// new alignment package replayer parameters
+	public static enum Type {
+		ASTAR,
+		INC0,
+		INC3,
+		INC,
+		INC_PLUS
+	}
+	
+	private Type algorithmType;
+	private boolean moveSort;
+	private boolean queueSort;
+	private boolean preferExact;
+	private int nThreads;
+	private boolean useInt;
+	private Debug debug;
+	private String outputDir;
+	private int timeoutPerTraceInSecs;
+	private int maximumNumberOfStates;
+	private int costUpperBound;
+	private boolean partiallyOrderEvents;
+	private boolean preProcessUsingPlaceBasedConstraints;
+	private int initialSplits;
+	
 //	private List<List<XEventClassifier>> classifiers;
 //	private List<TransEvClassMapping> mappings;
 //	protected List<PetrinetReplayerWithILP> replayers;
 //	protected List<CostBasedCompleteParam> replayParameters;
 
+	public ReplayEventLogArrayOnAcceptingPetriNetArrayParameters(EventLogArray logs, AcceptingPetriNetArray nets,
+			int moveOnLogCosts, int moveOnModelCosts,
+			Type algorithmType, boolean moveSort, boolean queueSort, 
+			boolean preferExact, int nThreads, boolean useInt, Debug debug, 
+			String outputDir, int timeoutPerTraceInSecs, int maximumNumberOfStates, 
+			int costUpperBound, boolean partiallyOrderEvents, 
+			boolean preProcessUsingPlaceBasedConstraints, int initialSplits) {
+		this(logs, nets, XUtils.getDefaultClassifier(logs.getLog(0)));
+		
+		this.moveOnLogCosts = moveOnLogCosts;
+		this.moveOnModelCosts = moveOnModelCosts;
+		
+		this.setAlgorithmType(algorithmType);
+		this.moveSort = moveSort;
+		this.queueSort = queueSort;
+		this.preferExact = preferExact;
+		this.nThreads = nThreads;
+		this.useInt = useInt;
+		this.debug = debug;
+		this.timeoutPerTraceInSecs = timeoutPerTraceInSecs;
+		this.maximumNumberOfStates = maximumNumberOfStates;
+		this.costUpperBound = costUpperBound;
+		this.partiallyOrderEvents = partiallyOrderEvents;
+		this.preProcessUsingPlaceBasedConstraints = preProcessUsingPlaceBasedConstraints;
+		this.initialSplits = initialSplits;
+	}
+	
 	public ReplayEventLogArrayOnAcceptingPetriNetArrayParameters(EventLogArray logs, AcceptingPetriNetArray nets) {
 		this(logs, nets, XUtils.getDefaultClassifier(logs.getLog(0)));
 	}
@@ -168,6 +221,118 @@ public class ReplayEventLogArrayOnAcceptingPetriNetArrayParameters extends Plugi
 
 	public void setDeadline(long deadline) {
 		this.deadline = deadline;
+	}
+
+	public Type getAlgorithmType() {
+		return algorithmType;
+	}
+
+	public void setAlgorithmType(Type type) {
+		this.algorithmType = type;
+	}
+
+	public boolean isMoveSort() {
+		return moveSort;
+	}
+
+	public void setMoveSort(boolean moveSort) {
+		this.moveSort = moveSort;
+	}
+
+	public boolean isQueueSort() {
+		return queueSort;
+	}
+
+	public void setQueueSort(boolean queueSort) {
+		this.queueSort = queueSort;
+	}
+
+	public boolean isPreferExact() {
+		return preferExact;
+	}
+
+	public void setPreferExact(boolean preferExact) {
+		this.preferExact = preferExact;
+	}
+
+	public int getnThreads() {
+		return nThreads;
+	}
+
+	public void setnThreads(int nThreads) {
+		this.nThreads = nThreads;
+	}
+
+	public boolean isUseInt() {
+		return useInt;
+	}
+
+	public void setUseInt(boolean useInt) {
+		this.useInt = useInt;
+	}
+
+	public Debug getDebug() {
+		return debug;
+	}
+
+	public void setDebug(Debug debug) {
+		this.debug = debug;
+	}
+
+	public int getTimeoutPerTraceInSecs() {
+		return timeoutPerTraceInSecs;
+	}
+
+	public void setTimeoutPerTraceInSecs(int timeoutPerTraceInSecs) {
+		this.timeoutPerTraceInSecs = timeoutPerTraceInSecs;
+	}
+
+	public int getMaximumNumberOfStates() {
+		return maximumNumberOfStates;
+	}
+
+	public void setMaximumNumberOfStates(int maximumNumberOfStates) {
+		this.maximumNumberOfStates = maximumNumberOfStates;
+	}
+
+	public int getCostUpperBound() {
+		return costUpperBound;
+	}
+
+	public void setCostUpperBound(int costUpperBound) {
+		this.costUpperBound = costUpperBound;
+	}
+
+	public boolean isPartiallyOrderEvents() {
+		return partiallyOrderEvents;
+	}
+
+	public void setPartiallyOrderEvents(boolean partiallyOrderEvents) {
+		this.partiallyOrderEvents = partiallyOrderEvents;
+	}
+
+	public boolean isPreProcessUsingPlaceBasedConstraints() {
+		return preProcessUsingPlaceBasedConstraints;
+	}
+
+	public void setPreProcessUsingPlaceBasedConstraints(boolean preProcessUsingPlaceBasedConstraints) {
+		this.preProcessUsingPlaceBasedConstraints = preProcessUsingPlaceBasedConstraints;
+	}
+
+	public int getInitialSplits() {
+		return initialSplits;
+	}
+
+	public void setInitialSplits(int initialSplits) {
+		this.initialSplits = initialSplits;
+	}
+
+	public String getOutputDir() {
+		return outputDir;
+	}
+
+	public void setOutputDir(String outputDir) {
+		this.outputDir = outputDir;
 	}
 
 //	public void setClassifier(int index, XEventClassifier classifier) {

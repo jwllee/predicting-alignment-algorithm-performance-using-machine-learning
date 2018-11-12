@@ -198,7 +198,9 @@ public class AlignmentTest {
 		XLogInfo summary = XLogInfoFactory.createLogInfo(log, eventClassifier);
 		XEventClasses classes = summary.getEventClasses();
 
-		// timeout per trace
+		// False advertisement since millis = secs * 1000
+		// but check out Replayer.computePNRepResult, millis * 10.0 / (log.size() + 1) to get
+		// trace timeout. Very strange... +1 is for the empty trace but why * 10.0???
 		int timeout = log.size() * timeoutPerTraceInSec * 1000 / 10;
 		int maxNumberOfStates = Integer.MAX_VALUE;
 		

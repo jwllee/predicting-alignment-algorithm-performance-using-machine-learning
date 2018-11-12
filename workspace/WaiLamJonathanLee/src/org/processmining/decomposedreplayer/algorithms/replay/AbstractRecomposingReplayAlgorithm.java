@@ -3,24 +3,32 @@ package org.processmining.decomposedreplayer.algorithms.replay;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.deckfour.xes.classification.XEventClass;
+import org.deckfour.xes.classification.XEventClasses;
 import org.deckfour.xes.model.XLog;
 import org.processmining.acceptingpetrinet.models.AcceptingPetriNet;
-import org.processmining.decomposedreplayer.configurations.DecomposedReplayConfiguration;
-import org.processmining.decomposedreplayer.configurations.impl.DecomposedGenericFilterReplayConfiguration;
-import org.processmining.decomposedreplayer.parameters.DecomposedReplayParameters;
 import org.processmining.decomposedreplayer.parameters.RecomposingReplayParameters;
 import org.processmining.decomposedreplayer.utils.ConflictUtils;
 import org.processmining.decomposedreplayer.workspaces.RecomposingReplayWorkspace;
 import org.processmining.framework.plugin.PluginContext;
 import org.processmining.framework.util.Pair;
 import org.processmining.models.semantics.petrinet.Marking;
+import org.processmining.plugins.connectionfactories.logpetrinet.TransEvClassMapping;
 import org.processmining.plugins.petrinet.replayer.algorithms.IPNReplayParameter;
 import org.processmining.plugins.petrinet.replayer.algorithms.costbasedcomplete.CostBasedCompleteParam;
 import org.processmining.plugins.petrinet.replayresult.PNRepResult;
 import org.processmining.plugins.petrinet.replayresult.StepTypes;
 import org.processmining.plugins.replayer.replayresult.SyncReplayResult;
+
+import nl.tue.alignment.Replayer;
+import nl.tue.alignment.ReplayerParameters;
+import nl.tue.alignment.TraceReplayTask;
+import nl.tue.alignment.TraceReplayTask.TraceReplayResult;
+import nl.tue.alignment.algorithms.ReplayAlgorithm.Debug;
 
 public abstract class AbstractRecomposingReplayAlgorithm implements RecomposingReplayAlgorithm {
 	
@@ -95,16 +103,85 @@ public abstract class AbstractRecomposingReplayAlgorithm implements RecomposingR
 			emptyTraceLog.getGlobalEventAttributes().addAll(log.getGlobalEventAttributes());
 			emptyTraceLog.getClassifiers().addAll(log.getClassifiers());
 			emptyTraceLog.add(workspace.factory.createTrace());
-			DecomposedReplayParameters pars = new DecomposedReplayParameters(log, net,
-					workspace.parameters.getClassifier());
-			pars.setPercentage(0);
-			DecomposedReplayConfiguration config = new DecomposedGenericFilterReplayConfiguration();
-			pars.setUnsplittableActivities(workspace.parameters.getUnsplittableActivities());
-			pars.setMoveOnLogCosts(parameters.getMoveOnLogCosts());
-			pars.setMoveOnModelCosts(parameters.getMoveOnModelCosts());
-			pars.setMapping(parameters.getMapping());
-			PNRepResult logAlignment = config.apply(context, emptyTraceLog, net, pars, null);
-			double modelMoveCosts = logAlignment.iterator().next().getInfo().get(PNRepResult.RAWFITNESSCOST);
+			
+//			DecomposedReplayParameters pars = new DecomposedReplayParameters(log, net,
+//					workspace.parameters.getClassifier());
+//			pars.setPercentage(0);
+//			DecomposedReplayConfiguration config = new DecomposedGenericFilterReplayConfiguration();
+//			pars.setUnsplittableActivities(workspace.parameters.getUnsplittableActivities());
+//			pars.setMoveOnLogCosts(parameters.getMoveOnLogCosts());
+//			pars.setMoveOnModelCosts(parameters.getMoveOnModelCosts());
+//			pars.setMapping(parameters.getMapping());
+//			
+//			// new alignment package
+//			pars.setAlgorithmType(Type.ASTAR);
+//			pars.setMoveSort(parameters.isMoveSort());
+//			pars.setQueueSort(parameters.isQueueSort());
+//			pars.setPreferExact(parameters.isPreferExact());
+//			pars.setnThreads(parameters.getnThreads());
+//			pars.setUseInt(false);
+//			pars.setDebug(null);
+//			pars.setTimeoutPerTraceInSecs(parameters.getTimeoutPerTraceInSecs());
+//			pars.setMaximumNumberOfStates(parameters.getMaximumNumberOfStates());
+//			pars.setCostUpperBound(parameters.getCostUpperBound());
+//			pars.setPartiallyOrderEvents(parameters.isPartiallyOrderEvents());
+//			pars.setPreProcessUsingPlaceBasedConstraints(parameters.isPreProcessUsingPlaceBasedConstraints());
+//			pars.setInitialSplits(0);
+//			pars.setPrintAlignments(false);
+//			
+//			PNRepResult logAlignment = config.apply(context, emptyTraceLog, net, pars, null);
+			
+			int nThreads = Math.max(1, Runtime.getRuntime().availableProcessors() / 4);
+			Marking initMarking = net.getInitialMarking();
+			Set<Marking> finalMarkings = net.getFinalMarkings();
+			Marking finalMarking = net.getFinalMarkings().iterator().next();
+			TransEvClassMapping mapping = parameters.getMapping();
+			XEventClasses classes = log.getInfo(parameters.getClassifier()).getEventClasses();
+			
+			if (finalMarkings.size() != 1) {
+				System.out.println(String.format("[%s] Final marking set size: %d", getClass().getSimpleName(), finalMarkings.size()));
+				System.exit(1);
+			}
+			
+			ReplayerParameters params = new ReplayerParameters.Default(nThreads, Debug.NONE);
+			Replayer replayer = new Replayer(params, net.getNet(), initMarking, finalMarking, classes, mapping, false);
+			
+			ExecutorService service = Executors.newFixedThreadPool(nThreads);
+
+			TraceReplayTask tr = new TraceReplayTask(replayer, params, parameters.getTimeoutPerTraceInSecs(), 
+					parameters.getMaximumNumberOfStates(), 0l);
+			
+			long start = System.nanoTime();
+			Future<TraceReplayTask> result = service.submit(tr);
+			TraceReplayTask traceReplay;
+			
+			// get the max model cost
+			double modelMoveCosts = 0.0;
+			
+			try {
+				traceReplay = result.get();
+				long end = System.nanoTime();
+				long taken = (end - start) / 1000000;
+				System.out.println(String.format("[%s] Empty trace took %d ms to compute", getClass().getSimpleName(), taken));
+				
+				if (traceReplay.getResult() == TraceReplayResult.SUCCESS) {
+					modelMoveCosts = traceReplay.getSuccesfulResult().getInfo().get(PNRepResult.RAWFITNESSCOST);
+				} else if (traceReplay.getResult() == TraceReplayResult.DUPLICATE) {
+					modelMoveCosts = 0.0;
+					System.out.println(String.format("[%s] Empty trace replay result code: duplicate", getClass().getSimpleName()));
+					System.exit(1);
+				} else {
+					modelMoveCosts = 0.0;
+					System.out.println(String.format("[%s] Empty trace replay result code: unsuccessful", getClass().getSimpleName()));
+					System.exit(1);
+				}
+			} catch (Exception e) {
+				System.out.println(String.format("[%s] Problem with computing empty trace cost.", getClass().getSimpleName()));
+				e.printStackTrace();
+			} finally {
+				service.shutdown();
+			}
+			
 			System.out.println("[RecomposingReplayAlgorithm] Exact value for model move costs: " + modelMoveCosts);
 			return modelMoveCosts;
 		}

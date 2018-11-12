@@ -108,6 +108,7 @@ public class ConvertReplayResultToLogAlignmentAlgorithm {
 		//				size++;
 		//			}
 		//		}
+		
 		Map<String, XEventClass> activities = new HashMap<String, XEventClass>();
 		for (Transition transition : tecMap.keySet()) {
 			activities.put(transition.getLabel(), tecMap.get(transition));

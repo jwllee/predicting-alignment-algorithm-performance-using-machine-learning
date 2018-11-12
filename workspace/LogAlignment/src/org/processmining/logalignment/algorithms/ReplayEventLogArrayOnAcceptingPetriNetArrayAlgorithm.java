@@ -1,15 +1,16 @@
 package org.processmining.logalignment.algorithms;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import nl.tue.astar.AStarException;
-import nl.tue.astar.AStarThread.Canceller;
-
 import org.deckfour.xes.classification.XEventClass;
+import org.deckfour.xes.classification.XEventClasses;
 import org.deckfour.xes.info.XLogInfo;
 import org.deckfour.xes.info.XLogInfoFactory;
 import org.processmining.acceptingpetrinet.models.AcceptingPetriNet;
@@ -22,7 +23,8 @@ import org.processmining.logalignment.models.ReplayCostFactor;
 import org.processmining.logalignment.models.ReplayResultArray;
 import org.processmining.logalignment.models.impl.ReplayResultArrayFactory;
 import org.processmining.logalignment.parameters.ReplayEventLogArrayOnAcceptingPetriNetArrayParameters;
-import org.processmining.logalignment.utils.AlignmentInfoLabels;
+import org.processmining.logalignment.parameters.ReplayEventLogArrayOnAcceptingPetriNetArrayParameters.Type;
+import org.processmining.models.graphbased.directed.petrinet.Petrinet;
 import org.processmining.models.graphbased.directed.petrinet.elements.Transition;
 import org.processmining.models.semantics.petrinet.Marking;
 import org.processmining.plugins.astar.petrinet.PetrinetReplayerMovePreferenceAwareWithILP;
@@ -30,9 +32,16 @@ import org.processmining.plugins.astar.petrinet.PetrinetReplayerWithILP;
 import org.processmining.plugins.connectionfactories.logpetrinet.TransEvClassMapping;
 import org.processmining.plugins.petrinet.replayer.algorithms.costbasedcomplete.CostBasedCompleteParam;
 import org.processmining.plugins.petrinet.replayresult.PNRepResult;
-import org.processmining.plugins.petrinet.replayresult.StepTypes;
 import org.processmining.plugins.replayer.replayresult.SyncReplayResult;
 import org.processmining.pnetreplayer.utils.TransEvClassMappingUtils;
+
+import nl.tue.alignment.Progress;
+import nl.tue.alignment.Replayer;
+import nl.tue.alignment.ReplayerParameters;
+import nl.tue.alignment.algorithms.ReplayAlgorithm;
+import nl.tue.alignment.algorithms.ReplayAlgorithm.Debug;
+import nl.tue.astar.AStarException;
+import nl.tue.astar.AStarThread.Canceller;
 
 public class ReplayEventLogArrayOnAcceptingPetriNetArrayAlgorithm implements Canceller {
 
@@ -42,6 +51,59 @@ public class ReplayEventLogArrayOnAcceptingPetriNetArrayAlgorithm implements Can
 	public ReplayResultArray apply(PluginContext context, EventLogArray logs, AcceptingPetriNetArray nets,
 			ReplayCostFactor factor, ReplayEventLogArrayOnAcceptingPetriNetArrayParameters parameters) {
 		return apply(context, logs, nets, null, factor, parameters);
+	}
+	
+	private ReplayerParameters getAlignParams(ReplayEventLogArrayOnAcceptingPetriNetArrayParameters parameters, int logSize) {
+		ReplayerParameters alignParams;
+		
+		boolean moveSort = parameters.isMoveSort();
+		boolean queueSort = parameters.isQueueSort();
+		boolean preferExact = parameters.isPreferExact();
+		boolean useInt = parameters.isUseInt();
+		int threads = parameters.getnThreads();
+		Debug debug = parameters.getDebug();
+		int maxNumberOfStates = parameters.getMaximumNumberOfStates();
+		boolean partialOrder = parameters.isPartiallyOrderEvents();
+		
+		// False advertisement since millis = secs * 1000
+		// but check out Replayer.computePNRepResult, millis * 10.0 / (log.size() + 1) to get
+		// trace timeout. Very strange... +1 is for the empty trace but why * 10.0???
+		// +1 to account for the empty trace
+		int timeout = (logSize + 1) * parameters.getTimeoutPerTraceInSecs() * 1000 / 10;
+		Type algoType = parameters.getAlgorithmType();
+		
+//		System.out.println(String.format("[%s] Log size: %d", getClass().getSimpleName(), logSize));
+//		System.out.println(String.format("[%s] Algorithm type: %s", getClass().getSimpleName(), algoType));
+//		System.out.println(String.format("[%s] No. of threads: %d", getClass().getSimpleName(), threads));
+		
+		switch(algoType) {
+			case ASTAR:
+				alignParams = new ReplayerParameters.AStar(moveSort, queueSort, preferExact, threads,
+						useInt, debug, timeout, maxNumberOfStates, Integer.MAX_VALUE, partialOrder);
+				break;
+			case INC0:
+				alignParams = new ReplayerParameters.IncementalAStar(moveSort, threads, useInt, debug, timeout,
+						maxNumberOfStates, Integer.MAX_VALUE, partialOrder, 0);
+				break;
+			case INC3:
+				alignParams = new ReplayerParameters.IncementalAStar(moveSort, threads, useInt, debug, timeout,
+						maxNumberOfStates, Integer.MAX_VALUE, partialOrder, 3);
+				break;
+			case INC:
+				alignParams = new ReplayerParameters.IncementalAStar(moveSort, threads, useInt, debug, timeout,
+						maxNumberOfStates, Integer.MAX_VALUE, partialOrder, parameters.getInitialSplits());
+				break;
+			case INC_PLUS:
+				alignParams = new ReplayerParameters.IncementalAStar(moveSort, threads, useInt, debug, timeout,
+						maxNumberOfStates, Integer.MAX_VALUE, partialOrder, parameters.isPreProcessUsingPlaceBasedConstraints());
+				break;
+			default:
+				alignParams = null;
+				System.out.println(String.format("[%s] Do not recognize algorithm type: %d", getClass().getSimpleName(), parameters.getAlgorithmType()));
+				System.exit(1);
+		}
+		
+		return alignParams;
 	}
 
 	public ReplayResultArray apply(PluginContext context, EventLogArray logs, AcceptingPetriNetArray nets,
@@ -68,6 +130,12 @@ public class ReplayEventLogArrayOnAcceptingPetriNetArrayAlgorithm implements Can
 					counts.put(activity, count + 1);
 				}
 			}
+		}
+		
+		String statsDirpath = parameters.getOutputDir() + File.separator + "stats";
+		File statsDir = new File(statsDirpath);
+		if (!statsDir.isDirectory()) {
+			statsDir.mkdirs();
 		}
 
 		for (int index = 0; index < size; index++) {
@@ -116,8 +184,65 @@ public class ReplayEventLogArrayOnAcceptingPetriNetArrayAlgorithm implements Can
 				setDeadline(parameters.getDeadline());
 				if (clusters == null) {
 					System.out.println("[ReplayEventLogArrayOnAcceptingPetriNetArrayPlugin] No preferred transitions");
-					replay = (new PetrinetReplayerWithILP()).replayLog(context, nets.getNet(index).getNet(),
-							logs.getLog(index), subMapping, replayParameters);
+//					replay = (new PetrinetReplayerWithILP()).replayLog(context, nets.getNet(index).getNet(),
+//							logs.getLog(index), subMapping, replayParameters);
+					
+					// Using new Alignment package
+					try {
+						
+						ReplayerParameters alignParams = getAlignParams(parameters, logs.getLog(index).size());
+						
+						PrintStream stream;
+						
+						String statsFp = statsDirpath + File.separator + index + ".csv";
+						
+						if (alignParams.debug == Debug.STATS) {
+							stream = new PrintStream(new File(statsFp));
+						} else if (alignParams.debug == Debug.DOT) {
+							stream = new PrintStream(new File(statsFp));
+						} else {
+							stream = System.out;
+						}
+						
+						ReplayAlgorithm.Debug.setOutputStream(stream);
+						
+						Petrinet net = nets.getNet(index).getNet();
+						Marking initialMarking = nets.getNet(index).getInitialMarking();
+						Set<Marking> finalMarkings = nets.getNet(index).getFinalMarkings();
+						Marking finalMarking = finalMarkings.iterator().next();
+						
+						XEventClasses classes = info.getEventClasses();
+						TransEvClassMapping mapping = subMapping;
+						
+						Map<Transition, Integer> costMM = replayParameters.getMapTrans2Cost();
+						Map<XEventClass, Integer> costLM = replayParameters.getMapEvClass2Cost();
+						
+						assert finalMarkings.size() == 1;
+						
+						if (finalMarkings.size() != 1) {
+							System.out.println(String.format("[%s] Petri net has %d final markings.", getClass().getSimpleName(), finalMarkings.size()));
+							System.exit(1);
+						}
+						
+						Replayer replayer = new Replayer(alignParams, net, initialMarking, finalMarking, 
+								classes, costMM, costLM, mapping, true);
+						
+						replay = replayer.computePNRepResult(Progress.INVISIBLE, logs.getLog(index));
+					} catch (IOException ioe) {
+						
+						System.out.println(String.format("[%s] Problem with print stream: %s", getClass().getSimpleName(), parameters.getOutputDir()));
+						ioe.printStackTrace();
+					
+					} catch (Exception e) {
+						
+						System.out.println("[%s] Problem with replayer. Defaulting to Arya replayer...");
+						e.printStackTrace();
+						
+						replay = (new PetrinetReplayerWithILP()).replayLog(context, nets.getNet(index).getNet(),
+								logs.getLog(index), subMapping, replayParameters);
+								
+					}
+					
 				} else {
 					/*
 					 * Create a set of border transitions for the cluster.
@@ -148,58 +273,58 @@ public class ReplayEventLogArrayOnAcceptingPetriNetArrayAlgorithm implements Can
 				/*
 				 * Add the sync-move fitness metric.
 				 */
-				if (clusters != null) {
-					for (SyncReplayResult alignment : replay) {
-						double numerator = 0.0;
-						double denominator = 0.0;
-						double count = 1.0;
-						int nofConformingMoves = 0;
-						int nofMoves = 0;
-						for (StepTypes stepType : alignment.getStepTypes()) {
-							switch (stepType) {
-								case LMGOOD :
-								case MREAL : {
-									Object object = alignment.getNodeInstance().get(nofMoves);
-									Transition transition = (Transition) object;
-									XEventClass activity = subMapping.get(transition);
-									if (counts.containsKey(activity)) {
-										count = 1.0 / counts.get(activity);
-									}
-									break;
-								}
-								case L : {
-									Object object = alignment.getNodeInstance().get(nofMoves);
-									XEventClass activity = (XEventClass) object;
-									if (counts.containsKey(activity)) {
-										count = 1.0 / counts.get(activity);
-									}
-									break;
-								}
-								default : {
-									count = 1.0;
-								}
-							}
-							denominator += count;
-							switch (stepType) {
-								case LMGOOD :
-								case MINVI : {
-									numerator += count;
-									nofConformingMoves++;
-									break;
-								}
-								default :
-							}
-							nofMoves++;
-						}
-						alignment.getInfo().put(AlignmentInfoLabels.DECOMPOSEDSYNCMOVENUMERATOR, numerator);
-						alignment.getInfo().put(AlignmentInfoLabels.DECOMPOSEDSYNCMOVEDENOMINATOR, denominator);
-						double syncMoveFitness = (nofMoves == 0 ? 1.0 : (1.0 * nofConformingMoves) / nofMoves);
-						alignment.getInfo().put(AlignmentInfoLabels.SYNCMOVEFITNESS, syncMoveFitness);
-					}
-				}
+//				if (clusters != null) {
+//					for (SyncReplayResult alignment : replay) {
+//						double numerator = 0.0;
+//						double denominator = 0.0;
+//						double count = 1.0;
+//						int nofConformingMoves = 0;
+//						int nofMoves = 0;
+//						for (StepTypes stepType : alignment.getStepTypes()) {
+//							switch (stepType) {
+//								case LMGOOD :
+//								case MREAL : {
+//									Object object = alignment.getNodeInstance().get(nofMoves);
+//									Transition transition = (Transition) object;
+//									XEventClass activity = subMapping.get(transition);
+//									if (counts.containsKey(activity)) {
+//										count = 1.0 / counts.get(activity);
+//									}
+//									break;
+//								}
+//								case L : {
+//									Object object = alignment.getNodeInstance().get(nofMoves);
+//									XEventClass activity = (XEventClass) object;
+//									if (counts.containsKey(activity)) {
+//										count = 1.0 / counts.get(activity);
+//									}
+//									break;
+//								}
+//								default : {
+//									count = 1.0;
+//								}
+//							}
+//							denominator += count;
+//							switch (stepType) {
+//								case LMGOOD :
+//								case MINVI : {
+//									numerator += count;
+//									nofConformingMoves++;
+//									break;
+//								}
+//								default :
+//							}
+//							nofMoves++;
+//						}
+//						alignment.getInfo().put(AlignmentInfoLabels.DECOMPOSEDSYNCMOVENUMERATOR, numerator);
+//						alignment.getInfo().put(AlignmentInfoLabels.DECOMPOSEDSYNCMOVEDENOMINATOR, denominator);
+//						double syncMoveFitness = (nofMoves == 0 ? 1.0 : (1.0 * nofConformingMoves) / nofMoves);
+//						alignment.getInfo().put(AlignmentInfoLabels.SYNCMOVEFITNESS, syncMoveFitness);
+//					}
+//				}
 
 				now += System.currentTimeMillis();
-				System.out.println("[ReplayEventLogArrayOnAcceptingPetriNetArrayPlugin] Replay took " + now
+				System.out.println("[ReplayEventLogArrayOnAcceptingPetriNetArrayPlugin] Replay " + index + " took " + now
 						+ " milliseconds, fitness is " + replay.getInfo().get(PNRepResult.TRACEFITNESS));
 				int ctr = 0;
 				for (SyncReplayResult traceResult : replay) {
