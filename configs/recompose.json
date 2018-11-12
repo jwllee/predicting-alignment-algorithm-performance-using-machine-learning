@@ -1,6 +1,6 @@
 {
   "runner_type": "recomposing",
-  "plugin_jar": "2018-10-06_recomposing-replay.jar",
+  "plugin_jar": "2018-11-08_recomposing-replay.jar",
   "main_class": "org.processmining.decomposedreplayer.experiments.boot.TestRecomposingReplayWithMergeStrategyBoot",
 
   "replay_config": "Decompose",
@@ -14,7 +14,22 @@
   "use_hide_n_reduce": true,
   "prefer_border_trans": false,
   "add_conflict_only_once": true,
-  "decomposition": [ "generic_100" ],
+  "decomposition": [ "sese_25" ],
   "recompose_strategy": [ "Score-based" ],
-  "log_creation_strategy": [ "Strict exclude by conflicts" ]
+  "log_creation_strategy": [ "Strict exclude by conflicts" ],
+
+  "algorithm_type": [ "inc+", "astar", "inc0", "inc3", "inc" ],
+  "move_sort": false,
+  "queue_sort": true,
+  "prefer_exact": true,
+  "n_threads": 1,
+  "use_int": false,
+  "debug": "stats",
+  "timeout_per_trace_in_secs": 90,
+  "max_n_states": -1,
+  "cost_upper_bound": -1,
+  "partial_order": false,
+  "preprocess_using_place_based_constraints": true,
+  "initial_splits": 0,
+  "print_alignments": true
 }

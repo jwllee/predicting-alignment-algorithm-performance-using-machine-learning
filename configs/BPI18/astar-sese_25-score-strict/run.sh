@@ -11,7 +11,7 @@ cd prom-nightly
 
 PYTHON=python
 RUN=../src/run.py
-CONFIG=../configs/BPI18/generic_100-score-strict/configs.json
+CONFIG=../configs/BPI18/astar-sese_25-score-strict/configs.json
 LOGGINGCONFIGS=../src/logging.json
 TIME_FILE="../times.txt"
 N=1

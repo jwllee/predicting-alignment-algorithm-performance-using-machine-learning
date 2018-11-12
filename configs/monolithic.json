@@ -4,12 +4,12 @@
   "main_class": "org.processmining.alignment.monolithic.AlignmentTest",
   "replay_config": [ "inc+", "astar", "inc0", "inc3" ],
   "debug": "stats",
-  "print_alignment": true,
-  "timeout_per_trace_in_sec": 90,
+  "print_alignments": true,
+  "timeout_per_trace_in_secs": 90,
   "move_sort": false,
   "use_int": false,
   "partial_order": false,
   "prefer_exact": true,
   "queue_sort": true,
-  "threads": 1
+  "n_threads": 1
 }
