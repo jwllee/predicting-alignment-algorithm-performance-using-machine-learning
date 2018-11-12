@@ -34,16 +34,16 @@ if __name__ == '__main__':
     basedir = configs[BASEDIR]
     result_dir = os.path.join(basedir, configs[RESULT_DIR])
 
-    date = datetime.now().strftime('%Y-%m-%d')
-    cnt = 0
-
-    get_dirname = lambda cnt: os.path.join(result_dir, '{}-{}'.format(date, cnt))
-
-    while os.path.isdir(get_dirname(cnt)):
-        cnt += 1
-
-    # get an overall result directory
-    result_dir = get_dirname(cnt)
+    # date = datetime.now().strftime('%Y-%m-%d')
+    # cnt = 0
+    #
+    # get_dirname = lambda cnt: os.path.join(result_dir, '{}-{}'.format(date, cnt))
+    #
+    # while os.path.isdir(get_dirname(cnt)):
+    #     cnt += 1
+    #
+    # # get an overall result directory
+    # result_dir = get_dirname(cnt)
 
     dt = datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f')
 
