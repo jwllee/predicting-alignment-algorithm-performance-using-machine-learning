@@ -1,6 +1,8 @@
 package org.processmining.decomposedreplayer.experiments.plugins;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,9 +35,11 @@ import org.processmining.framework.plugin.annotations.PluginCategory;
 import org.processmining.framework.plugin.annotations.PluginVariant;
 import org.processmining.framework.util.HTMLToString;
 import org.processmining.logalignment.parameters.ReplayEventLogArrayOnAcceptingPetriNetArrayParameters.Type;
+import org.processmining.models.graphbased.directed.petrinet.elements.Transition;
 import org.processmining.plugins.connectionfactories.logpetrinet.TransEvClassMapping;
 import org.processmining.plugins.log.OpenLogFilePlugin;
 import org.processmining.plugins.petrinet.replayresult.PNRepResult;
+import org.processmining.plugins.petrinet.replayresult.StepTypes;
 import org.processmining.plugins.replayer.replayresult.SyncReplayResult;
 
 import nl.tue.alignment.algorithms.ReplayAlgorithm.Debug;
@@ -87,6 +91,86 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 		}
 		
 		return null;
+	}
+	
+	private static List<String> getCaseIds(SyncReplayResult alignment, XLog log) {
+		List<String> caseIds = new ArrayList<>();
+		for (int index: alignment.getTraceIndex()) {
+			XTrace trace = log.get(index);
+			String caseId = trace.getAttributes().get("concept:name").toString();
+			caseIds.add(caseId);
+		}
+		return caseIds;
+	}
+
+	private static boolean isMove(StepTypes stepType) {
+		return stepType == StepTypes.LMGOOD || stepType == StepTypes.L || stepType == StepTypes.MREAL
+				|| stepType == StepTypes.MINVI;
+	}
+	
+	private static List<String> toMoves(SyncReplayResult result, TransEvClassMapping mapping) {
+		
+		List<String> moves = new ArrayList<>();
+		String move = "";
+		
+		for (int i = 0; i < result.getStepTypes().size(); ++i) {
+			StepTypes stepType = result.getStepTypes().get(i);
+			Object nodeInstance = result.getNodeInstance().get(i);
+			
+			if (isMove(stepType)) {
+				XEventClass eventClass = null;
+				
+				if (nodeInstance instanceof XEventClass) {
+					eventClass = (XEventClass) nodeInstance;
+				} else if (nodeInstance instanceof Transition) {
+					eventClass = mapping.get(nodeInstance);
+				} else {
+					System.err.println("Unknown node instance: " + nodeInstance);
+				}
+				
+				// add as a string
+				if (stepType == StepTypes.LMGOOD) {
+					move = "LMGOOD" + "," + eventClass.getId() + "," + eventClass.getId();
+				} else if (stepType == StepTypes.L) {
+					move = "L" + "," + eventClass.getId() + ",>>";
+				} else if (stepType == StepTypes.MREAL) {
+					move = "MREAL" + "," + ">>," + eventClass.getId();
+				} else if (stepType == StepTypes.MINVI) {
+					move = "MINVI,>>,invis";
+				}
+				
+				moves.add(move);
+			}
+		}
+		
+		return moves;
+		
+	}
+	
+	private static void printCaseIds(Set<SyncReplayResult> alignments, XLog log, String fp) {
+		// valid alignments
+		File file = new File(fp);
+		PrintStream stream = null;
+		
+		try {
+			stream = new PrintStream(file);
+			stream.println("CaseIds");
+			
+			for (SyncReplayResult alignment: alignments) {
+				// print list of caseids
+				List<String> caseIds = TestRecomposingReplayWithMergeStrategyPlugin.getCaseIds(alignment, log);
+				for (int j = 0; j < caseIds.size(); ++j) {
+					stream.println(caseIds.get(j));
+				}
+			}
+			
+		} catch (IOException ioe) {
+			System.out.println("Cannot write to " + fp);
+			ioe.printStackTrace();
+		} finally {
+			if (stream != null)
+				stream.close();
+		}
 	}
 
 	public TestRecomposingReplayWithMergeStrategyPlugin(final PluginContext context, final XLog log, final AcceptingPetriNet apn,
@@ -244,7 +328,7 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 			
 			// output the statistics per iteration
 			String statsFp = "stats.csv";
-			statsFp = parameters.resultDir + File.separator + parameters.iteration + File.separator + statsFp;
+			statsFp = parameters.resultDir + File.separator + statsFp;
 			
 			// output the performance stats
 			List<String> statsStringList = new ArrayList<>();
@@ -262,11 +346,19 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 			
 			//-------------------------Write the alignments to file and getting aggregate results--------------------------------------//
 			// trace alignment folder
-//			String alignResultDir = parameters.resultDir + File.separator + "alignments";
-//			File dir = new File (alignResultDir);
-//			if (!(dir.exists() || dir.isDirectory()))
-//				dir.mkdirs();
-//
+			String alignResultDir = parameters.resultDir + File.separator + "alignments";
+			File dir = new File (alignResultDir);
+			if (!(dir.exists() || dir.isDirectory()))
+				dir.mkdirs();
+			
+			String validFp = parameters.resultDir + File.separator + "valid.csv";
+			String toAlignFp = parameters.resultDir + File.separator + "to-align.csv";
+			String rejectedFp = parameters.resultDir + File.separator + "rejected.csv";
+			
+			TestRecomposingReplayWithMergeStrategyPlugin.printCaseIds(workspace.alignments, log, validFp);
+			TestRecomposingReplayWithMergeStrategyPlugin.printCaseIds(workspace.openAlignments, log, toAlignFp);
+			TestRecomposingReplayWithMergeStrategyPlugin.printCaseIds(workspace.pseudoAlignments, log, rejectedFp);
+			
 //			// alignment level info
 //			String alignInfoFp = "alignment-info.csv";
 //			alignInfoFp = parameters.resultDir + File.separator + parameters.iteration + File.separator + alignInfoFp;
@@ -311,27 +403,54 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 				totalAlignTime += alignTime;
 				
 				// write out the alignment
-//				String alignmentFp = "alignment-" + i + ".csv";
-//				alignmentFp = alignResultDir + File.separator + alignmentFp;
-//				i += 1;
-//				
-//				ReplayResultCsvWriter.writeReplayResultToCsv(alignment, alignmentFp, mapping);
+				String alignmentFp = i + ".csv";
+				alignmentFp = alignResultDir + File.separator + alignmentFp;
+				i += 1;
 				
-				// caseids related to the alignment				
-				String caseIds = "";
-				for (int index: alignment.getTraceIndex()) {
-					XTrace trace = log.get(index);
-					traceLength = trace.size();
-					String caseId = trace.getAttributes().get("concept:name").toString();
-					if (caseIds.equals(""))
-						caseIds = caseIds + caseId;
-					else
-						caseIds = caseIds + ";" + caseId;
+				File file = new File(alignmentFp);
+				PrintStream stream = null;
+				
+				try {
+					stream = new PrintStream(file);
 					
-					// get the first case id
-					if (caseId0.equals(""))
-						caseId0 = caseId;
+					// print list of caseids
+					List<String> caseIds = TestRecomposingReplayWithMergeStrategyPlugin.getCaseIds(alignment, log);
+					stream.println("CaseIds");
+					stream.print(caseIds.get(0));
+					for (int j = 1; j < caseIds.size(); ++j) {
+						stream.print("," + caseIds.get(j));
+					}
+					
+					// print moves
+					List<String> moves = TestRecomposingReplayWithMergeStrategyPlugin.toMoves(alignment, mapping);
+					stream.println("\nMove type,Log,Model");
+					for (int j = 0; j < moves.size(); ++j) {
+						stream.println(moves.get(j));
+					}
+					
+				} catch (IOException ioe) {
+					System.out.println("Cannot write to " + alignmentFp);
+					ioe.printStackTrace();
+				} finally {
+					if (stream != null)
+						stream.close();
 				}
+								
+				// caseids related to the alignment				
+//				String caseIds = "";
+//				for (int index: alignment.getTraceIndex()) {
+//					XTrace trace = log.get(index);
+//					traceLength = trace.size();
+//					String caseId = trace.getAttributes().get("concept:name").toString();
+//					if (caseIds.equals(""))
+//						caseIds = caseIds + caseId;
+//					else
+//						caseIds = caseIds + ";" + caseId;
+//					
+//					// get the first case id
+//					if (caseId0.equals(""))
+//						caseId0 = caseId;
+//				}
 				
 				// alignment info
 //				String row = alignTime + ", " + stateCount + ", " + queuedStates + ", " + 
@@ -339,11 +458,11 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 //				alignInfo.add(row);
 				
 				// get the caseid of the first associated trace
-				LOGGER.info(String.format("Alignment of caseid %s: "
-						+ "No. of generated states: %.2f, "
-						+ "No. of queued states: %.2f, "
-						+ "No. of traversed arcs: %.2f%n", 
-						caseId0, stateCount, queuedStates, traversedArcs));
+//				LOGGER.info(String.format("Alignment of caseid %s: "
+//						+ "No. of generated states: %.2f, "
+//						+ "No. of queued states: %.2f, "
+//						+ "No. of traversed arcs: %.2f%n", 
+//						caseId0, stateCount, queuedStates, traversedArcs));
 				
 			}
 			
