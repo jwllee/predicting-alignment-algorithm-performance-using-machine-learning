@@ -425,6 +425,7 @@ class MonolithicReplayRunner:
                 'configuration': self.configs[REPLAY_CONFIG],
                 'moveOnLogCosts': self.configs[MOVE_ON_LOG_COSTS],
                 'moveOnModelCosts': self.configs[MOVE_ON_MODEL_COSTS],
+                # @TODO: Change timeoutPerTraceInSec to timeoutPerTraceInSecs for consistency
                 'timeoutPerTraceInSec': self.configs[TIMEOUT_PER_TRACE_IN_SECS],
                 'moveSort': self.configs[MOVE_SORT],
                 'useInt': self.configs[USE_INT],
