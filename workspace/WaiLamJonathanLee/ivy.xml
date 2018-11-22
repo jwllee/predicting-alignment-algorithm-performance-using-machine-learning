@@ -33,12 +33,12 @@
     	<!-- Temporary so that eclipse project can be used as dependency
     	<dependency org="prom" name="DecomposedReplayer" rev="latest" changing="true" transitive="true" />
     	<dependency org="prom" name="LogAlignment" rev="latest" changing="true" transitive="true" />
+    	<dependency org="prom" name="Alignment" rev="latest" changing="true" transitive="true" />
     	-->
     	<dependency org="prom" name="PNetReplayer" rev="latest" changing="true" transitive="true" />
     	<dependency org="prom" name="DataAwareExplorer" rev="latest" changing="true" transitive="true" />
     	<dependency org="prom" name="DataAwareReplayer" rev="latest" changing="true" transitive="true" />
     	<dependency org="prom" name="AcceptingPetriNetClassicalReductor" rev="latest" changing="true" transitive="true" />
-		<dependency org="prom" name="Alignment" rev="latest" changing="true" transitive="true" />
     	<!-- Third party libraries. These may span multiple lines. -->
     	<!-- Please uncomment the second line in the resolve target in your build.xml file
     	     if you have any third party libraries. -->
