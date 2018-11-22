@@ -1,15 +1,19 @@
 {
   "runner_type": "monolithic",
-  "plugin_jar": "2018-10-17_monolithic-replay.jar",
+  "plugin_jar": "2018-11-22_monolithic-replay.jar",
   "main_class": "org.processmining.alignment.monolithic.AlignmentTest",
-  "replay_config": [ "inc+", "astar", "inc0", "inc3" ],
-  "debug": "stats",
-  "print_alignments": true,
-  "timeout_per_trace_in_secs": 90,
+  "algorithm_type": [ "inc+", "astar", "inc0", "inc3" ],
   "move_sort": false,
-  "use_int": false,
-  "partial_order": false,
-  "prefer_exact": true,
   "queue_sort": true,
-  "n_threads": 1
+  "prefer_exact": true,
+  "n_threads": 1,
+  "use_int": false,
+  "debug": "stats",
+  "timeout_per_trace_in_secs": 90,
+  "max_n_states": -1,
+  "cost_upper_bound": -1,
+  "partial_order": false,
+  "preprocess_using_place_based_constraints": true,
+  "initial_splits": 0,
+  "print_alignments": true
 }

@@ -1,6 +1,6 @@
 {
   "runner_type": "recomposing",
-  "plugin_jar": "2018-11-08_recomposing-replay.jar",
+  "plugin_jar": "2018-11-22_recomposing-replay.jar",
   "main_class": "org.processmining.decomposedreplayer.experiments.boot.TestRecomposingReplayWithMergeStrategyBoot",
 
   "replay_config": "Decompose",
@@ -18,7 +18,7 @@
   "recompose_strategy": [ "Score-based" ],
   "log_creation_strategy": [ "Strict exclude by conflicts" ],
 
-  "algorithm_type": [ "inc+", "astar", "inc0", "inc3", "inc" ],
+  "algorithm_type": [ "inc+", "astar", "inc0", "inc3" ],
   "move_sort": false,
   "queue_sort": true,
   "prefer_exact": true,

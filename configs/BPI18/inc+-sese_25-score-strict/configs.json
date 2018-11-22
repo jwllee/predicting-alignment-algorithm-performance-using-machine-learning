@@ -27,7 +27,7 @@
     "n_threads": 1,
     "nof_iterations": 200,
     "partial_order": false,
-    "plugin_jar": "2018-11-08_recomposing-replay.jar",
+    "plugin_jar": "2018-11-22_recomposing-replay.jar",
     "prefer_border_trans": false,
     "prefer_exact": true,
     "preprocess_using_place_based_constraints": true,
