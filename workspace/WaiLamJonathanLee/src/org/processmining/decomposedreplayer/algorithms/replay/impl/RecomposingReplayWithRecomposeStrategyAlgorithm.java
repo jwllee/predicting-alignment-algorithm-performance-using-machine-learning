@@ -32,6 +32,7 @@ import org.processmining.decomposedreplayer.experiments.utils.LogAlignmentJson;
 import org.processmining.decomposedreplayer.experiments.utils.StepJson;
 import org.processmining.decomposedreplayer.experiments.utils.TraceAlignmentJson;
 import org.processmining.decomposedreplayer.models.stats.IterationStats;
+import org.processmining.decomposedreplayer.models.stats.IterationStats.Statistic;
 import org.processmining.decomposedreplayer.parameters.DecomposedReplayParameters;
 import org.processmining.decomposedreplayer.parameters.RecomposingReplayParameters;
 import org.processmining.decomposedreplayer.workspaces.RecomposingReplayWorkspace;
@@ -85,7 +86,7 @@ public class RecomposingReplayWithRecomposeStrategyAlgorithm extends AbstractRec
 		this.parameters = parameters;
 		clusterList = new ArrayList<>();
 		recomposeActivities = new HashSet<>();
-		setPerformanceStats(new ArrayList<IterationStats>());
+		setPerformanceStats(new LinkedList<IterationStats>());
 		setLogAlignments(new ArrayList<LogAlignmentJson>());
 		
 		// using the default grouped single conflict recomposition strategy
@@ -276,17 +277,17 @@ public class RecomposingReplayWithRecomposeStrategyAlgorithm extends AbstractRec
 			
 		}
 
-		IterationStats stats = new IterationStats();
-		stats.setIteration(getIteration());
-		stats.setNofLeftOutTraces(nofLeftOutTraces);
-		stats.setNofTraceToAlign(logAlignmentAtIteration.size());
-		stats.setNofAlignmentValid(valid);
-		stats.setNofAlignmentOpen(open);
-		stats.setNofAlignmentRejected(rejected);
+		IterationStats stats = new IterationStats(getIteration());
+		stats.map.put(Statistic.N_EXCLUDED_TRACE, nofLeftOutTraces);
+		stats.map.put(Statistic.N_TRACE_ALIGNED, logAlignmentAtIteration.size());
+		stats.map.put(Statistic.N_ALIGNMENT_VALID, valid);
+		stats.map.put(Statistic.N_ALIGNMENT_OPEN, open);
+		stats.map.put(Statistic.N_ALIGNMENT_REJECTED, rejected);
+		
 		if (getIteration() > 1) {
-			stats.setNofSubnets(getLastActivityClusters().getClusters().size());
-			stats.setNofRecomposeActivities(recomposeActivities.size());
-			stats.setNofBorderActivities(getBorderActivities().size());
+			stats.map.put(Statistic.N_SUBNET, getLastActivityClusters().getClusters().size());
+			stats.map.put(Statistic.N_RECOMPOSE_ACTIVITY, recomposeActivities.size());
+			stats.map.put(Statistic.N_BORDER_ACTIVITY, getBorderActivities().size());
 		}
 		
 		// add costs info
@@ -313,7 +314,7 @@ public class RecomposingReplayWithRecomposeStrategyAlgorithm extends AbstractRec
 			int nofTraces = alignment.getTraceIndex().size();
 			sumCosts += costs * nofTraces;
 		}
-		stats.setLowerBoundCosts(sumCosts);
+		stats.map.put(Statistic.LOWER_BOUND_COST, sumCosts);
 	}
 	
 	private LogAlignmentJson makeLogAlignmentJson(Set<SyncReplayResult> alignments, 

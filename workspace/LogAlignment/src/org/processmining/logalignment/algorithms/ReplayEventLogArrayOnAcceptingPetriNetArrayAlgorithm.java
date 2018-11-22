@@ -64,7 +64,8 @@ public class ReplayEventLogArrayOnAcceptingPetriNetArrayAlgorithm implements Can
 		Debug debug = parameters.getDebug();
 		int maxNumberOfStates = parameters.getMaximumNumberOfStates();
 		boolean partialOrder = parameters.isPartiallyOrderEvents();
-		
+		int costUpperBound = parameters.getCostUpperBound() > 0 ? parameters.getCostUpperBound() : Integer.MAX_VALUE;
+
 		// False advertisement since millis = secs * 1000
 		// but check out Replayer.computePNRepResult, millis * 10.0 / (log.size() + 1) to get
 		// trace timeout. Very strange... +1 is for the empty trace but why * 10.0???
@@ -79,23 +80,23 @@ public class ReplayEventLogArrayOnAcceptingPetriNetArrayAlgorithm implements Can
 		switch(algoType) {
 			case ASTAR:
 				alignParams = new ReplayerParameters.AStar(moveSort, queueSort, preferExact, threads,
-						useInt, debug, timeout, maxNumberOfStates, Integer.MAX_VALUE, partialOrder);
+						useInt, debug, timeout, maxNumberOfStates, costUpperBound, partialOrder);
 				break;
 			case INC0:
 				alignParams = new ReplayerParameters.IncementalAStar(moveSort, threads, useInt, debug, timeout,
-						maxNumberOfStates, Integer.MAX_VALUE, partialOrder, 0);
+						maxNumberOfStates, costUpperBound, partialOrder, 0);
 				break;
 			case INC3:
 				alignParams = new ReplayerParameters.IncementalAStar(moveSort, threads, useInt, debug, timeout,
-						maxNumberOfStates, Integer.MAX_VALUE, partialOrder, 3);
+						maxNumberOfStates, costUpperBound, partialOrder, 3);
 				break;
 			case INC:
 				alignParams = new ReplayerParameters.IncementalAStar(moveSort, threads, useInt, debug, timeout,
-						maxNumberOfStates, Integer.MAX_VALUE, partialOrder, parameters.getInitialSplits());
+						maxNumberOfStates, costUpperBound, partialOrder, parameters.getInitialSplits());
 				break;
 			case INC_PLUS:
 				alignParams = new ReplayerParameters.IncementalAStar(moveSort, threads, useInt, debug, timeout,
-						maxNumberOfStates, Integer.MAX_VALUE, partialOrder, parameters.isPreProcessUsingPlaceBasedConstraints());
+						maxNumberOfStates, costUpperBound, partialOrder, parameters.isPreProcessUsingPlaceBasedConstraints());
 				break;
 			default:
 				alignParams = null;

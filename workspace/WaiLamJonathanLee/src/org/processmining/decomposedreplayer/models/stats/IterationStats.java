@@ -1,128 +1,78 @@
 package org.processmining.decomposedreplayer.models.stats;
 
+import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 public class IterationStats {
 	
-	public static String HEADER = "Iteration, NofTraceToAlign, "
-			+ "NofAlignmentValid, NofAlignmentOpen, NofAlignmentRejected, "
-			+ "NofLeftOutTraces, NofSubnets, NofRecomposeActivities, "
-			+ "NofBorderActivities, LowerBoundCosts";
-
-	private int iteration = -1;
-	private int nofTraceToAlign = -1;
-	private int nofAlignmentOpen = -1;
-	private int nofAlignmentValid = -1;
-	private int nofAlignmentRejected = -1;
-	private int nofRecomposeActivities = -1;
-	private int nofSubnets = -1;
-	private int nofBorderActivities = -1;
-	private int nofLeftOutTraces = -1;
-	private double lowerBoundCosts = 0.0;
-	
-	public int getIteration() {
-		return iteration;
-	}
-
-	public void setIteration(int iteration) {
-		this.iteration = iteration;
-	}
-
-	public int getNofTraceToAlign() {
-		return nofTraceToAlign;
+	public enum Statistic {
+		ITERATION("iteration"),
+		N_TRACE_ALIGNED("n_trace_aligned"),
+		N_ALIGNMENT_OPEN("n_alignment_open"),
+		N_ALIGNMENT_VALID("n_alignment_valid"),
+		N_ALIGNMENT_REJECTED("n_alignment_rejected"),
+		N_RECOMPOSE_ACTIVITY("n_recompose_activity"),
+		N_SUBNET("n_subnet"),
+		N_BORDER_ACTIVITY("n_border_activity"),
+		N_EXCLUDED_TRACE("n_excluded_trace"),
+		LOWER_BOUND_COST("lower_bound_cost");
+		
+		private final String label;
+		
+		private Statistic(String label) {
+			this.label = label;
+		}
+		
+		public String toString() {
+			return label;
+		}
 	}
 	
-	public void setNofTraceToAlign(int nofTraceToAlign) {
-		this.nofTraceToAlign = nofTraceToAlign;
+	public Map<Statistic,Object> map;
+	
+	public IterationStats(int iteration) {
+		this.map = new HashMap<>();
+		map.put(Statistic.ITERATION, iteration);
 	}
 	
-	public int getNofAlignmentOpen() {
-		return nofAlignmentOpen;
+	public String getHeader(List<Statistic> keys) {
+		String header = "";
+		boolean first = true;
+		
+		for (Statistic key: Statistic.values()) {
+			keys.add(key);
+			if (!first) {
+				header += ",";
+			}
+			
+			header += key.toString();
+			first = false;
+		}
+		
+		return header;
 	}
 	
-	public void setNofAlignmentOpen(int nofAlignmentOpen) {
-		this.nofAlignmentOpen = nofAlignmentOpen;
-	}
-	
-	public int getNofAlignmentValid() {
-		return nofAlignmentValid;
-	}
-	
-	public void setNofAlignmentValid(int nofAlignmentValid) {
-		this.nofAlignmentValid = nofAlignmentValid;
-	}
-	
-	public int getNofAlignmentRejected() {
-		return nofAlignmentRejected;
-	}
-	
-	public void setNofAlignmentRejected(int nofAlignmentRejected) {
-		this.nofAlignmentRejected = nofAlignmentRejected;
-	}
-
-	@Override
-	public String toString() {
-		return "Iteration: " + iteration + "\n" + 
-				"Nb of traces replayed: " + getNofTraceToAlign() + "\n" + 
-				"Nb of traces aligned: " + getNofAlignmentValid() + "\n" + 
-				"Nb of traces open: " + getNofAlignmentOpen() + "\n" + 
-				"Nb of traces rejected: " + getNofAlignmentRejected() + "\n" + 
-				"Nb of left out traces: " + getNofLeftOutTraces() + "\n" +
-				"Nb of subnets: " + getNofSubnets() + "\n" +
-				"Nb of recompose activities: " + getNofRecomposeActivities() + "\n" + 
-				"Nb of border activities: " + getNofBorderActivities() + "\n" + 
-				"Lower bound costs: " + getLowerBoundCosts() + "\n";
-	}
-	
-	public String toRowString() {
-		return getIteration() + ", " + 
-				getNofTraceToAlign() + ", " + 
-				getNofAlignmentValid() + ", " + 
-				getNofAlignmentOpen() + ", " + 
-				getNofAlignmentRejected() + ", " + 
-				getNofLeftOutTraces() + ", " + 
-				getNofSubnets() + ", " +
-				getNofRecomposeActivities() + ", " + 
-				getNofBorderActivities() + ", " + 
-				getLowerBoundCosts();
-	}
-
-	public int getNofRecomposeActivities() {
-		return nofRecomposeActivities;
-	}
-
-	public void setNofRecomposeActivities(int nofRecomposeActivities) {
-		this.nofRecomposeActivities = nofRecomposeActivities;
-	}
-
-	public int getNofBorderActivities() {
-		return nofBorderActivities;
-	}
-
-	public void setNofBorderActivities(int nofBorderActivities) {
-		this.nofBorderActivities = nofBorderActivities;
-	}
-
-	public int getNofLeftOutTraces() {
-		return nofLeftOutTraces;
-	}
-
-	public void setNofLeftOutTraces(int nofLeftOutTraces) {
-		this.nofLeftOutTraces = nofLeftOutTraces;
-	}
-
-	public int getNofSubnets() {
-		return nofSubnets;
-	}
-
-	public void setNofSubnets(int nofSubnets) {
-		this.nofSubnets = nofSubnets;
-	}
-
-	public double getLowerBoundCosts() {
-		return lowerBoundCosts;
-	}
-
-	public void setLowerBoundCosts(double lowerBoundCosts) {
-		this.lowerBoundCosts = lowerBoundCosts;
+	public void writeToStream(PrintStream stream, boolean writeHeader, List<Statistic> keys) {
+		synchronized (stream) {
+			if (writeHeader) {
+				keys.clear();
+				stream.println(getHeader(keys));
+			}
+			
+			if (keys.isEmpty()) {
+				return;
+			}
+			
+			Iterator<Statistic> iterator = keys.iterator();
+			stream.print(map.get(iterator.next()));
+			
+			while (iterator.hasNext()) {
+				stream.print("," + map.get(iterator.next()));
+			}
+		}
 	}
 	
 }

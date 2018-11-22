@@ -44,7 +44,7 @@ public abstract class AbstractRecomposingReplayAlgorithm implements RecomposingR
 		
 		iteration = 0;
 		
-		while (!stopReplay() || iteration == 0) {
+		while (iteration <= 0 || !stopReplay()) {
 			iteration++;
 			
 			if (iteration > 1)

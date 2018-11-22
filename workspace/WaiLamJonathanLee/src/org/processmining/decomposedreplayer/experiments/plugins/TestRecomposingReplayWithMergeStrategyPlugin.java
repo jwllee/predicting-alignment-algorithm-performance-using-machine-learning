@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -24,8 +26,8 @@ import org.processmining.decomposedreplayer.algorithms.replay.impl.RecomposingRe
 import org.processmining.decomposedreplayer.experiments.boot.TestRecomposingReplayWithMergeStrategyBoot;
 import org.processmining.decomposedreplayer.experiments.parameters.TestRecomposingReplayWithMergeStrategyParameters;
 import org.processmining.decomposedreplayer.experiments.utils.LogImporter;
-import org.processmining.decomposedreplayer.experiments.utils.StringFileWriter;
 import org.processmining.decomposedreplayer.models.stats.IterationStats;
+import org.processmining.decomposedreplayer.models.stats.IterationStats.Statistic;
 import org.processmining.decomposedreplayer.parameters.RecomposingReplayParameters;
 import org.processmining.decomposedreplayer.workspaces.RecomposingReplayWorkspace;
 import org.processmining.framework.abstractplugins.ImportPlugin;
@@ -42,6 +44,7 @@ import org.processmining.plugins.petrinet.replayresult.PNRepResult;
 import org.processmining.plugins.petrinet.replayresult.StepTypes;
 import org.processmining.plugins.replayer.replayresult.SyncReplayResult;
 
+import nl.tue.alignment.Replayer;
 import nl.tue.alignment.algorithms.ReplayAlgorithm.Debug;
 
 @Plugin(name = "Evaluate Recomposing Replay with Merge", 
@@ -327,22 +330,37 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 			//-------------------------Write out statistics per recomposition iteration----------------------------------------------//
 			
 			// output the statistics per iteration
-			String statsFp = "stats.csv";
+			String statsFp = "prom-iter-stats.csv";
 			statsFp = parameters.resultDir + File.separator + statsFp;
+			File statsFile = new File(statsFp);
+			PrintStream streamStats = null;
+
+			try {
+				streamStats = new PrintStream(statsFile);
+				
+				if (!replayer.getPerformanceStats().isEmpty()) {
+					Iterator<IterationStats> it = replayer.getPerformanceStats().iterator();
+					List<Statistic> keys = new LinkedList<>();
+					IterationStats stats = it.next();
+					
+					stats.writeToStream(streamStats, true, keys);
+					
+					while (it.hasNext()) {
+						stats = it.next();
+						stats.writeToStream(streamStats, false, keys);
+					}
+				}
+			} catch (IOException ioe) {
+				
+				System.out.println("Cannot write to " + statsFp);
+				ioe.printStackTrace();
 			
-			// output the performance stats
-			List<String> statsStringList = new ArrayList<>();
-			// add header if need be
-			if (!(new File(statsFp)).exists())
-				statsStringList.add("Model, Log, " + IterationStats.HEADER);
-			else
-				statsStringList.add("\n");
-			for (IterationStats stats: replayer.getPerformanceStats()) {
-				statsStringList.add(parameters.model + ", " + parameters.log + ", " + stats.toRowString());
+			} finally {
+			
+				if (streamStats != null)
+					streamStats.close();
+			
 			}
-			
-			StringFileWriter writer = new StringFileWriter();
-			writer.writeStringListToFile(statsStringList, statsFp, true);
 			
 			//-------------------------Write the alignments to file and getting aggregate results--------------------------------------//
 			// trace alignment folder
@@ -407,15 +425,44 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 				alignmentFp = alignResultDir + File.separator + alignmentFp;
 				i += 1;
 				
+				// get caseids
+				List<String> caseIds = new LinkedList<>();
+				// Representative caseid that was actually aligned and used by the related duplicated trace ids
+				String repCaseId = ""; 
+				Iterator<Integer> iterator = alignment.getTraceIndex().iterator();
+				
+				int index = iterator.next();
+				XTrace trace = log.get(index);
+				String caseId = trace.getAttributes().get("concept:name").toString();
+				caseIds.add(caseId);
+				repCaseId = caseId;
+				
+				while (iterator.hasNext()) {
+					index = iterator.next();
+					trace = log.get(index);
+					caseId = trace.getAttributes().get("concept:name").toString();
+					caseIds.add(caseId);
+				}
+				
 				File file = new File(alignmentFp);
 				PrintStream stream = null;
 				
 				try {
 					stream = new PrintStream(file);
 					
-					// print list of caseids
-					List<String> caseIds = TestRecomposingReplayWithMergeStrategyPlugin.getCaseIds(alignment, log);
-					stream.println("CaseIds");
+					// print exitcode
+					stream.println("Exitcode");
+					if (alignment.getInfo().containsKey(Replayer.TRACEEXITCODE)) {
+						stream.println(alignment.getInfo().get(Replayer.TRACEEXITCODE));
+					} else {
+						stream.println(alignment.isReliable());
+					}
+					
+					// print representative caseid
+					stream.println("\nRepresentative caseId");
+					stream.println(repCaseId);
+					
+					stream.println("\nCaseIds");
 					stream.print(caseIds.get(0));
 					for (int j = 1; j < caseIds.size(); ++j) {
 						stream.print("," + caseIds.get(j));

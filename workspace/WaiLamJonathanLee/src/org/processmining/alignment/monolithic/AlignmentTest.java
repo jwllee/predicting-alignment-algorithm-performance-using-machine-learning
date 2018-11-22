@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.FileHandler;
@@ -20,10 +23,10 @@ import org.deckfour.xes.in.XUniversalParser;
 import org.deckfour.xes.info.XLogInfo;
 import org.deckfour.xes.info.XLogInfoFactory;
 import org.deckfour.xes.model.XLog;
+import org.deckfour.xes.model.XTrace;
 import org.jbpt.petri.Flow;
 import org.jbpt.petri.NetSystem;
 import org.jbpt.petri.io.PNMLSerializer;
-import org.processmining.alignment.utils.AlignUtils;
 import org.processmining.alignment.utils.StringFileReader;
 import org.processmining.models.graphbased.directed.petrinet.Petrinet;
 import org.processmining.models.graphbased.directed.petrinet.PetrinetGraph;
@@ -33,6 +36,7 @@ import org.processmining.models.graphbased.directed.petrinet.impl.PetrinetFactor
 import org.processmining.models.semantics.petrinet.Marking;
 import org.processmining.plugins.connectionfactories.logpetrinet.TransEvClassMapping;
 import org.processmining.plugins.petrinet.replayresult.PNRepResult;
+import org.processmining.plugins.petrinet.replayresult.StepTypes;
 import org.processmining.plugins.replayer.replayresult.SyncReplayResult;
 
 import lpsolve.LpSolve;
@@ -202,38 +206,46 @@ public class AlignmentTest {
 		// but check out Replayer.computePNRepResult, millis * 10.0 / (log.size() + 1) to get
 		// trace timeout. Very strange... +1 is for the empty trace but why * 10.0???
 		int timeout = log.size() * timeoutPerTraceInSec * 1000 / 10;
-		int maxNumberOfStates = Integer.MAX_VALUE;
+		int maxNumberOfStates = params.maximumNumberOfStates > 0 ? params.maximumNumberOfStates : Integer.MAX_VALUE;
+		int costUpperBound = params.costUpperBound > 0 ? params.costUpperBound : Integer.MAX_VALUE;
 		
 		ReplayerParameters parameters;
  		
 		switch (configuration) {
 			case AlignmentTestParameters.ASTAR:
 				parameters = new ReplayerParameters.AStar(params.moveSort, params.queueSort, params.preferExact, 
-						params.threads, params.useInt, debug, timeout, maxNumberOfStates, Integer.MAX_VALUE, params.partialOrder);
-				doReplay(params, debug, folder, "alignment", net, initialMarking, finalMarking, log, mapping, classes,
+						params.nThreads, params.useInt, debug, timeout, maxNumberOfStates, costUpperBound, params.partiallyOrderEvents);
+				doReplay(params, debug, folder, "trace-stats", net, initialMarking, finalMarking, log, mapping, classes,
 							parameters);
 				break;
 
 			case AlignmentTestParameters.INC0 :
-				parameters = new ReplayerParameters.IncementalAStar(params.moveSort, params.threads, params.useInt, 
-						debug, timeout, maxNumberOfStates, Integer.MAX_VALUE, params.partialOrder, 0);
-				doReplay(params, debug, folder, "alignment", net, initialMarking, finalMarking, log, mapping, classes,
+				parameters = new ReplayerParameters.IncementalAStar(params.moveSort, params.nThreads, params.useInt, 
+						debug, timeout, maxNumberOfStates, costUpperBound, params.partiallyOrderEvents, 0);
+				doReplay(params, debug, folder, "trace-stats", net, initialMarking, finalMarking, log, mapping, classes,
 							parameters);
 				break;
 			case AlignmentTestParameters.INC3 :
-				parameters = new ReplayerParameters.IncementalAStar(params.moveSort, params.threads, params.useInt, 
-						debug, timeout, maxNumberOfStates, Integer.MAX_VALUE, params.partialOrder, 3);
-				doReplay(params, debug, folder, "alignment", net, initialMarking, finalMarking, log, mapping, classes,
+				parameters = new ReplayerParameters.IncementalAStar(params.moveSort, params.nThreads, params.useInt, 
+						debug, timeout, maxNumberOfStates, costUpperBound, params.partiallyOrderEvents, 3);
+				doReplay(params, debug, folder, "trace-stats", net, initialMarking, finalMarking, log, mapping, classes,
 							parameters);
 				break;
 
 			case AlignmentTestParameters.INC_PLUS :
-				parameters = new ReplayerParameters.IncementalAStar(params.moveSort, params.threads, params.useInt, 
-						debug, timeout, maxNumberOfStates, Integer.MAX_VALUE, params.partialOrder, true);
-				doReplay(params, debug, folder, "alignment", net, initialMarking, finalMarking, log, mapping, classes,
+				parameters = new ReplayerParameters.IncementalAStar(params.moveSort, params.nThreads, params.useInt, 
+						debug, timeout, maxNumberOfStates, costUpperBound, params.partiallyOrderEvents, params.preProcessUsingPlaceBasedConstraints);
+				doReplay(params, debug, folder, "trace-stats", net, initialMarking, finalMarking, log, mapping, classes,
 							parameters);
 				break;
-			
+				
+			case AlignmentTestParameters.INC:
+				parameters = new ReplayerParameters.IncementalAStar(params.moveSort, params.nThreads, params.useInt, debug, timeout,
+						maxNumberOfStates, costUpperBound, params.partiallyOrderEvents, params.initialSplits);
+				doReplay(params, debug, folder, "trace-stats", net, initialMarking, finalMarking, log, mapping, classes, 
+						parameters);
+				break;
+				
 			default:
 				break;
 		}
@@ -268,6 +280,50 @@ public class AlignmentTest {
 			costLM.put(clazz, cost);
 		}
 		return costLM;
+	}
+	
+	private static boolean isMove(StepTypes stepType) {
+		return stepType == StepTypes.LMGOOD || stepType == StepTypes.L || stepType == StepTypes.MREAL
+				|| stepType == StepTypes.MINVI;
+	}
+	
+	private static List<String> toMoves(SyncReplayResult result, TransEvClassMapping mapping) {
+		
+		List<String> moves = new ArrayList<>();
+		String move = "";
+		
+		for (int i = 0; i < result.getStepTypes().size(); ++i) {
+			StepTypes stepType = result.getStepTypes().get(i);
+			Object nodeInstance = result.getNodeInstance().get(i);
+			
+			if (isMove(stepType)) {
+				XEventClass eventClass = null;
+				
+				if (nodeInstance instanceof XEventClass) {
+					eventClass = (XEventClass) nodeInstance;
+				} else if (nodeInstance instanceof Transition) {
+					eventClass = mapping.get(nodeInstance);
+				} else {
+					System.err.println("Unknown node instance: " + nodeInstance);
+				}
+				
+				// add as a string
+				if (stepType == StepTypes.LMGOOD) {
+					move = "LMGOOD" + "," + eventClass.getId() + "," + eventClass.getId();
+				} else if (stepType == StepTypes.L) {
+					move = "L" + "," + eventClass.getId() + ",>>";
+				} else if (stepType == StepTypes.MREAL) {
+					move = "MREAL" + "," + ">>," + eventClass.getId();
+				} else if (stepType == StepTypes.MINVI) {
+					move = "MINVI,>>,invis";
+				}
+				
+				moves.add(move);
+			}
+		}
+		
+		return moves;
+		
 	}
 	
 	private static void doReplay(AlignmentTestParameters params, Debug debug, String folder, String postfix, PetrinetGraph net, 
@@ -309,13 +365,11 @@ public class AlignmentTest {
 		String alignDirpath = folder + "/" + params.iteration + "/alignment";
 		File alignmentDir = new File(alignDirpath);
 		
-		if (!alignmentDir.exists() && params.printAlignment) {
+		if (!alignmentDir.exists() && params.printAlignments) {
 			alignmentDir.mkdirs();
 		}
 		
-		File alignFp;
-		PrintStream alignStream;
-		String traceId;
+		int i = 0;
 		
 		for (SyncReplayResult res : result) {
 			weight += res.getTraceIndex().size();
@@ -327,15 +381,64 @@ public class AlignmentTest {
 			mem = Math.max(mem, res.getInfo().get(Replayer.MEMORYUSED).intValue());
 			
 			// output alignment
-			if (params.printAlignment) {
+			if (params.printAlignments) {
+				// get caseids
+				List<String> caseIds = new LinkedList<>();
+				// Representative caseid that was actually aligned and used by the related duplicated trace ids
+				String repCaseId = ""; 
 				Iterator<Integer> iterator = res.getTraceIndex().iterator();
+				
+				int index = iterator.next();
+				XTrace trace = log.get(index);
+				String caseId = trace.getAttributes().get("concept:name").toString();
+				caseIds.add(caseId);
+				repCaseId = caseId;
+				
 				while (iterator.hasNext()) {
-					traceId = iterator.next().toString();
-					alignFp = new File(alignDirpath + "/" + traceId + ".csv");
-					alignStream = new PrintStream(alignFp);
-					AlignUtils.toCsv(res, mapping, alignStream);
+					index = iterator.next();
+					trace = log.get(index);
+					caseId = trace.getAttributes().get("concept:name").toString();
+					caseIds.add(caseId);
+				}
+				
+				String alignFpath = alignDirpath + File.separator + i++ + ".csv";
+				File file = new File(alignFpath);
+				PrintStream alignStream = null;
+				
+				try {
+					alignStream = new PrintStream(file);
 					
-					alignStream.close();
+					// print exitcode
+					alignStream.println("Exitcode");
+					if (res.getInfo().containsKey(Replayer.TRACEEXITCODE)) {
+						alignStream.println(res.getInfo().get(Replayer.TRACEEXITCODE));
+					} else {
+						alignStream.println(res.isReliable());
+					}
+					
+					// print representative caseid
+					alignStream.println("\nRepresentative caseId");
+					alignStream.println(repCaseId);
+					
+					// print list of caseids
+					alignStream.println("\nCaseIds");
+					alignStream.print(caseIds.get(0));
+					for (int j = 1; j < caseIds.size(); ++j) {
+						alignStream.print("," + caseIds.get(j));
+					}
+					
+					// print moves
+					List<String> moves = AlignmentTest.toMoves(res, mapping);
+					alignStream.print("\nMove type,Log,Model");
+					for (int j = 0; j < moves.size(); ++j) {
+						alignStream.println(moves.get(j));
+					}
+				} catch (IOException ioe) {
+					System.out.println("Cannot write to " + alignFpath);
+					ioe.printStackTrace();
+				} finally {
+					if (alignStream != null)
+						alignStream.close();
 				}
 			}
 		}
@@ -428,7 +531,7 @@ public class AlignmentTest {
 		try {
 			
 			doReplayExperiment(params, debug, params.resultDir, net, initialMarking, finalMarking, 
-					log, eventClassifier, params.configuration, params.timeoutPerTraceInSec);
+					log, eventClassifier, params.algorithmType, params.timeoutPerTraceInSecs);
 		
 		} catch (Exception e) {
 			System.err.println(e.getMessage());

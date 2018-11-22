@@ -11,6 +11,7 @@ public class AlignmentTestParameters {
 	public static final String INC0 = "inc0";
 	public static final String INC3 = "inc3";
 	public static final String INC_PLUS = "inc+";
+	public static final String INC = "inc";
 	public static final String PLANNING = "planning";
 
 	public String log = "";
@@ -20,13 +21,14 @@ public class AlignmentTestParameters {
     public String modelPath = "";
 	
     public String debug = "";
-    public String configuration = "";
-    public int threads = 1;
+    public String algorithmType = "";
+    public int nThreads = 1;
     public boolean moveSort = false;
     public boolean useInt = false;
-    public boolean partialOrder = false;
+    public boolean partiallyOrderEvents = false;
     public boolean preferExact = true;
     public boolean queueSort = true;
+    public boolean preProcessUsingPlaceBasedConstraints = true;
     
 	public String iteration = "";
 	public String outFile = "";
@@ -34,29 +36,36 @@ public class AlignmentTestParameters {
 	
 	public int moveOnLogCosts = 0;
 	public int moveOnModelCosts = 0;
-	public int timeoutPerTraceInSec = 0;
+	public int timeoutPerTraceInSecs = 0;
+	public int maximumNumberOfStates = -1;
+	public int costUpperBound = -1;
+	public int initialSplits = 0;
 	
-	public boolean printAlignment = false;
+	public boolean printAlignments = false;
 
 	@Override
 	public String toString() {
 		return  "Result directory: " + resultDir + "\n" +
 				"Debug: " + debug + "\n" +
-				"Configurations: " + configuration + "\n" + 
-				"Threads: " + threads + "\n" +
-                "Time out per trace in sec: " + timeoutPerTraceInSec + "\n" + 
+				"Algorithm type: " + algorithmType + "\n" + 
+				"Threads: " + nThreads + "\n" +
+                "Time out per trace in sec: " + timeoutPerTraceInSecs + "\n" + 
+				"Maximum number of states: " + maximumNumberOfStates + "\n" +
+                "Cost upper bound: " + costUpperBound + "\n" +
 				"Move sort: " + moveSort + "\n" +
                 "Use ILP: " + useInt + "\n" +
-				"Partial order events: " + partialOrder + "\n" +
+				"Partial order events: " + partiallyOrderEvents + "\n" +
                 "Prefer exact heuristics: " + preferExact + "\n" +
 				"Queue sort: " + queueSort + "\n" +
+                "Pre-process using place based constraints: " + preProcessUsingPlaceBasedConstraints + "\n" +
+				"Initial splits: " + initialSplits + "\n" +
                 "Iteration: " + iteration + "\n" + 
                 "Log: " + log + "\n" + 
                 "Model: " + model + "\n" + 
                 "Log path: " + logPath + "\n" + 
                 "Model path: " + modelPath + "\n" + 
                 "Out file: " + outFile + "\n" +
-                "Print alignment: " + printAlignment;
+                "Print alignment: " + printAlignments;
 	}
 	
 	public static AlignmentTestParameters readParams(String jsonString) {

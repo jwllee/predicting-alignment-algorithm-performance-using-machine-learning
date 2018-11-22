@@ -140,13 +140,21 @@ public abstract class DecomposedAbstractGenericReplaceReplayConfiguration extend
 			printLogAlignmentArray(context, filteredAlignments, outDirpath, logs, filterNets, 
 					parameters.getClassifier(), parameters.getMapping());
 			
-			outDirpath = parameters.getOutputDir() + File.separator + "subnets";
+			outDirpath = parameters.getOutputDir() + File.separator + "filtered-subnets";
 			outDir = new File(outDirpath);
 			if (!outDir.isDirectory()) {
 				outDir.mkdir();
 			}
 			
 			printNetArray(context, filterNets, outDirpath);
+			
+			outDirpath = parameters.getOutputDir() + File.separator + "replay-subnets";
+			outDir = new File(outDirpath);
+			if (!outDir.isDirectory()) {
+				outDir.mkdir();
+			}
+			
+			printNetArray(context, replaceNets, outDirpath);
 			
 			msecs += System.currentTimeMillis();
 			parameters.displayError("[DecomposedReplayPlugin] Printing sub-alignments and sub-nets took " + msecs + " milliseconds.");
