@@ -2,20 +2,25 @@
 A classifier to predict best performing alignment algorithm to compute the alignment between a model and log trace.
 
 
-| Stats to retrieve | Destination | Monolithic | Recomposing |
-| --- | --- | --- | --- |
-| clock time | `i\log-stats.csv` | `i\prom.log` | `i\prom.log` |
-| total alignment cost | `i\log-stats.csv` | `i\prom.log` | `i\python.log` |
-| replay configurations | all `i\x-stats.csv` | `i\configs.json` | `i\configs.json` |
-| no. of valid alignments | `i\log-stats.csv` | `i\alignment-stats.csv` *remember &#x7c;alignments&#x7c; <= &#x7c;traces&#x7c;* | `i\alignment-stats.csv` *need to equal monolithic stats* |
-| log size | `i\log-stats.csv` | `log.xes` | `log.xes` |
-| duplicate alignment flag and id | `i\trace-x-stats.csv` | no need | read below |
-| no. of rejected alignments | `i\log-stats.csv` | no need | `i\rejected.csv` filtered by alignment ids |
-| no. of to-align alignments | `i\log-stats.csv` | no need | `i\to-align.csv` filtered by alignment ids |  
-| no. of valid alignments | `i\log-stats.csv` | no need | `i\valid.csv` filtered by alignment ids |
-| trace iteration stats | `i\trace-iter-stats.csv` | no need | `i\iter-1...n` |
-| trace level stats | `i\trace-stats.csv` | no need | `i\trace-iter-stats.csv` |
-| log level stats | `i\log-stats.csv` | `i\trace-stats.csv` | `i\trace-stats.csv` | 
+| Stats to retrieve | Level | Destination | Monolithic | Recomposing |
+| --- | --- | --- | --- | --- |
+| clock time | log | `i\log-stats.csv` | `i\prom.log` | `i\prom.log` |
+| total alignment cost | log | `i\log-stats.csv` | `i\prom.log` | `i\python.log` |
+| replay configurations | iteration trace log | all `i\x-stats.csv` | `i\configs.json` | `i\configs.json` |
+| no. of valid alignments | log | `i\log-stats.csv` | `i\alignment-stats.csv` *remember &#x7c;alignments&#x7c; <= &#x7c;traces&#x7c;* | `i\alignment-stats.csv` *need to equal monolithic stats* |
+| log size | log | `i\log-stats.csv` | `log.xes` | `log.xes` |
+| duplicate alignment flag and id | iteration trace log | `i\trace-x-stats.csv` | no need | read below |
+| no. of rejected alignments | iter-stats log | `i\log-stats.csv` | no need | `i\rejected.csv` filtered by alignment ids |
+| no. of to-align alignments | iter-stats log | `i\log-stats.csv` | no need | `i\to-align.csv` filtered by alignment ids |  
+| no. of valid alignments | iter-stats log | `i\log-stats.csv` | no need | `i\valid.csv` filtered by alignment ids |
+| no. of traces aligned | iter-stats | `i\prom-iter-stats.csv` | no need | done in prom |
+| no. of subnets | `i\prom-iter-stats.csv` | no need | done in prom |
+| no. of recomposing activity | `i\prom-iter-stats.csv` | no need | done in prom |
+| no. of border activity | `i\prom-iter-stats.csv` | no need | done in prom |
+| no. of excluded trace | `i\prom-iter-stats.csv` | no need | done in prom |
+| trace iteration stats | | `i\trace-iter-stats.csv` | no need | `i\iter-1...n` |
+| trace level stats | | `i\trace-stats.csv` | no need | `i\trace-iter-stats.csv` |
+| log level stats | | `i\log-stats.csv` | `i\trace-stats.csv` | `i\trace-stats.csv` | 
 
 #### How iteration statistics are processed per alignment for recomposing replay 
 | Categories | Stats | Notes |
@@ -52,14 +57,16 @@ A classifier to predict best performing alignment algorithm to compute the align
 |                  | Splitpoints | |
 
 #### Modification to prom jars
-- add no. of log traces per iteration
-- add no. of merged alignments per iteration
-- change alignments.csv to trace-stats.csv for consistency at monolithic replayer
-- change replay parameter names of monolithic replayer for consistency
-- add missing parameter names to monolithic replayer
-- add alignment exit codes to alignment csv files
-- add identifying alignment if to alignment csv files
-- add hide-and-reduce subnets per iteration
+- [x] add no. of log traces per iteration
+- [x] change alignments.csv to trace-stats.csv for consistency at monolithic replayer
+- [x] change replay parameter names of monolithic replayer for consistency
+- [x] add missing parameter names to monolithic replayer
+- [x] add alignment exit codes to alignment csv files
+- [x] add representative alignment id to alignment csv files
+- [x] add hide-and-reduce subnets per iteration
+- [x] update log alignment prom jar
+- [x] update recomposing prom jar
+- [x] update monolithic prom jar 
 
 #### Recomposing replay iteration stats
 - no. of log traces: except of the first iteration, log recomposition strategy can exclude some of the log traces
@@ -70,3 +77,5 @@ A classifier to predict best performing alignment algorithm to compute the align
 - us: microseconds
 - spelling mistakes with statistics categories exist to correspond exactly to the actual code. For example, `Length of the orignal trace`.
 - clock time refers to the time from the start of the Java program till the end
+- traces are unique and multiple cases can have the same trace
+- in `prom-iter-stats.csv`, open, valid, and rejected alignment counts should sum to no. of aligned trace 
