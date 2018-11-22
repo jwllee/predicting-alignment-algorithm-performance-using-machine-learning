@@ -120,16 +120,16 @@ def make_configs(dir, data_dir, data, name, basic, monolithic, recompose, prefix
     recompose_dict[DATA_DIR] = data_dir
 
     # make monolithic configuration
-    algorithms = monolithic_dict[REPLAY_CONFIG]
+    algorithms = monolithic_dict[ALGORITHM_TYPE]
 
-    del monolithic_dict[REPLAY_CONFIG]
+    del monolithic_dict[ALGORITHM_TYPE]
 
     for algo in algorithms:
         dirname = 'mono-{}'.format(algo)
         monolithic_dir = os.path.join(base_dir, dirname)
         os.makedirs(monolithic_dir)
 
-        monolithic_dict[REPLAY_CONFIG] = algo
+        monolithic_dict[ALGORITHM_TYPE] = algo
 
         # copy the data.txt
         monolithic_data = os.path.join(monolithic_dir, DATA_FILE)
