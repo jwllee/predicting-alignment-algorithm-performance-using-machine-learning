@@ -5,7 +5,7 @@
     "data_dir": "data/synthetic/BPI18",
     "data_to_run": "configs/BPI18/mono-inc0/data.txt",
     "debug": "stats",
-    "experiment_name": "BPI18-monolithic",
+    "experiment_name": "mono-inc0",
     "initial_splits": 0,
     "log_ext": "xes.gz",
     "main_class": "org.processmining.alignment.monolithic.AlignmentTest",
