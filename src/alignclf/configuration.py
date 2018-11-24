@@ -115,7 +115,6 @@ def make_configs(dir, data_dir, data, name, basic, monolithic, recompose, prefix
     # add the basic configurations to monolithic and recomposing
     monolithic_dict.update(basic_dict)
     monolithic_dict[DATA_DIR] = data_dir
-    monolithic_dict[EXPERIMENT_NAME] = '{}-monolithic'.format(name)
     recompose_dict.update(basic_dict)
     recompose_dict[DATA_DIR] = data_dir
 
@@ -129,6 +128,7 @@ def make_configs(dir, data_dir, data, name, basic, monolithic, recompose, prefix
         monolithic_dir = os.path.join(base_dir, dirname)
         os.makedirs(monolithic_dir)
 
+        monolithic_dict[EXPERIMENT_NAME] = 'mono-{}'.format(algo)
         monolithic_dict[ALGORITHM_TYPE] = algo
 
         # copy the data.txt
