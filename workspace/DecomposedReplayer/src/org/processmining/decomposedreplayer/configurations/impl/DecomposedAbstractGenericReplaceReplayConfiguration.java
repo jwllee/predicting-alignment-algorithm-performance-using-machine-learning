@@ -129,6 +129,8 @@ public abstract class DecomposedAbstractGenericReplaceReplayConfiguration extend
 		msecs += System.currentTimeMillis();
 		parameters.displayMessage("[DecomposedReplayPlugin] Filtering alignments took " + msecs + " milliseconds.");
 
+		parameters.displayMessage("[DecomposedReplayPlugin] Print alignments?: " + parameters.isPrintAlignments());
+		
 		if (parameters.isPrintAlignments()) {
 			String outDirpath = parameters.getOutputDir() + File.separator + "alignments";
 			File outDir = new File(outDirpath);
@@ -157,7 +159,7 @@ public abstract class DecomposedAbstractGenericReplaceReplayConfiguration extend
 			printNetArray(context, replaceNets, outDirpath);
 			
 			msecs += System.currentTimeMillis();
-			parameters.displayError("[DecomposedReplayPlugin] Printing sub-alignments and sub-nets took " + msecs + " milliseconds.");
+			parameters.displayMessage("[DecomposedReplayPlugin] Printing sub-alignments and sub-nets took " + msecs + " milliseconds.");
 		}
 		
 		msecs = -System.currentTimeMillis();

@@ -30,6 +30,7 @@ public class TraceAlignmentImpl implements TraceAlignment {
 	private double stateCount;
 	private double queuedStates;
 	private double traversedArcs;
+	private int traceExitCode;
 	
 	/*
 	 * Event labels that resulted in the trace having no TBA.
@@ -49,6 +50,7 @@ public class TraceAlignmentImpl implements TraceAlignment {
 		setStateCount(0.0);
 		setQueuedStates(0.0);
 		setTraversedArcs(0.0);
+		setTraceExitCode(0);
 	}
 
 	public List<Pair<StepTypes, Pair<XEventClass, String>>> getLegalMoves() {
@@ -266,5 +268,13 @@ public class TraceAlignmentImpl implements TraceAlignment {
 
 	public void setTraversedArcs(double traversedArcs) {
 		this.traversedArcs = traversedArcs;
+	}
+
+	public int getTraceExitCode() {
+		return traceExitCode;
+	}
+
+	public void setTraceExitCode(int exitCode) {
+		this.traceExitCode = exitCode;
 	}
 }

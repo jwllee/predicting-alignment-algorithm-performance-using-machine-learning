@@ -38,6 +38,8 @@ public interface TraceAlignment extends HTMLToString {
 	public double getQueuedStates();
 	public void setTraversedArcs(double traversedArcs);
 	public double getTraversedArcs();
+	public int getTraceExitCode();
+	public void setTraceExitCode(int exitCode);
 	
 	public void addConflictingActivity(XEventClass activity);
 	public Map<XEventClass, Double> getConflictingActivities();

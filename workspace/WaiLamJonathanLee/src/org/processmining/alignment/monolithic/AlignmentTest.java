@@ -417,11 +417,11 @@ public class AlignmentTest {
 					}
 					
 					// print representative caseid
-					alignStream.println("\nRepresentative caseId");
+					alignStream.println("Representative caseId");
 					alignStream.println(repCaseId);
 					
 					// print list of caseids
-					alignStream.println("\nCaseIds");
+					alignStream.println("CaseIds");
 					alignStream.print(caseIds.get(0));
 					for (int j = 1; j < caseIds.size(); ++j) {
 						alignStream.print("," + caseIds.get(j));

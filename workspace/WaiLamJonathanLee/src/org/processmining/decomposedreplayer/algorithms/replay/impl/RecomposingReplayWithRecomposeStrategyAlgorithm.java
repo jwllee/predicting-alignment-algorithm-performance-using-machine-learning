@@ -192,6 +192,7 @@ public class RecomposingReplayWithRecomposeStrategyAlgorithm extends AbstractRec
 		DecomposedReplayParameters pars = new DecomposedReplayParameters(log, net, classifier);
 		DecomposedReplayConfiguration config = new DecomposedGenericFilterHundredReplayConfiguration();
 		if (parameters.isUseHideAndReduceAbstraction()) {
+			System.out.println(String.format("[%s] Using hide and reduce replay", getClass().getSimpleName()));
 			config = new DecomposedGenericReplaceReduceReplayConfiguration();
 		}
 		pars.setUnsplittableActivities(workspace.parameters.getUnsplittableActivities());

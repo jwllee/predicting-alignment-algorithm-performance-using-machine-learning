@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -61,12 +62,16 @@ import org.processmining.logdecomposer.filters.impl.DecompositionInFilter;
 import org.processmining.logdecomposer.parameters.DecomposeEventLogUsingActivityClusterArrayParameters;
 import org.processmining.logdecomposer.plugins.DecomposeEventLogUsingActivityClusterArrayPlugin;
 import org.processmining.models.graphbased.directed.petrinet.PetrinetEdge;
+import org.processmining.models.graphbased.directed.petrinet.elements.Place;
 import org.processmining.models.graphbased.directed.petrinet.elements.Transition;
+import org.processmining.models.semantics.petrinet.Marking;
 import org.processmining.plugins.connectionfactories.logpetrinet.TransEvClassMapping;
 import org.processmining.plugins.petrinet.replayresult.PNRepResult;
 import org.processmining.plugins.petrinet.replayresult.StepTypes;
 import org.processmining.plugins.replayer.replayresult.SyncReplayResult;
 import org.processmining.pnetreplayer.utils.TransEvClassMappingUtils;
+
+import nl.tue.alignment.Replayer;
 
 public abstract class DecomposedAbstractReplayConfiguration implements DecomposedReplayConfiguration {
 
@@ -255,6 +260,19 @@ public abstract class DecomposedAbstractReplayConfiguration implements Decompose
 		return results;
 	}
 	
+	private void printMarking(Marking marking, PrintStream stream) {
+		Iterator<Place> it = marking.iterator();
+		if (it.hasNext()) {
+			stream.print(it.next().toString());
+			while (it.hasNext()) {
+				stream.print(it.next().toString());
+			}
+			stream.println();
+		} else {
+			stream.println("empty");
+		}
+	}
+	
 	public void printNetArray(PluginContext context, AcceptingPetriNetArray nets, String outDir) {
 		for (int i = 0; i < nets.getSize(); ++i) {
 			String outFp = outDir + File.separator + i + ".txt";
@@ -263,9 +281,27 @@ public abstract class DecomposedAbstractReplayConfiguration implements Decompose
 			
 			try {
 				stream = new PrintStream(file);
-				stream.println("Source,Target");
+				stream.println("InitialMarking");
+				printMarking(nets.getNet(i).getInitialMarking(), stream);
+				
+				Iterator<Marking> it = nets.getNet(i).getFinalMarkings().iterator();
+				stream.println("FinalMarkings");
+				int tmp = 0;
+				if (it.hasNext()) {
+					stream.println("Final marking " + tmp);
+					printMarking(it.next(), stream);
+				}
+				
+				stream.println("Source,Target,SourceType,TargetType,IsInvisible");
 				for (PetrinetEdge e: nets.getNet(i).getNet().getEdges()) {
-					stream.println(e.getSource().toString() + "," + e.getTarget().toString());
+					stream.print(e.getSource().toString() + "," + e.getTarget().toString());
+//					System.out.println("Source is transition: " + (e.getSource() instanceof Transition));
+//					System.out.println("Target is transition: " + (e.getTarget() instanceof Transition));
+					if (e.getSource() instanceof Transition) {
+						stream.println(",transition,place," + ((Transition) e.getSource()).isInvisible());
+					} else {
+						stream.println(",place,transition," + ((Transition) e.getTarget()).isInvisible());
+					}
 				}
 				
 			} catch (IOException ioe) {
@@ -333,8 +369,21 @@ public abstract class DecomposedAbstractReplayConfiguration implements Decompose
 			try {
 				stream = new PrintStream(file);
 				
-				// print list of caseids
+				// print exitcode
+				stream.println("Exitcode");
+				if (traceAlignment.getInfo().containsKey(Replayer.TRACEEXITCODE)) {
+					stream.println(traceAlignment.getInfo().get(Replayer.TRACEEXITCODE));
+				} else {
+					stream.println(traceAlignment.isReliable());
+				}
+				
 				List<String> caseIds = getCaseIds(traceAlignment, log);
+
+				// print representative caseid
+				stream.println("Representative caseId");
+				stream.println(caseIds.get(0));
+				
+				// print list of caseids
 				stream.println("CaseIds");
 				stream.print(caseIds.get(0));
 				for (int i = 1; i < caseIds.size(); ++i) {

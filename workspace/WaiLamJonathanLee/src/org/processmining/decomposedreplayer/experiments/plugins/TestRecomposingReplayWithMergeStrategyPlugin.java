@@ -459,10 +459,10 @@ public class TestRecomposingReplayWithMergeStrategyPlugin implements HTMLToStrin
 					}
 					
 					// print representative caseid
-					stream.println("\nRepresentative caseId");
+					stream.println("Representative caseId");
 					stream.println(repCaseId);
 					
-					stream.println("\nCaseIds");
+					stream.println("CaseIds");
 					stream.print(caseIds.get(0));
 					for (int j = 1; j < caseIds.size(); ++j) {
 						stream.print("," + caseIds.get(j));

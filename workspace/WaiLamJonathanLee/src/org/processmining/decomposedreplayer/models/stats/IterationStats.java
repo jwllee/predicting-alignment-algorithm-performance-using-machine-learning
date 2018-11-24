@@ -72,6 +72,8 @@ public class IterationStats {
 			while (iterator.hasNext()) {
 				stream.print("," + map.get(iterator.next()));
 			}
+			
+			stream.println();
 		}
 	}
 	

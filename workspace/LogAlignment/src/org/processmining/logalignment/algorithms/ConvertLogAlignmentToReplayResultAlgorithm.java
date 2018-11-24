@@ -35,6 +35,8 @@ import org.processmining.plugins.petrinet.replayresult.PNRepResultImpl;
 import org.processmining.plugins.petrinet.replayresult.StepTypes;
 import org.processmining.plugins.replayer.replayresult.SyncReplayResult;
 
+import nl.tue.alignment.Replayer;
+
 public class ConvertLogAlignmentToReplayResultAlgorithm {
 
 	public final static String CONFLICTPREFIX = " conflicts on ";
@@ -95,6 +97,7 @@ public class ConvertLogAlignmentToReplayResultAlgorithm {
 					if (traceAlignment.getTraversedArcs() >= 0.0) {
 						result.addInfo(PNRepResult.TRAVERSEDARCS, traceAlignment.getTraversedArcs());
 					}
+					result.addInfo(Replayer.TRACEEXITCODE, (double) traceAlignment.getTraceExitCode());
 					
 					/*
 					 * Convert the information on conflicting activities.

@@ -25,6 +25,8 @@ import org.processmining.plugins.petrinet.replayresult.PNRepResult;
 import org.processmining.plugins.petrinet.replayresult.StepTypes;
 import org.processmining.plugins.replayer.replayresult.SyncReplayResult;
 
+import nl.tue.alignment.Replayer;
+
 public class ConvertReplayResultToLogAlignmentAlgorithm {
 
 	public LogAlignmentArray apply(EventLogArray logs, AcceptingPetriNetArray nets, ReplayResultArray replayResults,
@@ -99,6 +101,9 @@ public class ConvertReplayResultToLogAlignmentAlgorithm {
 //			System.out.printf("[%s] No. of traversed arcs: %.2f%n", 
 //					getClass().getSimpleName(), replayResult.getInfo().get(PNRepResult.TRAVERSEDARCS));
 			traceAlignment.setTraversedArcs(replayResult.getInfo().get(PNRepResult.TRAVERSEDARCS));
+		}
+		if (replayResult.getInfo().containsKey(Replayer.TRACEEXITCODE)) {
+			traceAlignment.setTraceExitCode(replayResult.getInfo().get(Replayer.TRACEEXITCODE).intValue());
 		}
 		traceAlignment.setMillis(replayResult.getInfo().get(PNRepResult.TIME));
 		//		int size = 0;

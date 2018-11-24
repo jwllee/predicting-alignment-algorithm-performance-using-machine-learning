@@ -306,7 +306,7 @@ public class MergeLogAlignmentArrayIntoLogAlignmentAlgorithm {
 		 * So far, the result is still reliable.
 		 */
 		boolean isReliable = true;
-
+		int traceExitCode = 0;
 		/*
 		 * Initialize necessary counters.
 		 */
@@ -337,7 +337,11 @@ public class MergeLogAlignmentArrayIntoLogAlignmentAlgorithm {
 					syncMoveDenominator = -1.0; // Insufficient information.
 				}
 			}
+			
+			// OR trace exitcodes
+			traceExitCode |= alignment.getTraceExitCode();
 		}
+		mergedAlignment.setTraceExitCode(traceExitCode);
 		mergedAlignment.setMillis(millis);
 		mergedAlignment.setDecomposedSyncMoveNumerator(syncMoveNumerator);
 		mergedAlignment.setDecomposedSyncMoveDenominator(syncMoveDenominator);
