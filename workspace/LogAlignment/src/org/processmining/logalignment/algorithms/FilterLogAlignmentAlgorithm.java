@@ -72,6 +72,9 @@ public class FilterLogAlignmentAlgorithm {
 			filteredAlignment.setQueuedStates(alignment.getQueuedStates());
 			filteredAlignment.setTraversedArcs(alignment.getTraversedArcs());
 			
+			// add exit code from new alignment package
+			filteredAlignment.setTraceExitCode(alignment.getTraceExitCode());
+			
 			filteredAlignments.putAlignment(trace, filteredAlignment);
 		}
 		return filteredAlignments;

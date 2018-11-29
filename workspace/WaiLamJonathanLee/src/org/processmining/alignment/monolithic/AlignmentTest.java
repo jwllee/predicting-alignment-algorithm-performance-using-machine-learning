@@ -429,7 +429,7 @@ public class AlignmentTest {
 					
 					// print moves
 					List<String> moves = AlignmentTest.toMoves(res, mapping);
-					alignStream.print("\nMove type,Log,Model");
+					alignStream.println("\nMove type,Log,Model");
 					for (int j = 0; j < moves.size(); ++j) {
 						alignStream.println(moves.get(j));
 					}
