@@ -1,16 +1,27 @@
 #!/usr/bin/env python
 
 
-import os, sys
-import pandas as pd
-import numpy as np
-from alignclf import analysis
+import os
+from alignclf import analyze
+from alignclf.utils import setup_logging
 
 
 if __name__ == '__main__':
-    agg_result_dir = os.path.join('.', 'results-agg', '2018-11-13')
-    recomposing_processor = analysis.RecomposingReplayResultProcessor()
-    recomposing_processor.process_directory(agg_result_dir)
+    # use default logging
+    setup_logging(default_path='')
+    agg_result_dir = os.path.join('.', 'results-agg', '2018-11-26')
 
-    monolithic_processor = analysis.MonolithicReplayResultProcessor()
-    monolithic_processor.process_directory(agg_result_dir)
+    for dirname in os.listdir(agg_result_dir):
+        replay_result_dir = os.path.join(agg_result_dir, dirname)
+
+        if 'mono' in dirname:
+            monolithic_processor = analyze.MonolithicReplayResultProcessor()
+            logs_stats_df = monolithic_processor.process_directory(replay_result_dir)
+
+            print(logs_stats_df.head())
+        else:
+            recomposing_processor = analyze.RecomposeReplayResultProcessor()
+            logs_stats_df = recomposing_processor.process_directory(replay_result_dir)
+
+            print(logs_stats_df.head())
+

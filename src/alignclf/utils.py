@@ -1,12 +1,28 @@
 #!/usr/bin/env python
 
 
-import os, sys, logging, json, logging.config, csv
+import os, sys, logging, json, logging.config, csv, time
+
+
+logger = logging.getLogger(__file__)
 
 
 __all__ = [
-    'setup_logging'
+    'setup_logging',
+    'timeit'
 ]
+
+
+def timeit(func):
+    def timed(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        took = end_time - start_time
+        logger.info('{} took {:.2f} secs'.format(func.__name__, took))
+        return result
+
+    return timed
 
 
 def writeheader(fp, header):
