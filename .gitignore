@@ -344,6 +344,7 @@ pip-selfcheck.json
 
 # End of https://www.gitignore.io/api/python,django,intellij,pycharm
 
+data/
 results/
 results-agg/
 times.txt

@@ -1,1 +1,0 @@
-{"netFilePath": "../data/test/net1/net1.apnml", "classifierType": "conceptName", "includeClusterTransitions": false, "netArrayFilePath": "../data/test/net1/decomposition/generic_100/generic_100.apna", "percentage": 100, "decompositionStrategy": "Generic", "unsplittableFilePath": "../data/test/net1/decomposition/generic_100/unsplittable.generic_100"}
