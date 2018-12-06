@@ -1,7 +1,0 @@
-#PBS -N Benchmark
-#PBS -q full
-#PBS -l nodes=1:ppn=8
-
-cd /home2/wllee/2018/2018-09-26_align-algo-clf/
-
-sh ./configs/minimal/run.sh

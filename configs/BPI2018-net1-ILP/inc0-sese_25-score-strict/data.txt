@@ -1,0 +1,16 @@
+net1,net1,net1-noisy-l1000
+net1,net1,net1-0-0-l1000
+net1,net1,net1-0-0-l2000
+net1,net1,net1-0-0-l5000
+net1,net1,net1-10-10-l1000
+net1,net1,net1-10-10-l2000
+net1,net1,net1-10-10-l5000
+net1,net1,net1-10-60-l1000
+net1,net1,net1-10-60-l2000
+net1,net1,net1-10-60-l5000
+net1,net1,net1-60-10-l1000
+net1,net1,net1-60-10-l2000
+net1,net1,net1-60-10-l5000
+net1,net1,net1-60-60-l1000
+net1,net1,net1-60-60-l2000
+net1,net1,net1-60-60-l5000
