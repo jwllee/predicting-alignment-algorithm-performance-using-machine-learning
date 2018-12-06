@@ -482,7 +482,8 @@ public class RecomposingReplayWithRecomposeStrategyAlgorithm extends AbstractRec
 				}
 //			}
 		}
-		System.out.println("[RecomposingReplayAlgorithm] Replay costs interval = [" + sumLoCosts / log.size() + ","
+		System.out.println("[RecomposingReplayAlgorithm] Replay costs interval = [" + sumLoCosts + "," + sumHiCosts + "].");
+		System.out.println("[RecomposingReplayAlgorithm] Average replay costs interval = [" + sumLoCosts / log.size() + ","
 				+ sumHiCosts / log.size() + "].");
 		System.out.println("[RecomposingReplayAlgorithm] Fitness interval = [" + (1.0 - sumHiCosts / sumMaxCosts) + ","
 				+ (1.0 - sumLoCosts / sumMaxCosts) + "].");
