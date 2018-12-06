@@ -7,6 +7,7 @@ from datetime import datetime
 from alignclf.utils import *
 from alignclf.constants import *
 from alignclf.experiments import *
+from alignclf import analyze
 
 
 if __name__ == '__main__':
@@ -75,3 +76,14 @@ if __name__ == '__main__':
 
     print('[time] runner took {} seconds.'.format(end - start))
     print('[time] run.py took {} seconds.'.format(end_all - start_all))
+
+    print('Process experiment results in {}'.format(outdir))
+
+    if 'mono' in configs[EXPERIMENT_NAME]:
+        processor = analyze.MonolithicReplayResultProcessor()
+    else:
+        processor = analyze.RecomposeReplayResultProcessor()
+
+    logs_stats_df = processor.process_directory(outdir)
+    print(logs_stats_df.head())
+    print('Finished processing experiment results')
