@@ -1,0 +1,6 @@
+# each line here will be a separate pbs job sent to cluster queue
+# each line should have the following comma-separated information:
+# 1. job name
+# 2. working directory
+# 3. shell script file path
+# e.g. test-job,/home2/wllee/2018/working/directory,./test-job.sh

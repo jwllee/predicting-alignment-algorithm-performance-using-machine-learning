@@ -1,0 +1,5 @@
+{
+  "queue_name": "full",
+  "config": "ncpus=8",
+  "walltime": "12:00:00"
+}
