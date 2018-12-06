@@ -123,6 +123,7 @@ class RecomposeConfigToGrab(enum.Enum):
                 'MAX_CONFLICTS ' \
                 'USE_HIDE_AND_REDUCE_ABSTRACTION ' \
                 'PREFER_BORDER_TRANS ' \
+                'DECOMPOSITION ' \
                 'LOG_CREATION_STRATEGY ' \
                 'RECOMPOSE_STRATEGY'
 
@@ -152,6 +153,7 @@ class RecomposeConfigToGrab(enum.Enum):
 
     USE_HIDE_AND_REDUCE_ABSTRACTION = 'useHideAndReduceAbstraction'
     PREFER_BORDER_TRANS = 'preferBorderTransitions'
+    DECOMPOSITION = 'decomposition'
     LOG_CREATION_STRATEGY = 'logCreationStrategy'
     RECOMPOSE_STRATEGY = 'recomposeStrategy'
 
@@ -742,10 +744,10 @@ class RecomposeReplayResultProcessor:
 
                 df_list.append(sub_df)
 
-        logger.info('Repeating row {} times took: {} secs'.format(n_row_repeats, repeat_row_took))
-        logger.info('Concatenating repeated caseid dfs took: {} secs'.format(concat_repeat_took))
+        logger.info('Repeating row {} times took: {:.2f} secs'.format(n_row_repeats, repeat_row_took))
+        logger.info('Concatenating repeated caseid dfs took: {:.2f} secs'.format(concat_repeat_took))
         took = time.time() - start
-        logger.info('Processing all decomposed replay alignment stats files took: {} secs'.format(took))
+        logger.info('Processing all decomposed replay alignment stats files took: {:.2f} secs'.format(took))
 
         sub_df = pd.concat(df_list, axis=0)
 
@@ -1005,6 +1007,11 @@ class RecomposeReplayResultProcessor:
 
         trace_stats_df = self.process_trace_stats(replay_dirpath, trace_caseids)
 
+        # to correct old recomposing replay jar which has average cost interval rather than total cost interval
+        # prom_iter_stats_df = pd.read_csv(os.path.join(replay_dirpath, 'prom-iter-stats.csv'))
+        # cost_lower *= self.get_log_size(prom_iter_stats_df)
+        # cost_upper *= self.get_log_size(prom_iter_stats_df)
+
         # aggregate across traces
         to_sum = [
             self.MERGED_ALIGNMENT_COST,
@@ -1126,7 +1133,7 @@ class RecomposeReplayResultProcessor:
         start = time.time()
         df = pd.concat(iter_trace_stats_df_list)
         took = time.time() - start
-        logger.info('Concatenating iteration stats df took: {} secs'.format(took))
+        logger.info('Concatenating iteration stats df took: {:.2f} secs'.format(took))
 
         return df
 
