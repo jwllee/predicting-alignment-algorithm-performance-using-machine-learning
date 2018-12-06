@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 if __name__ == '__main__':
     setup_logging(default_path='')
 
-    datadir = os.path.join('.', 'data', 'synthetic', 'BPI18', 'net5')
+    datadir = os.path.join('.', 'data', 'synthetic', 'BPI2018', 'net5')
     dirty_datadir = os.path.join(datadir, 'dirty')
 
     clf_type = 'concept-name'
