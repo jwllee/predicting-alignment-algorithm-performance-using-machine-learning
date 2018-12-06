@@ -151,9 +151,11 @@ def make_configs(dir, data_dir, data, name, basic, monolithic, recompose, prefix
     rename = {
         'Score-based': 'score',
         'Top ten most frequent conflicts set': 'mfcs_10',
+        'Most frequent conflicts': 'mfc',
 
         'Include all': 'all',
-        'Strict exclude by conflicts': 'strict'
+        'Strict exclude by conflicts': 'strict',
+        'Group by conflicts': 'group'
     }
 
     del recompose_dict[ALGORITHM_TYPE]
