@@ -44,6 +44,23 @@ def make_classpath(prom_pkg, jar_fpath, base_dir='.'):
     return classpath
 
 
+def set_log_clf(log_fpath, clf_type, log_outpath, memory, jar_fpath, main_class, prom_dir, prom_pkg):
+    classpath = make_classpath(prom_pkg, jar_fpath, prom_dir)
+
+    command = 'java -classpath {classpath} ' \
+              '-Djava.util.Arrays.useLegacyMergeSort=true ' \
+              '-Xmx{memory}G ' \
+              '{main_class} {log_fpath} {clf_type} {log_outpath}'.format(
+        classpath=classpath,
+        memory=memory,
+        main_class=main_class,
+        log_fpath = log_fpath,
+        clf_type=clf_type,
+        log_outpath=log_outpath
+    )
+
+    logger.info('Calling {}'.format(command))
+    subprocess.call(command, shell=True)
 
 
 if __name__ == '__main__':
@@ -90,18 +107,5 @@ if __name__ == '__main__':
 
     logger.info('Executing...')
 
-    command = 'java -classpath {classpath} ' \
-              '-Djava.util.Arrays.useLegacyMergeSort=true ' \
-              '-Xmx{memory}G ' \
-              '{main_class} {log_fpath} {clf_type} {log_outpath}'.format(
-        classpath=classpath,
-        memory=memory,
-        main_class=args.main_class,
-        log_fpath = args.log_fpath,
-        clf_type=args.clf_type,
-        log_outpath=args.log_outpath
-    )
-
-    logger.info('Calling {}'.format(command))
-
-    subprocess.call(command, shell=True)
+    set_log_clf(args.log_fpath, args.clf_type, args.log_outpath, memory,
+                jar_fpath, args.main_class, prom_dir, prom_pkg)
