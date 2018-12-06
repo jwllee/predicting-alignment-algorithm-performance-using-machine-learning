@@ -14,7 +14,7 @@
   "use_hide_n_reduce": true,
   "prefer_border_trans": false,
   "add_conflict_only_once": true,
-  "decomposition": [ "sese_25" ],
+  "decomposition": [ "generic_50" ],
   "recompose_strategy": [ "Score-based" ],
   "log_creation_strategy": [ "Strict exclude by conflicts" ],
 

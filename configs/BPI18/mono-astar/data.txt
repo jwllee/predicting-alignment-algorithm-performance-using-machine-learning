@@ -1,4 +1,0 @@
-net1,net1,net1-0-0
-net1,net1,net1-10-10
-net1,net1,net1-10-60
-net1,net1,net1-60-10
