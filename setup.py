@@ -12,7 +12,7 @@ setup(
     description='Experiment setup for alignment algorithm classification',
     author='Wai Lam Jonathan Lee',
     author_email='walee@uc.cl',
-    install_requires=['numpy', 'pandas'],
+    install_requires=['numpy', 'pandas', 'click', 'pygraphviz'],
     test_requires=['pytest'],
     packages=find_packages('src'),
     package_dir={'': 'src'},
