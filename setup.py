@@ -6,13 +6,23 @@ from os.path import splitext, basename
 from setuptools import find_packages, setup
 
 
+requirements = [
+    'numpy',
+    'pandas',
+    'matplotlib',
+    'podspy',
+    'click',
+    'pygraphviz'
+]
+
+
 setup(
     name='alignclf',
     version='0.1.0',
     description='Experiment setup for alignment algorithm classification',
     author='Wai Lam Jonathan Lee',
     author_email='walee@uc.cl',
-    install_requires=['numpy', 'pandas', 'click', 'pygraphviz'],
+    install_requires=requirements,
     test_requires=['pytest'],
     packages=find_packages('src'),
     package_dir={'': 'src'},

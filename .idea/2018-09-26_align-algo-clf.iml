@@ -2,9 +2,12 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <excludeFolder url="file://$MODULE_DIR$/alignclf-venv" />
+      <excludeFolder url="file://$MODULE_DIR$/data" />
+      <excludeFolder url="file://$MODULE_DIR$/prom-nightly" />
+      <excludeFolder url="file://$MODULE_DIR$/results" />
+      <excludeFolder url="file://$MODULE_DIR$/results-agg" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.5 (alignment-algorithm-classifier)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.5 (2018-09-26_align-algo-clf)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TestRunnerService">
