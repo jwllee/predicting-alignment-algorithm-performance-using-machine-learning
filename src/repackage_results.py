@@ -74,7 +74,8 @@ def make_mono_dirname(orig_dirname, configs_dict):
 
 
 def repackage_mono_results(new_base_dir):
-    base_dir = '/home/jonathan/github-repos/2018/2018-09-26_align-algo-clf/results-agg/clst-2018-12'
+    base_dir = os.path.join('/', 'home', 'jonathan', 'github-repos', '2018', '2018-09-26_align-algo-clf',
+                            'results-agg', 'clst-net1-repeat', 'net1-inc3-repeat')
     mono_dirname = [dirname for dirname in os.listdir(base_dir) if 'mono' in dirname]
 
     total_dirs = len(mono_dirname)
@@ -209,7 +210,8 @@ def repackage_replay_iter_directory(dirname, old_base_dirpath, new_base_dirpath)
 
 
 def verify_reco_results():
-    base_dir = '/home/jonathan/github-repos/2018/2018-09-26_align-algo-clf/results-agg/clst-2018-12'
+    base_dir = os.path.join('/', 'home', 'jonathan', 'github-repos', '2018', '2018-09-26_align-algo-clf',
+                            'results-agg', 'clst-net1-repeat', 'net1-astar-repeat')
     reco_dirname = [dirname for dirname in os.listdir(base_dir) if 'mono' not in dirname]
 
     total_dirs = len(reco_dirname)
@@ -304,7 +306,8 @@ def verify_reco_results():
 
 
 def repackage_reco_results(new_base_dir):
-    base_dir = '/home/jonathan/github-repos/2018/2018-09-26_align-algo-clf/results-agg/clst-2018-12'
+    base_dir = os.path.join('/', 'home', 'jonathan', 'github-repos', '2018', '2018-09-26_align-algo-clf',
+                            'results-agg', 'clst-net1-repeat', 'net1-inc3-repeat')
     reco_dirname = list()
 
     for dirname in os.listdir(base_dir):
@@ -373,11 +376,11 @@ def repackage_reco_results(new_base_dir):
 if __name__ == '__main__':
     new_base_dir = os.path.join('/', 'home', 'jonathan', 'github-repos', '2018',
                                 '2018-09-26_align-algo-clf', 'results-agg',
-                                'clst-2018-12-copy-reco')
+                                'clst-net1-repeat', 'net1-inc3-repeat-mono')
 
     if not os.path.exists(new_base_dir):
         os.mkdir(new_base_dir)
 
-    # repackage_mono_results(new_base_dir)
-    repackage_reco_results(new_base_dir)
+    repackage_mono_results(new_base_dir)
+    # repackage_reco_results(new_base_dir)
     # verify_reco_results()
