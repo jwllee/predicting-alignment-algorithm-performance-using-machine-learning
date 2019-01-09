@@ -11,6 +11,8 @@ requirements = [
     'pandas',
     'matplotlib',
     'podspy',
+    'click',
+    'pygraphviz'
 ]
 
 
