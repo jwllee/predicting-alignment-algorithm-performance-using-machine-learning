@@ -425,7 +425,11 @@ class MonolithicReplayResultProcessor:
 
         log_stats_df = pd.concat([log_sum_df, log_max_df], axis=1)
         log_stats_df[self.N_ALIGNS] = no_empty_df.shape[0]
-        n_valid_aligns = no_empty_df[StatsColname.ALIGNMENT_EXITCODE.value].value_counts().loc[AlignExitCode.OPTIMAL_ALIGNMENT.value]
+        n_valid_aligns_df = no_empty_df[StatsColname.ALIGNMENT_EXITCODE.value].value_counts()
+        if AlignExitCode.OPTIMAL_ALIGNMENT.value in n_valid_aligns_df.index:
+            n_valid_aligns = n_valid_aligns_df.loc[AlignExitCode.OPTIMAL_ALIGNMENT.value]
+        else:
+            n_valid_aligns = 0
         log_stats_df[self.CLOCK_TIME] = clock_time
         log_stats_df[self.LOG_ALIGN_COST] = log_align_cost
         log_stats_df[self.N_VALID_ALIGNS] = n_valid_aligns
@@ -1053,7 +1057,11 @@ class RecomposeReplayResultProcessor:
 
         log_stats_df = pd.concat([log_sum_df, log_max_df], axis=1)
         log_stats_df[self.N_ALIGNS] = len(trace_caseids)
-        n_valid_aligns = no_empty_df[StatsColname.ALIGNMENT_EXITCODE.value].value_counts().loc[AlignExitCode.OPTIMAL_ALIGNMENT.value]
+        n_valid_aligns_df = no_empty_df[StatsColname.ALIGNMENT_EXITCODE.value].value_counts()
+        if AlignExitCode.OPTIMAL_ALIGNMENT.value in n_valid_aligns_df.index:
+            n_valid_aligns = n_valid_aligns_df.loc[AlignExitCode.OPTIMAL_ALIGNMENT.value]
+        else:
+            n_valid_aligns = 0
         log_stats_df[self.N_VALID_ALIGNS] = n_valid_aligns
         log_stats_df[self.CLOCK_TIME] = clock_time
         log_stats_df[self.LOG_ALIGN_COST_LOWER] = cost_lower
