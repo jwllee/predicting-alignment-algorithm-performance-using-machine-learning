@@ -217,11 +217,13 @@ def get_uniq_tran_std_in_deg(pn):
 
 
 def get_uniq_tran_mean_out_deg(pn):
-    return np.mean(get_uniq_tran_out_deg_list(pn))
+    out_deg_list = get_uniq_tran_out_deg_list(pn)
+    return np.mean(out_deg_list) if out_deg_list else 0.
 
 
 def get_uniq_tran_std_out_deg(pn):
-    return np.mean(get_uniq_tran_out_deg_list(pn))
+    out_deg_list = get_uniq_tran_out_deg_list(pn)
+    return np.std(out_deg_list) if out_deg_list else 0.
 
 
 def get_dup_tran_in_deg_list(pn):
@@ -245,19 +247,23 @@ def get_dup_tran_out_deg_list(pn):
 
 
 def get_dup_tran_mean_in_deg(pn):
-    return np.mean(get_dup_tran_in_deg_list(pn))
+    in_deg_list = get_dup_tran_in_deg_list(pn)
+    return np.mean(in_deg_list) if in_deg_list else 0.
 
 
 def get_dup_tran_std_in_deg(pn):
-    return np.std(get_dup_tran_in_deg_list(pn))
+    in_deg_list = get_dup_tran_in_deg_list(pn)
+    return np.std(in_deg_list) if in_deg_list else 0.
 
 
 def get_dup_tran_mean_out_deg(pn):
-    return np.mean(get_uniq_tran_out_deg_list(pn))
+    out_deg_list = get_dup_tran_out_deg_list(pn)
+    return np.mean(out_deg_list) if out_deg_list else 0.
 
 
 def get_dup_tran_std_out_deg(pn):
-    return np.std(get_dup_tran_out_deg_list(pn))
+    out_deg_list = get_dup_tran_out_deg_list(pn)
+    return np.std(out_deg_list) if out_deg_list else 0.
 
 
 def get_place_in_deg_list(pn):
@@ -276,6 +282,26 @@ def get_place_out_deg_list(pn):
         p_edges = pn.get_directed_edges(src=p)
         out_deg_list.append(len(p_edges))
     return out_deg_list
+
+
+def get_place_mean_in_deg(pn):
+    in_deg_list = get_place_in_deg_list(pn)
+    return np.mean(in_deg_list) if in_deg_list else 0.
+
+
+def get_place_std_in_deg(pn):
+    in_deg_list = get_place_in_deg_list(pn)
+    return np.std(in_deg_list) if in_deg_list else 0.
+
+
+def get_place_mean_out_deg(pn):
+    out_deg_list = get_place_out_deg_list(pn)
+    return np.mean(out_deg_list) if out_deg_list else 0.
+
+
+def get_place_std_out_deg(pn):
+    out_deg_list = get_place_out_deg_list(pn)
+    return np.std(out_deg_list) if out_deg_list else 0.
 
 
 def pn_to_undirected(pn):
