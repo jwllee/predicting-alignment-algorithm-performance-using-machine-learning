@@ -44,6 +44,12 @@ SUBNET_N_INV_TRAN_MEAN = 'subnet_n_inv_transition_mean'
 SUBNET_N_INV_TRAN_STD = 'subnet_n_inv_transition_std'
 SUBNET_N_DUP_TRAN_MEAN = 'subnet_n_dup_transition_mean'
 SUBNET_N_DUP_TRAN_STD = 'subnet_n_dup_transition_std'
+SUBNET_N_UNIQ_TRAN_MEAN = 'subnet_n_uniq_transition_mean'
+SUBNET_N_UNIQ_TRAN_STD = 'subnet_n_uniq_transition_std'
+SUBNET_N_PLACE_MEAN = 'subnet_n_place_mean'
+SUBNET_N_PLACE_STD = 'subnet_n_place_std'
+SUBNET_N_ARC_MEAN = 'subnet_n_arc_mean'
+SUBNET_N_ARC_STD = 'subnet_n_arc_std'
 
 
 def extract_features(pn):
@@ -392,5 +398,93 @@ def get_biconnected_component_list(pn):
 def get_n_biconnected_component(pn):
     components = get_biconnected_component_list(pn)
     return len(components)
+
+
+def get_n_subnet(netlist):
+    return len(netlist)
+
+
+def get_subnet_n_tran_mean(netlist):
+    assert len(netlist) > 1, 'Should have at least 2 subnets in netlist.'
+    netlist = map(lambda apn: apn.net, netlist)
+    n_trans = [get_n_tran(pn) for pn in netlist]
+    return np.mean(n_trans)
+
+
+def get_subnet_n_tran_std(netlist):
+    assert len(netlist) > 1, 'Should have at least 2 subnets in netlist.'
+    netlist = map(lambda apn: apn.net, netlist)
+    n_trans = [get_n_tran(pn) for pn in netlist]
+    return np.std(n_trans)
+
+
+def get_subnet_n_inv_tran_mean(netlist):
+    assert len(netlist) > 1, 'Should have at least 2 subnets in netlist.'
+    netlist = map(lambda apn: apn.net, netlist)
+    n_invis = [get_n_inv_tran(pn) for pn in netlist]
+    return np.mean(n_invis)
+
+
+def get_subnet_n_inv_tran_std(netlist):
+    assert len(netlist) > 1, 'Should have at least 2 subnets in netlist.'
+    netlist = map(lambda apn: apn.net, netlist)
+    n_invis = [get_n_inv_tran(pn) for pn in netlist]
+    return np.std(n_invis)
+
+
+def get_subnet_n_dup_tran_mean(netlist):
+    assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
+    netlist = map(lambda apn: apn.net, netlist)
+    n_dups = [get_n_dup_tran(pn) for pn in netlist]
+    return np.mean(n_dups)
+
+
+def get_subnet_n_dup_tran_std(netlist):
+    assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
+    netlist = map(lambda apn: apn.net, netlist)
+    n_dups = [get_n_dup_tran(pn) for pn in netlist]
+    return np.std(n_dups)
+
+
+def get_subnet_n_uniq_tran_mean(netlist):
+    assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
+    netlist = map(lambda apn: apn.net, netlist)
+    n_uniqs = [get_n_uniq_tran(pn) for pn in netlist]
+    return np.mean(n_uniqs)
+
+
+def get_subnet_n_uniq_tran_std(netlist):
+    assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
+    netlist = map(lambda apn: apn.net, netlist)
+    n_uniqs = [get_n_uniq_tran(pn) for pn in netlist]
+    return np.std(n_uniqs)
+
+
+def get_subnet_n_place_mean(netlist):
+    assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
+    netlist = map(lambda apn: apn.net, netlist)
+    n_places = [get_n_place(pn) for pn in netlist]
+    return np.mean(n_places)
+
+
+def get_subnet_n_place_std(netlist):
+    assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
+    netlist = map(lambda apn: apn.net, netlist)
+    n_places = [get_n_place(pn) for pn in netlist]
+    return np.std(n_places)
+
+
+def get_subnet_n_arc_mean(netlist):
+    assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
+    netlist = map(lambda apn: apn.net, netlist)
+    n_arcs = [get_n_arc(pn) for pn in netlist]
+    return np.mean(n_arcs)
+
+
+def get_subnet_n_arc_std(netlist):
+    assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
+    netlist = map(lambda apn: apn.net, netlist)
+    n_arcs = [get_n_arc(pn) for pn in netlist]
+    return np.std(n_arcs)
 
 

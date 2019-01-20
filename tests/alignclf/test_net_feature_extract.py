@@ -42,6 +42,37 @@ class TestExtractNetFeature:
     def empty_net(self):
         return PetrinetFactory.new_petrinet('net0')
 
+    @pytest.fixture(
+        scope='function'
+    )
+    def sese_subnets_3(self):
+        subnet0 = PetrinetFactory.new_accepting_petrinet(PetrinetFactory.new_petrinet('subnet0'))
+        subnet1 = PetrinetFactory.new_accepting_petrinet(PetrinetFactory.new_petrinet('subnet1'))
+        subnet2 = PetrinetFactory.new_accepting_petrinet(PetrinetFactory.new_petrinet('subnet2'))
+
+        t_a = subnet0.net.add_transition('a')
+        p0 = subnet0.net.add_place('p0')
+        subnet0.net.add_arc(p0, t_a)
+
+        t_a = subnet1.net.add_transition('a')
+        t_b = subnet1.net.add_transition('b')
+        p1 = subnet1.net.add_place('p1')
+        subnet1.net.add_arc(t_a, p1)
+        subnet1.net.add_arc(p1, t_b)
+
+        t_b = subnet2.net.add_transition('b')
+        t_c = subnet2.net.add_transition('c')
+        t_d = subnet2.net.add_transition('d')
+        p2 = subnet2.net.add_place('p2')
+        p3 = subnet2.net.add_place('p3')
+        subnet2.net.add_arc(t_b, p2)
+        subnet2.net.add_arc(p2, t_c)
+        subnet2.net.add_arc(p2, t_d)
+        subnet2.net.add_arc(t_c, p3)
+        subnet2.net.add_arc(t_d, p3)
+
+        return [subnet0, subnet1, subnet2]
+
     def test_get_n_tran(self, net_t4_p3_a8):
         expected = len(net_t4_p3_a8.transitions)
         assert net_feature_extract.get_n_tran(net_t4_p3_a8) == expected
