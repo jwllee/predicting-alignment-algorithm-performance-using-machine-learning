@@ -130,69 +130,69 @@ class TestExtractNetFeature:
         expected = 1
         assert net_feature_extract.get_n_and_split(net) == expected
 
-    def test_get_inv_tran_mean_in_deg_zero_case(self, empty_net):
+    def test_get_inv_tran_in_deg_mean_zero_case(self, empty_net):
         expected = 0.
-        assert net_feature_extract.get_inv_tran_mean_in_deg(empty_net) == expected
+        assert net_feature_extract.get_inv_tran_in_deg_mean(empty_net) == expected
 
-    def test_get_inv_tran_std_in_deg_zero_case(self, empty_net):
+    def test_get_inv_tran_in_deg_std_zero_case(self, empty_net):
         expected = 0.
-        assert net_feature_extract.get_inv_tran_std_in_deg(empty_net) == expected
+        assert net_feature_extract.get_inv_tran_in_deg_std(empty_net) == expected
 
-    def test_get_inv_tran_mean_out_deg_zero_case(self, empty_net):
+    def test_get_inv_tran_out_deg_mean_zero_case(self, empty_net):
         expected = 0.
-        assert net_feature_extract.get_inv_tran_mean_out_deg(empty_net) == expected
+        assert net_feature_extract.get_inv_tran_out_deg_mean(empty_net) == expected
 
-    def test_get_inv_tran_std_out_deg_zero_case(self, empty_net):
+    def test_get_inv_tran_out_deg_zero_case(self, empty_net):
         expected = 0.
-        assert net_feature_extract.get_inv_tran_std_out_deg(empty_net) == expected
+        assert net_feature_extract.get_inv_tran_out_deg_std(empty_net) == expected
 
-    def test_get_uniq_tran_mean_in_deg_zero_case(self, empty_net):
+    def test_get_uniq_tran_in_deg_mean_zero_case(self, empty_net):
         expected = 0.
-        assert net_feature_extract.get_uniq_tran_mean_in_deg(empty_net) == expected
+        assert net_feature_extract.get_uniq_tran_in_deg_mean(empty_net) == expected
 
-    def test_get_uniq_tran_std_in_deg_zero_case(self, empty_net):
+    def test_get_uniq_tran_in_deg_std_zero_case(self, empty_net):
         expected = 0.
-        assert net_feature_extract.get_uniq_tran_std_in_deg(empty_net) == expected
+        assert net_feature_extract.get_uniq_tran_in_deg_std(empty_net) == expected
 
-    def test_get_uniq_tran_mean_out_deg_zero_case(self, empty_net):
+    def test_get_uniq_tran_out_deg_mean_zero_case(self, empty_net):
         expected = 0.
-        assert net_feature_extract.get_uniq_tran_mean_out_deg(empty_net) == expected
+        assert net_feature_extract.get_uniq_tran_out_deg_mean(empty_net) == expected
 
-    def test_get_uniq_tran_std_out_deg_zero_case(self, empty_net):
+    def test_get_uniq_tran_out_deg_std_zero_case(self, empty_net):
         expected = 0.
-        assert net_feature_extract.get_uniq_tran_std_out_deg(empty_net) == expected
+        assert net_feature_extract.get_uniq_tran_out_deg_std(empty_net) == expected
 
-    def test_get_dup_tran_mean_in_deg_zero_case(self, empty_net):
+    def test_get_dup_tran_in_deg_mean_zero_case(self, empty_net):
         expected = 0.
-        assert net_feature_extract.get_dup_tran_mean_in_deg(empty_net) == expected
+        assert net_feature_extract.get_dup_tran_in_deg_mean(empty_net) == expected
 
-    def test_get_dup_tran_std_in_deg_zero_case(self, empty_net):
+    def test_get_dup_tran_in_deg_std_zero_case(self, empty_net):
         expected = 0.
-        assert net_feature_extract.get_dup_tran_std_in_deg(empty_net) ==  expected
+        assert net_feature_extract.get_dup_tran_in_deg_std(empty_net) ==  expected
 
-    def test_get_dup_tran_mean_out_deg_zero_case(self, empty_net):
+    def test_get_dup_tran_out_deg_zero_case(self, empty_net):
         expected = 0.
-        assert net_feature_extract.get_dup_tran_mean_out_deg(empty_net) == expected
+        assert net_feature_extract.get_dup_tran_out_deg_mean(empty_net) == expected
 
-    def test_get_dup_tran_std_out_deg_zero_case(self, empty_net):
+    def test_get_dup_tran_out_deg_std_zero_case(self, empty_net):
         expected = 0.
-        assert net_feature_extract.get_dup_tran_std_out_deg(empty_net) == expected
+        assert net_feature_extract.get_dup_tran_out_deg_std(empty_net) == expected
 
-    def test_get_place_mean_in_deg_zero_case(self, empty_net):
+    def test_get_place_in_deg_mean_zero_case(self, empty_net):
         expected = 0.
-        assert net_feature_extract.get_place_mean_in_deg(empty_net) == expected
+        assert net_feature_extract.get_place_in_deg_mean(empty_net) == expected
 
-    def test_get_place_std_in_deg_zero_case(self, empty_net):
+    def test_get_place_in_deg_std_zero_case(self, empty_net):
         expected = 0.
-        assert net_feature_extract.get_place_std_in_deg(empty_net) == expected
+        assert net_feature_extract.get_place_in_deg_std(empty_net) == expected
 
-    def test_get_place_mean_out_deg_zero_case(self, empty_net):
+    def test_get_place_out_deg_mean_zero_case(self, empty_net):
         expected = 0.
-        assert net_feature_extract.get_place_mean_out_deg(empty_net) == expected
+        assert net_feature_extract.get_place_out_deg_mean(empty_net) == expected
 
-    def test_get_place_std_out_deg_zero_case(self, empty_net):
+    def test_get_place_out_deg_std_zero_case(self, empty_net):
         expected = 0.
-        assert net_feature_extract.get_place_std_out_deg(empty_net) == expected
+        assert net_feature_extract.get_place_out_deg_std(empty_net) == expected
 
     def test_get_n_biconnected_component_without_bridge(self):
         # make net

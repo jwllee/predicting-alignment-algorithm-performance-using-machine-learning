@@ -13,22 +13,22 @@ N_TRAN = 'n_transition'
 N_INV_TRAN = 'n_inv_transition'
 N_DUP_TRAN = 'n_dup_transition'
 N_UNIQ_TRAN = 'n_uniq_transition'
-INV_TRAN_MEAN_IN_DEG = 'inv_transition_mean_in_degree'
-INV_TRAN_STD_IN_DEG = 'inv_transition_std_in_degree'
-INV_TRAN_MEAN_OUT_DEG = 'inv_transition_mean_out_degree'
-INV_TRAN_STD_OUT_DEG = 'inv_transition_std_out_degree'
-UNIQ_TRAN_MEAN_IN_DEG = 'uniq_transition_mean_in_degree'
-UNIQ_TRAN_STD_IN_DEG = 'uniq_transition_std_in_degree'
-UNIQ_TRAN_MEAN_OUT_DEG = 'uniq_transition_mean_out_degree'
-UNIQ_TRAN_STD_OUT_DEG = 'uniq_transition_std_out_degree'
-DUP_TRAN_MEAN_IN_DEG = 'dup_transition_mean_in_degree'
-DUP_TRAN_STD_IN_DEG = 'dup_transition_std_in_degree'
-DUP_TRAN_MEAN_OUT_DEG = 'dup_transition_mean_out_degree'
-DUP_TRAN_STD_OUT_DEG = 'dup_transition_std_out_degree'
-PLACE_MEAN_IN_DEG = 'place_mean_in_deg'
-PLACE_STD_IN_DEG = 'place_std_in_deg'
-PLACE_MEAN_OUT_DEG = 'place_mean_out_deg'
-PLACE_STD_OUT_DEG = 'place_std_out_deg'
+INV_TRAN_IN_DEG_MEAN = 'inv_transition_in_degree_mean'
+INV_TRAN_IN_DEG_STD = 'inv_transition_in_degree_std'
+INV_TRAN_OUT_DEG_MEAN = 'inv_transition_out_degree_mean'
+INV_TRAN_OUT_DEG_STD = 'inv_transition_out_degree_std'
+UNIQ_TRAN_IN_DEG_MEAN = 'uniq_transition_in_degree_mean'
+UNIQ_TRAN_IN_DEG_STD = 'uniq_transition_in_degree_std'
+UNIQ_TRAN_OUT_DEG_MEAN = 'uniq_transition_out_degree_mean'
+UNIQ_TRAN_OUT_DEG_STD = 'uniq_transition_out_degree_std'
+DUP_TRAN_IN_DEG_MEAN = 'dup_transition_in_degree_mean'
+DUP_TRAN_IN_DEG_STD = 'dup_transition_in_degree_std'
+DUP_TRAN_OUT_DEG_MEAN = 'dup_transition_out_degree_mean'
+DUP_TRAN_OUT_DEG_STD = 'dup_transition_out_degree_std'
+PLACE_IN_DEG_MEAN = 'place_in_deg_mean'
+PLACE_IN_DEG_STD = 'place_in_deg_std'
+PLACE_OUT_DEG_MEAN = 'place_out_deg_mean'
+PLACE_OUT_DEG_STD = 'place_out_deg_std'
 N_PLACE = 'n_place'
 N_ARC = 'n_arc'
 N_AND_SPLIT = 'n_and_split'
@@ -38,8 +38,12 @@ N_BICONNECTED_COMPONENT = 'n_biconnected'
 
 # decomposition related
 N_SUBNET = 'n_subnet'                             # for monolithic it's just 1
-SUBNET_MEAN_N_TRAN = 'subnet_mean_n_transition'   # for monolithic just N_TRAN
-SUBNET_STD_N_TRAN = 'subnet_std_n_transition'     # for monolithic it's just 1
+SUBNET_N_TRAN_MEAN = 'subnet_n_transition_mean'   # for monolithic just N_TRAN
+SUBNET_N_TRAN_STD = 'subnet_n_transition_std'     # for monolithic it's just 1
+SUBNET_N_INV_TRAN_MEAN = 'subnet_n_inv_transition_mean'
+SUBNET_N_INV_TRAN_STD = 'subnet_n_inv_transition_std'
+SUBNET_N_DUP_TRAN_MEAN = 'subnet_n_dup_transition_mean'
+SUBNET_N_DUP_TRAN_STD = 'subnet_n_dup_transition_std'
 
 
 def extract_features(pn):
@@ -166,22 +170,22 @@ def get_inv_tran_out_deg_list(pn):
     return out_deg_list
 
 
-def get_inv_tran_mean_in_deg(pn):
+def get_inv_tran_in_deg_mean(pn):
     in_deg_list = get_inv_tran_in_deg_list(pn)
     return np.mean(in_deg_list) if in_deg_list else 0.
 
 
-def get_inv_tran_std_in_deg(pn):
+def get_inv_tran_in_deg_std(pn):
     in_deg_list = get_inv_tran_in_deg_list(pn)
     return np.std(in_deg_list) if in_deg_list else 0.
 
 
-def get_inv_tran_mean_out_deg(pn):
+def get_inv_tran_out_deg_mean(pn):
     out_deg_list = get_inv_tran_out_deg_list(pn)
     return np.mean(out_deg_list) if out_deg_list else 0.
 
 
-def get_inv_tran_std_out_deg(pn):
+def get_inv_tran_out_deg_std(pn):
     out_deg_list = get_inv_tran_out_deg_list(pn)
     return np.std(out_deg_list) if out_deg_list else 0.
 
@@ -206,22 +210,22 @@ def get_uniq_tran_out_deg_list(pn):
     return out_deg_list
 
 
-def get_uniq_tran_mean_in_deg(pn):
+def get_uniq_tran_in_deg_mean(pn):
     in_deg_list = get_uniq_tran_in_deg_list(pn)
     return np.mean(in_deg_list) if in_deg_list else 0.
 
 
-def get_uniq_tran_std_in_deg(pn):
+def get_uniq_tran_in_deg_std(pn):
     in_deg_list = get_uniq_tran_in_deg_list(pn)
     return np.std(in_deg_list) if in_deg_list else 0.
 
 
-def get_uniq_tran_mean_out_deg(pn):
+def get_uniq_tran_out_deg_mean(pn):
     out_deg_list = get_uniq_tran_out_deg_list(pn)
     return np.mean(out_deg_list) if out_deg_list else 0.
 
 
-def get_uniq_tran_std_out_deg(pn):
+def get_uniq_tran_out_deg_std(pn):
     out_deg_list = get_uniq_tran_out_deg_list(pn)
     return np.std(out_deg_list) if out_deg_list else 0.
 
@@ -246,22 +250,22 @@ def get_dup_tran_out_deg_list(pn):
     return out_deg_list
 
 
-def get_dup_tran_mean_in_deg(pn):
+def get_dup_tran_in_deg_mean(pn):
     in_deg_list = get_dup_tran_in_deg_list(pn)
     return np.mean(in_deg_list) if in_deg_list else 0.
 
 
-def get_dup_tran_std_in_deg(pn):
+def get_dup_tran_in_deg_std(pn):
     in_deg_list = get_dup_tran_in_deg_list(pn)
     return np.std(in_deg_list) if in_deg_list else 0.
 
 
-def get_dup_tran_mean_out_deg(pn):
+def get_dup_tran_out_deg_mean(pn):
     out_deg_list = get_dup_tran_out_deg_list(pn)
     return np.mean(out_deg_list) if out_deg_list else 0.
 
 
-def get_dup_tran_std_out_deg(pn):
+def get_dup_tran_out_deg_std(pn):
     out_deg_list = get_dup_tran_out_deg_list(pn)
     return np.std(out_deg_list) if out_deg_list else 0.
 
@@ -284,22 +288,22 @@ def get_place_out_deg_list(pn):
     return out_deg_list
 
 
-def get_place_mean_in_deg(pn):
+def get_place_in_deg_mean(pn):
     in_deg_list = get_place_in_deg_list(pn)
     return np.mean(in_deg_list) if in_deg_list else 0.
 
 
-def get_place_std_in_deg(pn):
+def get_place_in_deg_std(pn):
     in_deg_list = get_place_in_deg_list(pn)
     return np.std(in_deg_list) if in_deg_list else 0.
 
 
-def get_place_mean_out_deg(pn):
+def get_place_out_deg_mean(pn):
     out_deg_list = get_place_out_deg_list(pn)
     return np.mean(out_deg_list) if out_deg_list else 0.
 
 
-def get_place_std_out_deg(pn):
+def get_place_out_deg_std(pn):
     out_deg_list = get_place_out_deg_list(pn)
     return np.std(out_deg_list) if out_deg_list else 0.
 
