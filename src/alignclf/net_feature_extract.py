@@ -52,13 +52,57 @@ SUBNET_N_ARC_MEAN = 'subnet_n_arc_mean'
 SUBNET_N_ARC_STD = 'subnet_n_arc_std'
 
 
-def extract_features(pn):
+def extract_features(pn, decomposition=None):
     """Extract required features given a petri net
 
-    :param pn:
-    :return:
+    :param pn: petrinet
+    :param decomposition: decomposition of pn
+    :return: dictionary of extracted features
     """
-    pass
+    features = {
+        N_TRAN: get_n_tran(pn),
+        N_PLACE: get_n_place(pn),
+        N_ARC: get_n_arc(pn),
+        N_INV_TRAN: get_n_inv_tran(pn),
+        N_DUP_TRAN: get_n_dup_tran(pn),
+        N_UNIQ_TRAN: get_n_uniq_tran(pn),
+        N_AND_SPLIT: get_n_and_split(pn),
+        N_XOR_SPLIT: get_n_xor_split(pn),
+        N_BICONNECTED_COMPONENT: get_n_biconnected_component(pn),
+        INV_TRAN_IN_DEG_MEAN: get_inv_tran_in_deg_mean(pn),
+        INV_TRAN_IN_DEG_STD: get_inv_tran_in_deg_std(pn),
+        INV_TRAN_OUT_DEG_MEAN: get_inv_tran_out_deg_mean(pn),
+        INV_TRAN_OUT_DEG_STD: get_inv_tran_out_deg_std(pn),
+        UNIQ_TRAN_IN_DEG_MEAN: get_uniq_tran_in_deg_mean(pn),
+        UNIQ_TRAN_IN_DEG_STD: get_uniq_tran_in_deg_std(pn),
+        UNIQ_TRAN_OUT_DEG_MEAN: get_uniq_tran_out_deg_mean(pn),
+        UNIQ_TRAN_OUT_DEG_STD: get_uniq_tran_out_deg_std(pn),
+        DUP_TRAN_IN_DEG_MEAN: get_dup_tran_in_deg_mean(pn),
+        DUP_TRAN_IN_DEG_STD: get_dup_tran_in_deg_std(pn),
+        DUP_TRAN_OUT_DEG_MEAN: get_dup_tran_out_deg_mean(pn),
+        DUP_TRAN_OUT_DEG_STD: get_dup_tran_out_deg_std(pn),
+        PLACE_IN_DEG_MEAN: get_place_in_deg_mean(pn),
+        PLACE_IN_DEG_STD: get_place_in_deg_std(pn),
+        PLACE_OUT_DEG_MEAN: get_place_out_deg_mean(pn),
+        PLACE_OUT_DEG_STD: get_place_out_deg_std(pn),
+
+        # decomposition
+        N_SUBNET: get_n_subnet(decomposition) if decomposition else 1,
+        SUBNET_N_TRAN_MEAN: get_subnet_n_tran_mean(decomposition) if decomposition else get_n_tran(pn),
+        SUBNET_N_TRAN_STD: get_subnet_n_arc_std(decomposition) if decomposition else 0.,
+        SUBNET_N_INV_TRAN_MEAN: get_subnet_n_inv_tran_mean(decomposition) if decomposition else get_n_inv_tran(pn),
+        SUBNET_N_INV_TRAN_STD: get_subnet_n_inv_tran_std(decomposition) if decomposition else 0.,
+        SUBNET_N_DUP_TRAN_MEAN: get_subnet_n_dup_tran_mean(decomposition) if decomposition else get_n_dup_tran(pn),
+        SUBNET_N_DUP_TRAN_STD: get_subnet_n_dup_tran_std(decomposition) if decomposition else 0.,
+        SUBNET_N_UNIQ_TRAN_MEAN: get_subnet_n_uniq_tran_mean(decomposition) if decomposition else get_n_uniq_tran(pn),
+        SUBNET_N_UNIQ_TRAN_STD: get_subnet_n_uniq_tran_std(decomposition) if decomposition else 0.,
+        SUBNET_N_PLACE_MEAN: get_subnet_n_place_mean(decomposition) if decomposition else get_n_place(pn),
+        SUBNET_N_PLACE_STD: get_subnet_n_place_std(decomposition) if decomposition else 0.,
+        SUBNET_N_ARC_MEAN: get_subnet_n_arc_mean(decomposition) if decomposition else get_n_arc(pn),
+        SUBNET_N_ARC_STD: get_subnet_n_arc_std(decomposition) if decomposition else 0.
+    }
+
+    return features
 
 
 def get_n_tran(pn):
