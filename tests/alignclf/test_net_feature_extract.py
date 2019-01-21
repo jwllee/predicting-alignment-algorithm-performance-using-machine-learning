@@ -4,6 +4,7 @@
 import podspy
 from podspy.petrinet import *
 import pytest
+import numpy as np
 
 
 from alignclf import net_feature_extract
@@ -45,7 +46,7 @@ class TestExtractNetFeature:
     @pytest.fixture(
         scope='function'
     )
-    def sese_subnets_3(self):
+    def sese_subnet_3(self):
         subnet0 = PetrinetFactory.new_accepting_petrinet(PetrinetFactory.new_petrinet('subnet0'))
         subnet1 = PetrinetFactory.new_accepting_petrinet(PetrinetFactory.new_petrinet('subnet1'))
         subnet2 = PetrinetFactory.new_accepting_petrinet(PetrinetFactory.new_petrinet('subnet2'))
@@ -73,6 +74,86 @@ class TestExtractNetFeature:
 
         return [subnet0, subnet1, subnet2]
 
+    @pytest.fixture(
+        scope='function'
+    )
+    def sese_subnet_2_3inv(self):
+        subnet0 = PetrinetFactory.new_accepting_petrinet(PetrinetFactory.new_petrinet('subnet0'))
+        subnet1 = PetrinetFactory.new_accepting_petrinet(PetrinetFactory.new_petrinet('subnet1'))
+
+        t_a = subnet0.net.add_transition('a')
+        t_b = subnet0.net.add_transition('b')
+        t_c = subnet0.net.add_transition('c')
+        t_d = subnet0.net.add_transition('d')
+        inv = subnet0.net.add_transition('inv', is_invisible=True)
+        p0 = subnet0.net.add_place('p0')
+        p1 = subnet0.net.add_place('p1')
+        p2 = subnet0.net.add_place('p2')
+        subnet0.net.add_arc(p0, t_a)
+        subnet0.net.add_arc(p0, t_b)
+        subnet0.net.add_arc(p1, inv)
+        subnet0.net.add_arc(p2, t_c)
+        subnet0.net.add_arc(p2, t_d)
+        subnet0.net.add_arc(t_a, p1)
+        subnet0.net.add_arc(t_b, p1)
+        subnet0.net.add_arc(inv, p2)
+
+        t_c = subnet1.net.add_transition('c')
+        t_d = subnet1.net.add_transition('d')
+        inv = subnet1.net.add_transition('inv', is_invisible=True)
+        inv1 = subnet1.net.add_transition('inv1', is_invisible=True)
+        p3 = subnet1.net.add_place('p3')
+        p4 = subnet1.net.add_place('p4')
+        p5 = subnet1.net.add_place('p5')
+        subnet1.net.add_arc(t_c, p3)
+        subnet1.net.add_arc(t_d, p3)
+        subnet1.net.add_arc(inv, p4)
+        subnet1.net.add_arc(inv1, p5)
+        subnet1.net.add_arc(p3, inv)
+        subnet1.net.add_arc(p4, inv1)
+
+        return [subnet0, subnet1]
+
+    @pytest.fixture(
+        scope='function'
+    )
+    def sese_subnet_2_2dup(self):
+        subnet0 = PetrinetFactory.new_accepting_petrinet(PetrinetFactory.new_petrinet('subnet0'))
+        subnet1 = PetrinetFactory.new_accepting_petrinet(PetrinetFactory.new_petrinet('subnet1'))
+
+        t_a = subnet0.net.add_transition('a')
+        t_b = subnet0.net.add_transition('b')
+        t_c0 = subnet0.net.add_transition('c')
+        t_c1 = subnet0.net.add_transition('c')
+        inv = subnet0.net.add_transition('inv', is_invisible=True)
+        t_d = subnet0.net.add_transition('d')
+        p0 = subnet0.net.add_place('p0')
+        p1 = subnet0.net.add_place('p1')
+        p2 = subnet0.net.add_place('p2')
+        p3 = subnet0.net.add_place('p3')
+        p4 = subnet0.net.add_place('p4')
+        subnet0.net.add_arc(p0, t_a)
+        subnet0.net.add_arc(p1, t_b)
+        subnet0.net.add_arc(p1, inv)
+        subnet0.net.add_arc(p2, t_c0)
+        subnet0.net.add_arc(p3, t_c1)
+        subnet0.net.add_arc(p4, t_d)
+        subnet0.net.add_arc(t_a, p1)
+        subnet0.net.add_arc(t_b, p2)
+        subnet0.net.add_arc(inv, p3)
+        subnet0.net.add_arc(t_c0, p4)
+        subnet0.net.add_arc(t_c1, p4)
+
+        t_d = subnet1.net.add_transition('d')
+        inv = subnet1.net.add_transition('inv', is_invisible=True)
+        p5 = subnet1.net.add_place('p5')
+        p6 = subnet1.net.add_place('p6')
+        subnet1.net.add_arc(t_d, p5)
+        subnet1.net.add_arc(inv, p6)
+        subnet1.net.add_arc(p5, inv)
+
+        return [subnet0, subnet1]
+
     def test_get_n_tran(self, net_t4_p3_a8):
         expected = len(net_t4_p3_a8.transitions)
         assert net_feature_extract.get_n_tran(net_t4_p3_a8) == expected
@@ -96,7 +177,7 @@ class TestExtractNetFeature:
         net.add_transition('a')
         net.add_transition('a')
         net.add_transition('b')
-        expected = 1
+        expected = 2
         assert net_feature_extract.get_n_dup_tran(net) == expected
 
     def test_get_n_uniq_tran_should_not_include_invisible(self):
@@ -117,6 +198,10 @@ class TestExtractNetFeature:
     def test_get_n_place(self, net_t4_p3_a8):
         expected = 3
         assert net_feature_extract.get_n_place(net_t4_p3_a8) == expected
+
+    def test_get_n_arc(self, net_t4_p3_a8):
+        expected = 8.
+        assert net_feature_extract.get_n_arc(net_t4_p3_a8) == expected
 
     def test_get_n_xor_split_zero_case(self):
         net = PetrinetFactory.new_petrinet('net0')
@@ -224,6 +309,94 @@ class TestExtractNetFeature:
     def test_get_place_out_deg_std_zero_case(self, empty_net):
         expected = 0.
         assert net_feature_extract.get_place_out_deg_std(empty_net) == expected
+
+    def test_get_n_subnet(self, sese_subnet_3):
+        expected = 3
+        assert net_feature_extract.get_n_subnet(sese_subnet_3) == expected
+
+    def test_get_subnet_n_tran_mean(self, sese_subnet_3):
+        expected = (1 + 2 + 3) / 3.
+        assert net_feature_extract.get_subnet_n_tran_mean(sese_subnet_3) == expected
+
+    def test_get_subnet_n_tran_std(self, sese_subnet_3):
+        expected = np.std((1, 2, 3))
+        assert net_feature_extract.get_subnet_n_tran_std(sese_subnet_3) == expected
+
+    def test_get_subnet_n_inv_tran_mean(self, sese_subnet_2_3inv):
+        expected = np.mean((1, 2))
+        assert net_feature_extract.get_subnet_n_inv_tran_mean(sese_subnet_2_3inv) == expected
+
+    def test_get_subnet_n_inv_tran_std(self, sese_subnet_2_3inv):
+        expected = np.std((1, 2))
+        assert net_feature_extract.get_subnet_n_inv_tran_std(sese_subnet_2_3inv) == expected
+
+    def test_get_subnet_n_dup_tran_mean(self, sese_subnet_2_2dup):
+        expected = np.mean((1, 1))
+        assert net_feature_extract.get_subnet_n_inv_tran_mean(sese_subnet_2_2dup) == expected
+
+    def test_get_subnet_n_dup_tran_std(self, sese_subnet_2_2dup):
+        expected = np.std((2, 0))
+        assert net_feature_extract.get_subnet_n_dup_tran_std(sese_subnet_2_2dup) == expected
+
+    def test_get_subnet_n_uniq_tran_mean(self, sese_subnet_3, sese_subnet_2_3inv, sese_subnet_2_2dup):
+        expected = np.mean((1, 2, 3))
+        assert net_feature_extract.get_subnet_n_uniq_tran_mean(sese_subnet_3) == expected
+
+        expected = np.mean((4, 2))
+        assert net_feature_extract.get_subnet_n_uniq_tran_mean(sese_subnet_2_3inv) == expected
+
+        expected = np.mean((3, 1))
+        assert net_feature_extract.get_subnet_n_uniq_tran_mean(sese_subnet_2_2dup) == expected
+
+    def test_get_subnet_n_uniq_tran_std(self, sese_subnet_3, sese_subnet_2_3inv, sese_subnet_2_2dup):
+        expected = np.std((1, 2, 3))
+        assert net_feature_extract.get_subnet_n_uniq_tran_std(sese_subnet_3) == expected
+
+        expected = np.std((4, 2))
+        assert net_feature_extract.get_subnet_n_uniq_tran_std(sese_subnet_2_3inv) == expected
+
+        expected = np.std((3, 1))
+        assert net_feature_extract.get_subnet_n_uniq_tran_std(sese_subnet_2_2dup) == expected
+
+    def test_get_subnet_n_place_mean(self, sese_subnet_3, sese_subnet_2_3inv, sese_subnet_2_2dup):
+        expected = np.mean((1, 1, 2))
+        assert net_feature_extract.get_subnet_n_place_mean(sese_subnet_3) == expected
+
+        expected = np.mean((3, 3))
+        assert net_feature_extract.get_subnet_n_place_mean(sese_subnet_2_3inv) == expected
+
+        expected = np.mean((5, 2))
+        assert net_feature_extract.get_subnet_n_place_mean(sese_subnet_2_2dup) == expected
+
+    def test_get_subnet_n_place_std(self, sese_subnet_3, sese_subnet_2_3inv, sese_subnet_2_2dup):
+        expected = np.std((1, 1, 2))
+        assert net_feature_extract.get_subnet_n_place_std(sese_subnet_3) == expected
+
+        expected = np.std((3, 3))
+        assert net_feature_extract.get_subnet_n_place_std(sese_subnet_2_3inv) == expected
+
+        expected = np.std((5, 2))
+        assert net_feature_extract.get_subnet_n_place_std(sese_subnet_2_2dup) == expected
+
+    def test_get_subnet_n_arc_mean(self, sese_subnet_3, sese_subnet_2_3inv, sese_subnet_2_2dup):
+        expected = np.mean((1, 2, 5))
+        assert net_feature_extract.get_subnet_n_arc_mean(sese_subnet_3) == expected
+
+        expected = np.mean((8, 6))
+        assert net_feature_extract.get_subnet_n_arc_mean(sese_subnet_2_3inv) == expected
+
+        expected = np.mean((11, 3))
+        assert net_feature_extract.get_subnet_n_arc_mean(sese_subnet_2_2dup) == expected
+
+    def test_get_subnet_n_arc_std(self, sese_subnet_3, sese_subnet_2_3inv, sese_subnet_2_2dup):
+        expected = np.std((1, 2, 5))
+        assert net_feature_extract.get_subnet_n_arc_std(sese_subnet_3) == expected
+
+        expected = np.std((8, 6))
+        assert net_feature_extract.get_subnet_n_arc_std(sese_subnet_2_3inv) == expected
+
+        expected = np.std((11, 3))
+        assert net_feature_extract.get_subnet_n_arc_std(sese_subnet_2_2dup) == expected
 
     def test_get_n_biconnected_component_without_bridge(self):
         # make net
