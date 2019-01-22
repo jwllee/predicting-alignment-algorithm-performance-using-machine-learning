@@ -26,6 +26,21 @@ def extract_features(trace):
     return features
 
 
+def extract_features_from_logtable(logtable):
+    assert isinstance(logtable, podspy.log.LogTable)
+
+    def trace_to_feature_series(trace):
+        feature_dict = extract_features(trace[podspy.log.ACTIVITY])
+        feature_ss = pd.Series(feature_dict)
+        return feature_ss
+
+    feature_df = logtable.event_df.groupby(podspy.log.CASEID).apply(trace_to_feature_series)
+    feature_df = feature_df.reset_index(drop=False)
+    col_order = [podspy.log.CASEID, TRACE_LENGTH, N_ACT, ACT_REPEAT_MEAN, ACT_REPEAT_STD]
+    feature_df = feature_df[col_order]
+    return feature_df
+
+
 def get_trace_length(trace):
     return len(trace)
 
