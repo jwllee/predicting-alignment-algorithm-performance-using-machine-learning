@@ -227,7 +227,7 @@ def get_inv_tran_in_deg_mean(pn):
 
 def get_inv_tran_in_deg_std(pn):
     in_deg_list = get_inv_tran_in_deg_list(pn)
-    return np.std(in_deg_list) if in_deg_list else 0.
+    return np.std(in_deg_list, ddof=1) if in_deg_list else 0.
 
 
 def get_inv_tran_out_deg_mean(pn):
@@ -237,7 +237,7 @@ def get_inv_tran_out_deg_mean(pn):
 
 def get_inv_tran_out_deg_std(pn):
     out_deg_list = get_inv_tran_out_deg_list(pn)
-    return np.std(out_deg_list) if out_deg_list else 0.
+    return np.std(out_deg_list, ddof=1) if out_deg_list else 0.
 
 
 def get_uniq_tran_in_deg_list(pn):
@@ -267,7 +267,7 @@ def get_uniq_tran_in_deg_mean(pn):
 
 def get_uniq_tran_in_deg_std(pn):
     in_deg_list = get_uniq_tran_in_deg_list(pn)
-    return np.std(in_deg_list) if in_deg_list else 0.
+    return np.std(in_deg_list, ddof=1) if in_deg_list else 0.
 
 
 def get_uniq_tran_out_deg_mean(pn):
@@ -277,7 +277,7 @@ def get_uniq_tran_out_deg_mean(pn):
 
 def get_uniq_tran_out_deg_std(pn):
     out_deg_list = get_uniq_tran_out_deg_list(pn)
-    return np.std(out_deg_list) if out_deg_list else 0.
+    return np.std(out_deg_list, ddof=1) if out_deg_list else 0.
 
 
 def get_dup_tran_in_deg_list(pn):
@@ -307,7 +307,7 @@ def get_dup_tran_in_deg_mean(pn):
 
 def get_dup_tran_in_deg_std(pn):
     in_deg_list = get_dup_tran_in_deg_list(pn)
-    return np.std(in_deg_list) if in_deg_list else 0.
+    return np.std(in_deg_list, ddof=1) if in_deg_list else 0.
 
 
 def get_dup_tran_out_deg_mean(pn):
@@ -317,7 +317,7 @@ def get_dup_tran_out_deg_mean(pn):
 
 def get_dup_tran_out_deg_std(pn):
     out_deg_list = get_dup_tran_out_deg_list(pn)
-    return np.std(out_deg_list) if out_deg_list else 0.
+    return np.std(out_deg_list, ddof=1) if out_deg_list else 0.
 
 
 def get_place_in_deg_list(pn):
@@ -345,7 +345,7 @@ def get_place_in_deg_mean(pn):
 
 def get_place_in_deg_std(pn):
     in_deg_list = get_place_in_deg_list(pn)
-    return np.std(in_deg_list) if in_deg_list else 0.
+    return np.std(in_deg_list, ddof=1) if in_deg_list else 0.
 
 
 def get_place_out_deg_mean(pn):
@@ -355,7 +355,7 @@ def get_place_out_deg_mean(pn):
 
 def get_place_out_deg_std(pn):
     out_deg_list = get_place_out_deg_list(pn)
-    return np.std(out_deg_list) if out_deg_list else 0.
+    return np.std(out_deg_list, ddof=1) if out_deg_list else 0.
 
 
 def pn_to_undirected(pn):
@@ -459,7 +459,7 @@ def get_subnet_n_tran_std(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist.'
     netlist = map(lambda apn: apn.net, netlist)
     n_trans = [get_n_tran(pn) for pn in netlist]
-    return np.std(n_trans)
+    return np.std(n_trans, ddof=1)
 
 
 def get_subnet_n_inv_tran_mean(netlist):
@@ -473,7 +473,7 @@ def get_subnet_n_inv_tran_std(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist.'
     netlist = map(lambda apn: apn.net, netlist)
     n_invis = [get_n_inv_tran(pn) for pn in netlist]
-    return np.std(n_invis)
+    return np.std(n_invis, ddof=1)
 
 
 def get_subnet_n_dup_tran_mean(netlist):
@@ -487,7 +487,7 @@ def get_subnet_n_dup_tran_std(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
     netlist = map(lambda apn: apn.net, netlist)
     n_dups = [get_n_dup_tran(pn) for pn in netlist]
-    return np.std(n_dups)
+    return np.std(n_dups, ddof=1)
 
 
 def get_subnet_n_uniq_tran_mean(netlist):
@@ -501,7 +501,7 @@ def get_subnet_n_uniq_tran_std(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
     netlist = map(lambda apn: apn.net, netlist)
     n_uniqs = [get_n_uniq_tran(pn) for pn in netlist]
-    return np.std(n_uniqs)
+    return np.std(n_uniqs, ddof=1)
 
 
 def get_subnet_n_place_mean(netlist):
@@ -515,7 +515,7 @@ def get_subnet_n_place_std(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
     netlist = map(lambda apn: apn.net, netlist)
     n_places = [get_n_place(pn) for pn in netlist]
-    return np.std(n_places)
+    return np.std(n_places, ddof=1)
 
 
 def get_subnet_n_arc_mean(netlist):
@@ -529,6 +529,6 @@ def get_subnet_n_arc_std(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
     netlist = map(lambda apn: apn.net, netlist)
     n_arcs = [get_n_arc(pn) for pn in netlist]
-    return np.std(n_arcs)
+    return np.std(n_arcs, ddof=1)
 
 

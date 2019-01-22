@@ -319,7 +319,7 @@ class TestExtractNetFeature:
         assert net_feature_extract.get_subnet_n_tran_mean(sese_subnet_3) == expected
 
     def test_get_subnet_n_tran_std(self, sese_subnet_3):
-        expected = np.std((1, 2, 3))
+        expected = np.std((1, 2, 3), ddof=1)
         assert net_feature_extract.get_subnet_n_tran_std(sese_subnet_3) == expected
 
     def test_get_subnet_n_inv_tran_mean(self, sese_subnet_2_3inv):
@@ -327,7 +327,7 @@ class TestExtractNetFeature:
         assert net_feature_extract.get_subnet_n_inv_tran_mean(sese_subnet_2_3inv) == expected
 
     def test_get_subnet_n_inv_tran_std(self, sese_subnet_2_3inv):
-        expected = np.std((1, 2))
+        expected = np.std((1, 2), ddof=1)
         assert net_feature_extract.get_subnet_n_inv_tran_std(sese_subnet_2_3inv) == expected
 
     def test_get_subnet_n_dup_tran_mean(self, sese_subnet_2_2dup):
@@ -335,7 +335,7 @@ class TestExtractNetFeature:
         assert net_feature_extract.get_subnet_n_inv_tran_mean(sese_subnet_2_2dup) == expected
 
     def test_get_subnet_n_dup_tran_std(self, sese_subnet_2_2dup):
-        expected = np.std((2, 0))
+        expected = np.std((2, 0), ddof=1)
         assert net_feature_extract.get_subnet_n_dup_tran_std(sese_subnet_2_2dup) == expected
 
     def test_get_subnet_n_uniq_tran_mean(self, sese_subnet_3, sese_subnet_2_3inv, sese_subnet_2_2dup):
@@ -349,13 +349,13 @@ class TestExtractNetFeature:
         assert net_feature_extract.get_subnet_n_uniq_tran_mean(sese_subnet_2_2dup) == expected
 
     def test_get_subnet_n_uniq_tran_std(self, sese_subnet_3, sese_subnet_2_3inv, sese_subnet_2_2dup):
-        expected = np.std((1, 2, 3))
+        expected = np.std((1, 2, 3), ddof=1)
         assert net_feature_extract.get_subnet_n_uniq_tran_std(sese_subnet_3) == expected
 
-        expected = np.std((4, 2))
+        expected = np.std((4, 2), ddof=1)
         assert net_feature_extract.get_subnet_n_uniq_tran_std(sese_subnet_2_3inv) == expected
 
-        expected = np.std((3, 1))
+        expected = np.std((3, 1), ddof=1)
         assert net_feature_extract.get_subnet_n_uniq_tran_std(sese_subnet_2_2dup) == expected
 
     def test_get_subnet_n_place_mean(self, sese_subnet_3, sese_subnet_2_3inv, sese_subnet_2_2dup):
@@ -369,13 +369,13 @@ class TestExtractNetFeature:
         assert net_feature_extract.get_subnet_n_place_mean(sese_subnet_2_2dup) == expected
 
     def test_get_subnet_n_place_std(self, sese_subnet_3, sese_subnet_2_3inv, sese_subnet_2_2dup):
-        expected = np.std((1, 1, 2))
+        expected = np.std((1, 1, 2), ddof=1)
         assert net_feature_extract.get_subnet_n_place_std(sese_subnet_3) == expected
 
-        expected = np.std((3, 3))
+        expected = np.std((3, 3), ddof=1)
         assert net_feature_extract.get_subnet_n_place_std(sese_subnet_2_3inv) == expected
 
-        expected = np.std((5, 2))
+        expected = np.std((5, 2), ddof=1)
         assert net_feature_extract.get_subnet_n_place_std(sese_subnet_2_2dup) == expected
 
     def test_get_subnet_n_arc_mean(self, sese_subnet_3, sese_subnet_2_3inv, sese_subnet_2_2dup):
@@ -389,13 +389,13 @@ class TestExtractNetFeature:
         assert net_feature_extract.get_subnet_n_arc_mean(sese_subnet_2_2dup) == expected
 
     def test_get_subnet_n_arc_std(self, sese_subnet_3, sese_subnet_2_3inv, sese_subnet_2_2dup):
-        expected = np.std((1, 2, 5))
+        expected = np.std((1, 2, 5), ddof=1)
         assert net_feature_extract.get_subnet_n_arc_std(sese_subnet_3) == expected
 
-        expected = np.std((8, 6))
+        expected = np.std((8, 6), ddof=1)
         assert net_feature_extract.get_subnet_n_arc_std(sese_subnet_2_3inv) == expected
 
-        expected = np.std((11, 3))
+        expected = np.std((11, 3), ddof=1)
         assert net_feature_extract.get_subnet_n_arc_std(sese_subnet_2_2dup) == expected
 
     def test_get_n_biconnected_component_without_bridge(self):
