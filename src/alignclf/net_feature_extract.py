@@ -58,33 +58,32 @@ def extract_features(pn):
     :param pn: petrinet
     :return: dictionary of extracted features
     """
-    features = {
-        N_TRAN: get_n_tran(pn),
-        N_PLACE: get_n_place(pn),
-        N_ARC: get_n_arc(pn),
-        N_INV_TRAN: get_n_inv_tran(pn),
-        N_DUP_TRAN: get_n_dup_tran(pn),
-        N_UNIQ_TRAN: get_n_uniq_tran(pn),
-        N_AND_SPLIT: get_n_and_split(pn),
-        N_XOR_SPLIT: get_n_xor_split(pn),
-        N_BICONNECTED_COMPONENT: get_n_biconnected_component(pn),
-        INV_TRAN_IN_DEG_MEAN: get_inv_tran_in_deg_mean(pn),
-        INV_TRAN_IN_DEG_STD: get_inv_tran_in_deg_std(pn),
-        INV_TRAN_OUT_DEG_MEAN: get_inv_tran_out_deg_mean(pn),
-        INV_TRAN_OUT_DEG_STD: get_inv_tran_out_deg_std(pn),
-        UNIQ_TRAN_IN_DEG_MEAN: get_uniq_tran_in_deg_mean(pn),
-        UNIQ_TRAN_IN_DEG_STD: get_uniq_tran_in_deg_std(pn),
-        UNIQ_TRAN_OUT_DEG_MEAN: get_uniq_tran_out_deg_mean(pn),
-        UNIQ_TRAN_OUT_DEG_STD: get_uniq_tran_out_deg_std(pn),
-        DUP_TRAN_IN_DEG_MEAN: get_dup_tran_in_deg_mean(pn),
-        DUP_TRAN_IN_DEG_STD: get_dup_tran_in_deg_std(pn),
-        DUP_TRAN_OUT_DEG_MEAN: get_dup_tran_out_deg_mean(pn),
-        DUP_TRAN_OUT_DEG_STD: get_dup_tran_out_deg_std(pn),
-        PLACE_IN_DEG_MEAN: get_place_in_deg_mean(pn),
-        PLACE_IN_DEG_STD: get_place_in_deg_std(pn),
-        PLACE_OUT_DEG_MEAN: get_place_out_deg_mean(pn),
-        PLACE_OUT_DEG_STD: get_place_out_deg_std(pn),
-    }
+    features = dict()
+    features[N_TRAN] = get_n_tran(pn)
+    features[N_PLACE] = get_n_place(pn)
+    features[N_ARC] = get_n_arc(pn),
+    features[N_INV_TRAN] = get_n_inv_tran(pn)
+    features[N_DUP_TRAN] = get_n_dup_tran(pn)
+    features[N_UNIQ_TRAN] = get_n_uniq_tran(pn)
+    features[N_AND_SPLIT] = get_n_and_split(pn)
+    features[N_XOR_SPLIT] = get_n_xor_split(pn)
+    features[N_BICONNECTED_COMPONENT] = get_n_biconnected_component(pn)
+    features[INV_TRAN_IN_DEG_MEAN] = get_inv_tran_in_deg_mean(pn)
+    features[INV_TRAN_IN_DEG_STD] = get_inv_tran_in_deg_std(pn)
+    features[INV_TRAN_OUT_DEG_MEAN] = get_inv_tran_out_deg_mean(pn)
+    features[INV_TRAN_OUT_DEG_STD] = get_inv_tran_out_deg_std(pn)
+    features[UNIQ_TRAN_IN_DEG_MEAN] = get_uniq_tran_in_deg_mean(pn)
+    features[UNIQ_TRAN_IN_DEG_STD] = get_uniq_tran_in_deg_std(pn)
+    features[UNIQ_TRAN_OUT_DEG_MEAN] = get_uniq_tran_out_deg_mean(pn)
+    features[UNIQ_TRAN_OUT_DEG_STD] = get_uniq_tran_out_deg_std(pn)
+    features[DUP_TRAN_IN_DEG_MEAN] = get_dup_tran_in_deg_mean(pn)
+    features[DUP_TRAN_IN_DEG_STD] = get_dup_tran_in_deg_std(pn)
+    features[DUP_TRAN_OUT_DEG_MEAN] = get_dup_tran_out_deg_mean(pn)
+    features[DUP_TRAN_OUT_DEG_STD] = get_dup_tran_out_deg_std(pn)
+    features[PLACE_IN_DEG_MEAN] = get_place_in_deg_mean(pn)
+    features[PLACE_IN_DEG_STD] = get_place_in_deg_std(pn)
+    features[PLACE_OUT_DEG_MEAN] = get_place_out_deg_mean(pn)
+    features[PLACE_OUT_DEG_STD] = get_place_out_deg_std(pn)
 
     return features
 
