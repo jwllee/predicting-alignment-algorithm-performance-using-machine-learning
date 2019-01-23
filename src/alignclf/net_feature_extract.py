@@ -89,22 +89,22 @@ def extract_features(pn):
     return features
 
 
-def extract_features_from_decomposition(pn, decomposition):
+def extract_features_from_decomposition(decomposition):
     features = dict()
 
-    features[N_SUBNET] = get_n_subnet(decomposition) if decomposition else 1
-    features[SUBNET_N_TRAN_MEAN] = get_subnet_n_tran_mean(decomposition) if decomposition else get_n_tran(pn)
-    features[SUBNET_N_TRAN_STD] = get_subnet_n_arc_std(decomposition) if decomposition else 0.
-    features[SUBNET_N_INV_TRAN_MEAN] = get_subnet_n_inv_tran_mean(decomposition) if decomposition else get_n_inv_tran(pn)
-    features[SUBNET_N_INV_TRAN_STD] = get_subnet_n_inv_tran_std(decomposition) if decomposition else 0.
-    features[SUBNET_N_DUP_TRAN_MEAN] = get_subnet_n_dup_tran_mean(decomposition) if decomposition else get_n_dup_tran(pn)
-    features[SUBNET_N_DUP_TRAN_STD] = get_subnet_n_dup_tran_std(decomposition) if decomposition else 0.
-    features[SUBNET_N_UNIQ_TRAN_MEAN] = get_subnet_n_uniq_tran_mean(decomposition) if decomposition else get_n_uniq_tran(pn)
-    features[SUBNET_N_UNIQ_TRAN_STD] = get_subnet_n_uniq_tran_std(decomposition) if decomposition else 0.
-    features[SUBNET_N_PLACE_MEAN] = get_subnet_n_place_mean(decomposition) if decomposition else get_n_place(pn)
-    features[SUBNET_N_PLACE_STD] = get_subnet_n_place_std(decomposition) if decomposition else 0.
-    features[SUBNET_N_ARC_MEAN] = get_subnet_n_arc_mean(decomposition) if decomposition else get_n_arc(pn)
-    features[SUBNET_N_ARC_STD] = get_subnet_n_arc_std(decomposition) if decomposition else 0.
+    features[N_SUBNET] = get_n_subnet(decomposition)
+    features[SUBNET_N_TRAN_MEAN] = get_subnet_n_tran_mean(decomposition)
+    features[SUBNET_N_TRAN_STD] = get_subnet_n_arc_std(decomposition)
+    features[SUBNET_N_INV_TRAN_MEAN] = get_subnet_n_inv_tran_mean(decomposition)
+    features[SUBNET_N_INV_TRAN_STD] = get_subnet_n_inv_tran_std(decomposition)
+    features[SUBNET_N_DUP_TRAN_MEAN] = get_subnet_n_dup_tran_mean(decomposition)
+    features[SUBNET_N_DUP_TRAN_STD] = get_subnet_n_dup_tran_std(decomposition)
+    features[SUBNET_N_UNIQ_TRAN_MEAN] = get_subnet_n_uniq_tran_mean(decomposition)
+    features[SUBNET_N_UNIQ_TRAN_STD] = get_subnet_n_uniq_tran_std(decomposition)
+    features[SUBNET_N_PLACE_MEAN] = get_subnet_n_place_mean(decomposition)
+    features[SUBNET_N_PLACE_STD] = get_subnet_n_place_std(decomposition)
+    features[SUBNET_N_ARC_MEAN] = get_subnet_n_arc_mean(decomposition)
+    features[SUBNET_N_ARC_STD] = get_subnet_n_arc_std(decomposition)
 
     return features
 
