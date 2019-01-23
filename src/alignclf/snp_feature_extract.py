@@ -36,7 +36,7 @@ def _apply_df(args):
     df, net, init, final, log_time = args
     n_caseids = df[logpkg.CASEID].unique().shape[0]
     start = time.time()
-    feature_df = df.groupby(logpkg.CASEID, as_index=False).apply(lambda df: trace_to_feature_series(df, net, init, final))
+    feature_df = df.groupby(logpkg.CASEID).apply(lambda df: trace_to_feature_series(df, net, init, final))
     end = time.time()
     if log_time:
         print('Extracting feature from {} caseids took: {:.2f}s'.format(n_caseids, end - start))
@@ -60,8 +60,10 @@ def extract_features_from_logtable(logtable, net, init, final, parallelize=False
         ) for i in range(n_proc)]
         result = pool.map(_apply_df, args)
         feature_df = pd.concat(result, axis=0)
+        feature_df = feature_df.reset_index()
     else:
-        feature_df = logtable.event_df.groupby(logpkg.CASEID, as_index=False).apply(lambda df: trace_to_feature_series(df, net, init, final))
+        feature_df = logtable.event_df.groupby(logpkg.CASEID).apply(lambda df: trace_to_feature_series(df, net, init, final))
+        feature_df = feature_df.reset_index()
 
     col_order = [
         logpkg.CASEID,
@@ -92,4 +94,8 @@ def extract_features_from_logtable(logtable, net, init, final, parallelize=False
         net_feature_extract.N_BICONNECTED_COMPONENT
     ]
     feature_df = feature_df[col_order]
+
+    # rename columns
+    renamed = {col: 'snp_{}'.format(col) for col in feature_df.columns if col != logpkg.CASEID}
+    feature_df.rename(columns=renamed, inplace=True)
     return feature_df

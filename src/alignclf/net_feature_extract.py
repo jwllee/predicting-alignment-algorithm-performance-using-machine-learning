@@ -63,29 +63,52 @@ def extract_features(pn):
     features = dict()
     features[N_TRAN] = get_n_tran(pn)
     features[N_PLACE] = get_n_place(pn)
-    features[N_ARC] = get_n_arc(pn),
-    features[N_INV_TRAN] = get_n_inv_tran(pn)
-    features[N_DUP_TRAN] = get_n_dup_tran(pn)
-    features[N_UNIQ_TRAN] = get_n_uniq_tran(pn)
+    features[N_ARC] = get_n_arc(pn)
+
+    inv_tran_list = get_inv_tran_list(pn)
+    dup_tran_list = get_dup_tran_list(pn)
+    uniq_tran_list = get_uniq_tran_list(pn)
+    inv_tran_in_deg_list = get_inv_tran_in_deg_list(pn, inv_tran_list)
+    inv_tran_out_deg_list = get_inv_tran_out_deg_list(pn, inv_tran_list)
+    dup_tran_in_deg_list = get_dup_tran_in_deg_list(pn, dup_tran_list)
+    dup_tran_out_deg_list = get_dup_tran_out_deg_list(pn, dup_tran_list)
+    uniq_tran_in_deg_list = get_uniq_tran_in_deg_list(pn, uniq_tran_list)
+    uniq_tran_out_deg_list = get_uniq_tran_out_deg_list(pn, uniq_tran_list)
+    place_in_deg_list = get_place_in_deg_list(pn)
+    place_out_deg_list = get_place_out_deg_list(pn)
+
+    # inv_tran_list = None
+    # dup_tran_list = None
+    # uniq_tran_list = None
+    # inv_tran_in_deg_list = None
+    # inv_tran_out_deg_list = None
+    # dup_tran_in_deg_list = None
+    # dup_tran_out_deg_list = None
+    # uniq_tran_in_deg_list = None
+    # uniq_tran_out_deg_list = None
+
+    features[N_INV_TRAN] = get_n_inv_tran(pn, inv_tran_list)
+    features[N_DUP_TRAN] = get_n_dup_tran(pn, dup_tran_list)
+    features[N_UNIQ_TRAN] = get_n_uniq_tran(pn, uniq_tran_list)
     features[N_AND_SPLIT] = get_n_and_split(pn)
     features[N_XOR_SPLIT] = get_n_xor_split(pn)
     features[N_BICONNECTED_COMPONENT] = get_n_biconnected_component(pn)
-    features[INV_TRAN_IN_DEG_MEAN] = get_inv_tran_in_deg_mean(pn)
-    features[INV_TRAN_IN_DEG_STD] = get_inv_tran_in_deg_std(pn)
-    features[INV_TRAN_OUT_DEG_MEAN] = get_inv_tran_out_deg_mean(pn)
-    features[INV_TRAN_OUT_DEG_STD] = get_inv_tran_out_deg_std(pn)
-    features[UNIQ_TRAN_IN_DEG_MEAN] = get_uniq_tran_in_deg_mean(pn)
-    features[UNIQ_TRAN_IN_DEG_STD] = get_uniq_tran_in_deg_std(pn)
-    features[UNIQ_TRAN_OUT_DEG_MEAN] = get_uniq_tran_out_deg_mean(pn)
-    features[UNIQ_TRAN_OUT_DEG_STD] = get_uniq_tran_out_deg_std(pn)
-    features[DUP_TRAN_IN_DEG_MEAN] = get_dup_tran_in_deg_mean(pn)
-    features[DUP_TRAN_IN_DEG_STD] = get_dup_tran_in_deg_std(pn)
-    features[DUP_TRAN_OUT_DEG_MEAN] = get_dup_tran_out_deg_mean(pn)
-    features[DUP_TRAN_OUT_DEG_STD] = get_dup_tran_out_deg_std(pn)
-    features[PLACE_IN_DEG_MEAN] = get_place_in_deg_mean(pn)
-    features[PLACE_IN_DEG_STD] = get_place_in_deg_std(pn)
-    features[PLACE_OUT_DEG_MEAN] = get_place_out_deg_mean(pn)
-    features[PLACE_OUT_DEG_STD] = get_place_out_deg_std(pn)
+    features[INV_TRAN_IN_DEG_MEAN] = get_inv_tran_in_deg_mean(pn, inv_tran_in_deg_list)
+    features[INV_TRAN_IN_DEG_STD] = get_inv_tran_in_deg_std(pn, inv_tran_in_deg_list)
+    features[INV_TRAN_OUT_DEG_MEAN] = get_inv_tran_out_deg_mean(pn, inv_tran_out_deg_list)
+    features[INV_TRAN_OUT_DEG_STD] = get_inv_tran_out_deg_std(pn, inv_tran_out_deg_list)
+    features[UNIQ_TRAN_IN_DEG_MEAN] = get_uniq_tran_in_deg_mean(pn, uniq_tran_in_deg_list)
+    features[UNIQ_TRAN_IN_DEG_STD] = get_uniq_tran_in_deg_std(pn, uniq_tran_in_deg_list)
+    features[UNIQ_TRAN_OUT_DEG_MEAN] = get_uniq_tran_out_deg_mean(pn, uniq_tran_out_deg_list)
+    features[UNIQ_TRAN_OUT_DEG_STD] = get_uniq_tran_out_deg_std(pn, uniq_tran_out_deg_list)
+    features[DUP_TRAN_IN_DEG_MEAN] = get_dup_tran_in_deg_mean(pn, dup_tran_in_deg_list)
+    features[DUP_TRAN_IN_DEG_STD] = get_dup_tran_in_deg_std(pn, dup_tran_in_deg_list)
+    features[DUP_TRAN_OUT_DEG_MEAN] = get_dup_tran_out_deg_mean(pn, dup_tran_out_deg_list)
+    features[DUP_TRAN_OUT_DEG_STD] = get_dup_tran_out_deg_std(pn, dup_tran_out_deg_list)
+    features[PLACE_IN_DEG_MEAN] = get_place_in_deg_mean(pn, place_in_deg_list)
+    features[PLACE_IN_DEG_STD] = get_place_in_deg_std(pn, place_in_deg_list)
+    features[PLACE_OUT_DEG_MEAN] = get_place_out_deg_mean(pn, place_out_deg_list)
+    features[PLACE_OUT_DEG_STD] = get_place_out_deg_std(pn, place_out_deg_list)
 
     return features
 
@@ -156,21 +179,24 @@ def get_inv_tran_list(pn):
 
 
 @utils.timeit(on=False, verbose=False)
-def get_n_inv_tran(pn):
+def get_n_inv_tran(pn, inv_tran_list=None):
     assert isinstance(pn, podspy.petrinet.Petrinet)
-    return len(get_inv_tran_list(pn))
+    inv_tran_list = inv_tran_list if inv_tran_list else get_inv_tran_list(pn)
+    return len(inv_tran_list)
 
 
 @utils.timeit(on=False, verbose=False)
-def get_n_dup_tran(pn):
+def get_n_dup_tran(pn, dup_tran_list=None):
     assert isinstance(pn, podspy.petrinet.Petrinet)
-    return len(get_dup_tran_list(pn))
+    dup_tran_list = dup_tran_list if dup_tran_list else get_dup_tran_list(pn)
+    return len(dup_tran_list)
 
 
 @utils.timeit(on=False, verbose=False)
-def get_n_uniq_tran(pn):
+def get_n_uniq_tran(pn, uniq_tran_list=None):
     assert isinstance(pn, podspy.petrinet.Petrinet)
-    return len(get_uniq_tran_list(pn))
+    uniq_tran_list = uniq_tran_list if uniq_tran_list else get_uniq_tran_list(pn)
+    return len(uniq_tran_list)
 
 
 @utils.timeit(on=False, verbose=False)
@@ -218,140 +244,140 @@ def get_n_xor_split(pn):
 
 
 @utils.timeit(on=False, verbose=False)
-def get_inv_tran_in_deg_list(pn):
+def get_inv_tran_in_deg_list(pn, inv_tran_list=None):
     assert isinstance(pn, podspy.petrinet.Petrinet)
-    inv_tran = get_inv_tran_list(pn)
+    inv_tran_list = inv_tran_list if inv_tran_list else get_inv_tran_list(pn)
     in_deg_list = []
-    for t in inv_tran:
+    for t in inv_tran_list:
         t_edges = pn.get_directed_edges(target=t)
         in_deg_list.append(len(t_edges))
     return in_deg_list
 
 
 @utils.timeit(on=False, verbose=False)
-def get_inv_tran_out_deg_list(pn):
+def get_inv_tran_out_deg_list(pn, inv_tran_list=None):
     assert isinstance(pn, podspy.petrinet.Petrinet)
-    inv_tran = get_inv_tran_list(pn)
+    inv_tran_list = inv_tran_list if inv_tran_list else get_inv_tran_list(pn)
     out_deg_list = []
-    for t in inv_tran:
+    for t in inv_tran_list:
         t_edges = pn.get_directed_edges(src=t)
         out_deg_list.append(len(t_edges))
     return out_deg_list
 
 
 @utils.timeit(on=False, verbose=False)
-def get_inv_tran_in_deg_mean(pn):
-    in_deg_list = get_inv_tran_in_deg_list(pn)
+def get_inv_tran_in_deg_mean(pn, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_inv_tran_in_deg_list(pn)
     return np.mean(in_deg_list) if in_deg_list else 0.
 
 
 @utils.timeit(on=False, verbose=False)
-def get_inv_tran_in_deg_std(pn):
-    in_deg_list = get_inv_tran_in_deg_list(pn)
+def get_inv_tran_in_deg_std(pn, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_inv_tran_in_deg_list(pn)
     return np.std(in_deg_list, ddof=1) if in_deg_list else 0.
 
 
 @utils.timeit(on=False, verbose=False)
-def get_inv_tran_out_deg_mean(pn):
-    out_deg_list = get_inv_tran_out_deg_list(pn)
+def get_inv_tran_out_deg_mean(pn, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_inv_tran_out_deg_list(pn)
     return np.mean(out_deg_list) if out_deg_list else 0.
 
 
 @utils.timeit(on=False, verbose=False)
-def get_inv_tran_out_deg_std(pn):
-    out_deg_list = get_inv_tran_out_deg_list(pn)
+def get_inv_tran_out_deg_std(pn, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_inv_tran_out_deg_list(pn)
     return np.std(out_deg_list, ddof=1) if out_deg_list else 0.
 
 
 @utils.timeit(on=False, verbose=False)
-def get_uniq_tran_in_deg_list(pn):
+def get_uniq_tran_in_deg_list(pn, uniq_tran_list=None):
     assert isinstance(pn, podspy.petrinet.Petrinet)
-    uniq_tran = get_uniq_tran_list(pn)
+    uniq_tran_list = uniq_tran_list if uniq_tran_list else get_uniq_tran_list(pn)
     in_deg_list = []
-    for t in uniq_tran:
+    for t in uniq_tran_list:
         t_edges = pn.get_directed_edges(target=t)
         in_deg_list.append(len(t_edges))
     return in_deg_list
 
 
 @utils.timeit(on=False, verbose=False)
-def get_uniq_tran_out_deg_list(pn):
+def get_uniq_tran_out_deg_list(pn, uniq_tran_list=None):
     assert isinstance(pn, podspy.petrinet.Petrinet)
-    uniq_tran = get_uniq_tran_list(pn)
+    uniq_tran_list = uniq_tran_list if uniq_tran_list else get_uniq_tran_list(pn)
     out_deg_list = []
-    for t in uniq_tran:
+    for t in uniq_tran_list:
         t_edges = pn.get_directed_edges(src=t)
         out_deg_list.append(len(t_edges))
     return out_deg_list
 
 
 @utils.timeit(on=False, verbose=False)
-def get_uniq_tran_in_deg_mean(pn):
-    in_deg_list = get_uniq_tran_in_deg_list(pn)
+def get_uniq_tran_in_deg_mean(pn, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_uniq_tran_in_deg_list(pn)
     return np.mean(in_deg_list) if in_deg_list else 0.
 
 
 @utils.timeit(on=False, verbose=False)
-def get_uniq_tran_in_deg_std(pn):
-    in_deg_list = get_uniq_tran_in_deg_list(pn)
+def get_uniq_tran_in_deg_std(pn, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_uniq_tran_in_deg_list(pn)
     return np.std(in_deg_list, ddof=1) if in_deg_list else 0.
 
 
 @utils.timeit(on=False, verbose=False)
-def get_uniq_tran_out_deg_mean(pn):
-    out_deg_list = get_uniq_tran_out_deg_list(pn)
+def get_uniq_tran_out_deg_mean(pn, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_uniq_tran_out_deg_list(pn)
     return np.mean(out_deg_list) if out_deg_list else 0.
 
 
 @utils.timeit(on=False, verbose=False)
-def get_uniq_tran_out_deg_std(pn):
-    out_deg_list = get_uniq_tran_out_deg_list(pn)
+def get_uniq_tran_out_deg_std(pn, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_uniq_tran_out_deg_list(pn)
     return np.std(out_deg_list, ddof=1) if out_deg_list else 0.
 
 
 @utils.timeit(on=False, verbose=False)
-def get_dup_tran_in_deg_list(pn):
+def get_dup_tran_in_deg_list(pn, dup_tran_list=None):
     assert isinstance(pn, podspy.petrinet.Petrinet)
-    dup_tran = get_dup_tran_list(pn)
+    dup_tran_list = dup_tran_list if dup_tran_list else get_dup_tran_list(pn)
     in_deg_list = []
-    for t in dup_tran:
+    for t in dup_tran_list:
         t_edges = pn.get_directed_edges(target=t)
         in_deg_list.append(len(t_edges))
     return in_deg_list
 
 
 @utils.timeit(on=False, verbose=False)
-def get_dup_tran_out_deg_list(pn):
+def get_dup_tran_out_deg_list(pn, dup_tran_list=None):
     assert isinstance(pn, podspy.petrinet.Petrinet)
-    dup_tran = get_dup_tran_list(pn)
+    dup_tran_list = dup_tran_list if dup_tran_list else get_dup_tran_list(pn)
     out_deg_list = []
-    for t in dup_tran:
+    for t in dup_tran_list:
         t_edges = pn.get_directed_edges(src=t)
         out_deg_list.append(len(t_edges))
     return out_deg_list
 
 
 @utils.timeit(on=False, verbose=False)
-def get_dup_tran_in_deg_mean(pn):
-    in_deg_list = get_dup_tran_in_deg_list(pn)
+def get_dup_tran_in_deg_mean(pn, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_dup_tran_in_deg_list(pn)
     return np.mean(in_deg_list) if in_deg_list else 0.
 
 
 @utils.timeit(on=False, verbose=False)
-def get_dup_tran_in_deg_std(pn):
-    in_deg_list = get_dup_tran_in_deg_list(pn)
+def get_dup_tran_in_deg_std(pn, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_dup_tran_in_deg_list(pn)
     return np.std(in_deg_list, ddof=1) if in_deg_list else 0.
 
 
 @utils.timeit(on=False, verbose=False)
-def get_dup_tran_out_deg_mean(pn):
-    out_deg_list = get_dup_tran_out_deg_list(pn)
+def get_dup_tran_out_deg_mean(pn, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_dup_tran_out_deg_list(pn)
     return np.mean(out_deg_list) if out_deg_list else 0.
 
 
 @utils.timeit(on=False, verbose=False)
-def get_dup_tran_out_deg_std(pn):
-    out_deg_list = get_dup_tran_out_deg_list(pn)
+def get_dup_tran_out_deg_std(pn, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_dup_tran_out_deg_list(pn)
     return np.std(out_deg_list, ddof=1) if out_deg_list else 0.
 
 
@@ -376,26 +402,26 @@ def get_place_out_deg_list(pn):
 
 
 @utils.timeit(on=False, verbose=False)
-def get_place_in_deg_mean(pn):
-    in_deg_list = get_place_in_deg_list(pn)
+def get_place_in_deg_mean(pn, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_place_in_deg_list(pn)
     return np.mean(in_deg_list) if in_deg_list else 0.
 
 
 @utils.timeit(on=False, verbose=False)
-def get_place_in_deg_std(pn):
-    in_deg_list = get_place_in_deg_list(pn)
+def get_place_in_deg_std(pn, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_place_in_deg_list(pn)
     return np.std(in_deg_list, ddof=1) if in_deg_list else 0.
 
 
 @utils.timeit(on=False, verbose=False)
-def get_place_out_deg_mean(pn):
-    out_deg_list = get_place_out_deg_list(pn)
+def get_place_out_deg_mean(pn, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_place_out_deg_list(pn)
     return np.mean(out_deg_list) if out_deg_list else 0.
 
 
 @utils.timeit(on=False, verbose=False)
-def get_place_out_deg_std(pn):
-    out_deg_list = get_place_out_deg_list(pn)
+def get_place_out_deg_std(pn, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_place_out_deg_list(pn)
     return np.std(out_deg_list, ddof=1) if out_deg_list else 0.
 
 
@@ -411,6 +437,7 @@ def pn_to_undirected(pn):
     return dict(adj)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_biconnected_component_list(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     components = list()

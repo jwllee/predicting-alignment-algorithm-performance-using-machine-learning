@@ -8,6 +8,8 @@ import pandas as pd
 import collections as cols
 import functools as fct
 
+from . import utils
+
 # trace features
 TRACE_LENGTH = 'trace_length'
 N_ACT = 'n_activity'
@@ -26,6 +28,7 @@ def extract_features(trace):
     return features
 
 
+@utils.timeit(on=True)
 def extract_features_from_logtable(logtable):
     assert isinstance(logtable, podspy.log.LogTable)
 
