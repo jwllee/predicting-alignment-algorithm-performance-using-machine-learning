@@ -128,8 +128,8 @@ def get_dup_tran_dict(pn):
 
 def get_dup_tran_list(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
-    dup_tran = get_dup_tran_dict(pn)
-    return fct.reduce(lambda _all, tran_list: _all + list(tran_list), dup_tran.items(), [])
+    dup_dict = get_dup_tran_dict(pn)
+    return fct.reduce(lambda _all, tran_list: _all + list(tran_list), dup_dict.values(), [])
 
 
 def get_uniq_tran_list(pn):
