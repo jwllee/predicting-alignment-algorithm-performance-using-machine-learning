@@ -7,9 +7,10 @@ import pytest
 import numpy as np
 import pandas as pd
 
-from . import net_feature_extract
+from . import net_feature_extract, utils
 
 
+@utils.timeit()
 def extract_features(trace_name, trace, net, init, final):
     # build snp
     trace_net, trace_init, trace_final = alignment.to_trace_net(trace_name, trace)
@@ -22,6 +23,7 @@ def extract_features(trace_name, trace, net, init, final):
     return feature_dict
 
 
+@utils.timeit()
 def extract_features_from_logtable(logtable, net, init, final):
     assert isinstance(logtable, logpkg.LogTable)
 
@@ -32,7 +34,7 @@ def extract_features_from_logtable(logtable, net, init, final):
         feature_ss = pd.Series(feature_dict)
         return feature_ss
 
-    feature_df = logtable.event_df.groupby(logpkg.CASEID).apply(lambda df: trace_to_feature_series(df, net, init, final))
+    feature_df = logtable.event_df.groupby(logpkg.CASEID, as_index=False).apply(lambda df: trace_to_feature_series(df, net, init, final))
     feature_df = feature_df.reset_index(drop=False)
     col_order = [
         logpkg.CASEID,

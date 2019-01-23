@@ -7,6 +7,8 @@ import numpy as np
 import functools as fct
 import collections as cols
 
+from . import utils
+
 
 # net features
 N_TRAN = 'n_transition'
@@ -108,11 +110,13 @@ def extract_features_from_decomposition(decomposition):
     return features
 
 
+@utils.timeit(on=False, verbose=False)
 def get_n_tran(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     return len(pn.transitions)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_dup_tran_dict(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     tran_dict = cols.defaultdict(list)
@@ -126,12 +130,14 @@ def get_dup_tran_dict(pn):
     return dict(tran_dict)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_dup_tran_list(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     dup_dict = get_dup_tran_dict(pn)
     return fct.reduce(lambda _all, tran_list: _all + list(tran_list), dup_dict.values(), [])
 
 
+@utils.timeit(on=False, verbose=False)
 def get_uniq_tran_list(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     tran_dict = cols.defaultdict(list)
@@ -143,36 +149,43 @@ def get_uniq_tran_list(pn):
     return fct.reduce(lambda _all, tran_set: _all + list(tran_set), uniq_tran, [])
 
 
+@utils.timeit(on=False, verbose=False)
 def get_inv_tran_list(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     return list(filter(lambda t: t.is_invisible, pn.transitions))
 
 
+@utils.timeit(on=False, verbose=False)
 def get_n_inv_tran(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     return len(get_inv_tran_list(pn))
 
 
+@utils.timeit(on=False, verbose=False)
 def get_n_dup_tran(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     return len(get_dup_tran_list(pn))
 
 
+@utils.timeit(on=False, verbose=False)
 def get_n_uniq_tran(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     return len(get_uniq_tran_list(pn))
 
 
+@utils.timeit(on=False, verbose=False)
 def get_n_place(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     return len(pn.places)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_n_arc(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     return len(pn.arcs)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_n_and_split(pn):
     """Get the number of AND split of a petrinet. It is an AND split if a transition has more than one outgoing arc.
 
@@ -188,6 +201,7 @@ def get_n_and_split(pn):
     return len(list(and_split))
 
 
+@utils.timeit(on=False, verbose=False)
 def get_n_xor_split(pn):
     """Get the number of XOR split of a petrinet. It is an XOR split if a place has more than one outgoing arc.
 
@@ -203,6 +217,7 @@ def get_n_xor_split(pn):
     return len(list(xor_split))
 
 
+@utils.timeit(on=False, verbose=False)
 def get_inv_tran_in_deg_list(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     inv_tran = get_inv_tran_list(pn)
@@ -213,6 +228,7 @@ def get_inv_tran_in_deg_list(pn):
     return in_deg_list
 
 
+@utils.timeit(on=False, verbose=False)
 def get_inv_tran_out_deg_list(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     inv_tran = get_inv_tran_list(pn)
@@ -223,26 +239,31 @@ def get_inv_tran_out_deg_list(pn):
     return out_deg_list
 
 
+@utils.timeit(on=False, verbose=False)
 def get_inv_tran_in_deg_mean(pn):
     in_deg_list = get_inv_tran_in_deg_list(pn)
     return np.mean(in_deg_list) if in_deg_list else 0.
 
 
+@utils.timeit(on=False, verbose=False)
 def get_inv_tran_in_deg_std(pn):
     in_deg_list = get_inv_tran_in_deg_list(pn)
     return np.std(in_deg_list, ddof=1) if in_deg_list else 0.
 
 
+@utils.timeit(on=False, verbose=False)
 def get_inv_tran_out_deg_mean(pn):
     out_deg_list = get_inv_tran_out_deg_list(pn)
     return np.mean(out_deg_list) if out_deg_list else 0.
 
 
+@utils.timeit(on=False, verbose=False)
 def get_inv_tran_out_deg_std(pn):
     out_deg_list = get_inv_tran_out_deg_list(pn)
     return np.std(out_deg_list, ddof=1) if out_deg_list else 0.
 
 
+@utils.timeit(on=False, verbose=False)
 def get_uniq_tran_in_deg_list(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     uniq_tran = get_uniq_tran_list(pn)
@@ -253,6 +274,7 @@ def get_uniq_tran_in_deg_list(pn):
     return in_deg_list
 
 
+@utils.timeit(on=False, verbose=False)
 def get_uniq_tran_out_deg_list(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     uniq_tran = get_uniq_tran_list(pn)
@@ -263,26 +285,31 @@ def get_uniq_tran_out_deg_list(pn):
     return out_deg_list
 
 
+@utils.timeit(on=False, verbose=False)
 def get_uniq_tran_in_deg_mean(pn):
     in_deg_list = get_uniq_tran_in_deg_list(pn)
     return np.mean(in_deg_list) if in_deg_list else 0.
 
 
+@utils.timeit(on=False, verbose=False)
 def get_uniq_tran_in_deg_std(pn):
     in_deg_list = get_uniq_tran_in_deg_list(pn)
     return np.std(in_deg_list, ddof=1) if in_deg_list else 0.
 
 
+@utils.timeit(on=False, verbose=False)
 def get_uniq_tran_out_deg_mean(pn):
     out_deg_list = get_uniq_tran_out_deg_list(pn)
     return np.mean(out_deg_list) if out_deg_list else 0.
 
 
+@utils.timeit(on=False, verbose=False)
 def get_uniq_tran_out_deg_std(pn):
     out_deg_list = get_uniq_tran_out_deg_list(pn)
     return np.std(out_deg_list, ddof=1) if out_deg_list else 0.
 
 
+@utils.timeit(on=False, verbose=False)
 def get_dup_tran_in_deg_list(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     dup_tran = get_dup_tran_list(pn)
@@ -293,6 +320,7 @@ def get_dup_tran_in_deg_list(pn):
     return in_deg_list
 
 
+@utils.timeit(on=False, verbose=False)
 def get_dup_tran_out_deg_list(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     dup_tran = get_dup_tran_list(pn)
@@ -303,26 +331,31 @@ def get_dup_tran_out_deg_list(pn):
     return out_deg_list
 
 
+@utils.timeit(on=False, verbose=False)
 def get_dup_tran_in_deg_mean(pn):
     in_deg_list = get_dup_tran_in_deg_list(pn)
     return np.mean(in_deg_list) if in_deg_list else 0.
 
 
+@utils.timeit(on=False, verbose=False)
 def get_dup_tran_in_deg_std(pn):
     in_deg_list = get_dup_tran_in_deg_list(pn)
     return np.std(in_deg_list, ddof=1) if in_deg_list else 0.
 
 
+@utils.timeit(on=False, verbose=False)
 def get_dup_tran_out_deg_mean(pn):
     out_deg_list = get_dup_tran_out_deg_list(pn)
     return np.mean(out_deg_list) if out_deg_list else 0.
 
 
+@utils.timeit(on=False, verbose=False)
 def get_dup_tran_out_deg_std(pn):
     out_deg_list = get_dup_tran_out_deg_list(pn)
     return np.std(out_deg_list, ddof=1) if out_deg_list else 0.
 
 
+@utils.timeit(on=False, verbose=False)
 def get_place_in_deg_list(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     in_deg_list = []
@@ -332,6 +365,7 @@ def get_place_in_deg_list(pn):
     return in_deg_list
 
 
+@utils.timeit(on=False, verbose=False)
 def get_place_out_deg_list(pn):
     assert isinstance(pn, podspy.petrinet.Petrinet)
     out_deg_list = []
@@ -341,21 +375,25 @@ def get_place_out_deg_list(pn):
     return out_deg_list
 
 
+@utils.timeit(on=False, verbose=False)
 def get_place_in_deg_mean(pn):
     in_deg_list = get_place_in_deg_list(pn)
     return np.mean(in_deg_list) if in_deg_list else 0.
 
 
+@utils.timeit(on=False, verbose=False)
 def get_place_in_deg_std(pn):
     in_deg_list = get_place_in_deg_list(pn)
     return np.std(in_deg_list, ddof=1) if in_deg_list else 0.
 
 
+@utils.timeit(on=False, verbose=False)
 def get_place_out_deg_mean(pn):
     out_deg_list = get_place_out_deg_list(pn)
     return np.mean(out_deg_list) if out_deg_list else 0.
 
 
+@utils.timeit(on=False, verbose=False)
 def get_place_out_deg_std(pn):
     out_deg_list = get_place_out_deg_list(pn)
     return np.std(out_deg_list, ddof=1) if out_deg_list else 0.
@@ -442,15 +480,18 @@ def get_biconnected_component_list(pn):
     return components
 
 
+@utils.timeit(on=False, verbose=False)
 def get_n_biconnected_component(pn):
     components = get_biconnected_component_list(pn)
     return len(components)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_n_subnet(netlist):
     return len(netlist)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_subnet_n_tran_mean(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist.'
     netlist = map(lambda apn: apn.net, netlist)
@@ -458,6 +499,7 @@ def get_subnet_n_tran_mean(netlist):
     return np.mean(n_trans)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_subnet_n_tran_std(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist.'
     netlist = map(lambda apn: apn.net, netlist)
@@ -465,6 +507,7 @@ def get_subnet_n_tran_std(netlist):
     return np.std(n_trans, ddof=1)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_subnet_n_inv_tran_mean(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist.'
     netlist = map(lambda apn: apn.net, netlist)
@@ -472,6 +515,7 @@ def get_subnet_n_inv_tran_mean(netlist):
     return np.mean(n_invis)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_subnet_n_inv_tran_std(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist.'
     netlist = map(lambda apn: apn.net, netlist)
@@ -479,6 +523,7 @@ def get_subnet_n_inv_tran_std(netlist):
     return np.std(n_invis, ddof=1)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_subnet_n_dup_tran_mean(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
     netlist = map(lambda apn: apn.net, netlist)
@@ -486,6 +531,7 @@ def get_subnet_n_dup_tran_mean(netlist):
     return np.mean(n_dups)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_subnet_n_dup_tran_std(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
     netlist = map(lambda apn: apn.net, netlist)
@@ -493,6 +539,7 @@ def get_subnet_n_dup_tran_std(netlist):
     return np.std(n_dups, ddof=1)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_subnet_n_uniq_tran_mean(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
     netlist = map(lambda apn: apn.net, netlist)
@@ -500,6 +547,7 @@ def get_subnet_n_uniq_tran_mean(netlist):
     return np.mean(n_uniqs)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_subnet_n_uniq_tran_std(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
     netlist = map(lambda apn: apn.net, netlist)
@@ -507,6 +555,7 @@ def get_subnet_n_uniq_tran_std(netlist):
     return np.std(n_uniqs, ddof=1)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_subnet_n_place_mean(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
     netlist = map(lambda apn: apn.net, netlist)
@@ -514,6 +563,7 @@ def get_subnet_n_place_mean(netlist):
     return np.mean(n_places)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_subnet_n_place_std(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
     netlist = map(lambda apn: apn.net, netlist)
@@ -521,6 +571,7 @@ def get_subnet_n_place_std(netlist):
     return np.std(n_places, ddof=1)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_subnet_n_arc_mean(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
     netlist = map(lambda apn: apn.net, netlist)
@@ -528,6 +579,7 @@ def get_subnet_n_arc_mean(netlist):
     return np.mean(n_arcs)
 
 
+@utils.timeit(on=False, verbose=False)
 def get_subnet_n_arc_std(netlist):
     assert len(netlist) > 1, 'Should have at least 2 subnets in netlist'
     netlist = map(lambda apn: apn.net, netlist)
