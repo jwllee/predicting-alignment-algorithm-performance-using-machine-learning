@@ -10,6 +10,7 @@ logger = logging.getLogger(__file__)
 __all__ = [
     'setup_logging',
     'timeit',
+    'check_isinstance'
 ]
 
 
@@ -100,3 +101,12 @@ def setup_logging(logdir='.',
     else:
         # load the basic configuration
         logging.basicConfig(level=default_level)
+
+
+def check_isinstance(obj, cls):
+    err_msg = '{name} Expected type {exp_type}, found {act_type} instead'
+    cls_name = cls.__name__
+
+    if not isinstance(obj, cls):
+        raise AssertionError(err_msg.format(name=cls_name, exp_type=cls,
+                                            act_type=type(obj)))
