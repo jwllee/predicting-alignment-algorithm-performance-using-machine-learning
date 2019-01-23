@@ -17,7 +17,7 @@ def extract_features(trace_name, trace, net, init, final):
     snp, snp_init, snp_final = alignment.to_sync_net_product(trace_net, trace_init, trace_final,
                                                              net, init, final, mapping)
 
-    feature_dict = net_feature_extract.extract_features(snp, include_decomposition=False)
+    feature_dict = net_feature_extract.extract_features(snp)
 
     return feature_dict
 

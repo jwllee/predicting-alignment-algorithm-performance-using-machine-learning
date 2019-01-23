@@ -52,11 +52,10 @@ SUBNET_N_ARC_MEAN = 'subnet_n_arc_mean'
 SUBNET_N_ARC_STD = 'subnet_n_arc_std'
 
 
-def extract_features(pn, decomposition=None, include_decomposition=True):
+def extract_features(pn):
     """Extract required features given a petri net
 
     :param pn: petrinet
-    :param decomposition: decomposition of pn
     :return: dictionary of extracted features
     """
     features = {
@@ -87,21 +86,25 @@ def extract_features(pn, decomposition=None, include_decomposition=True):
         PLACE_OUT_DEG_STD: get_place_out_deg_std(pn),
     }
 
-    if include_decomposition:
-        # decomposition
-        features[N_SUBNET] = get_n_subnet(decomposition) if decomposition else 1,
-        features[SUBNET_N_TRAN_MEAN] = get_subnet_n_tran_mean(decomposition) if decomposition else get_n_tran(pn),
-        features[SUBNET_N_TRAN_STD] = get_subnet_n_arc_std(decomposition) if decomposition else 0.,
-        features[SUBNET_N_INV_TRAN_MEAN] = get_subnet_n_inv_tran_mean(decomposition) if decomposition else get_n_inv_tran(pn),
-        features[SUBNET_N_INV_TRAN_STD] = get_subnet_n_inv_tran_std(decomposition) if decomposition else 0.,
-        features[SUBNET_N_DUP_TRAN_MEAN] = get_subnet_n_dup_tran_mean(decomposition) if decomposition else get_n_dup_tran(pn),
-        features[SUBNET_N_DUP_TRAN_STD] = get_subnet_n_dup_tran_std(decomposition) if decomposition else 0.,
-        features[SUBNET_N_UNIQ_TRAN_MEAN] = get_subnet_n_uniq_tran_mean(decomposition) if decomposition else get_n_uniq_tran(pn),
-        features[SUBNET_N_UNIQ_TRAN_STD] = get_subnet_n_uniq_tran_std(decomposition) if decomposition else 0.,
-        features[SUBNET_N_PLACE_MEAN] = get_subnet_n_place_mean(decomposition) if decomposition else get_n_place(pn),
-        features[SUBNET_N_PLACE_STD] = get_subnet_n_place_std(decomposition) if decomposition else 0.,
-        features[SUBNET_N_ARC_MEAN] = get_subnet_n_arc_mean(decomposition) if decomposition else get_n_arc(pn),
-        features[SUBNET_N_ARC_STD] = get_subnet_n_arc_std(decomposition) if decomposition else 0.
+    return features
+
+
+def extract_features_from_decomposition(pn, decomposition):
+    features = dict()
+
+    features[N_SUBNET] = get_n_subnet(decomposition) if decomposition else 1
+    features[SUBNET_N_TRAN_MEAN] = get_subnet_n_tran_mean(decomposition) if decomposition else get_n_tran(pn)
+    features[SUBNET_N_TRAN_STD] = get_subnet_n_arc_std(decomposition) if decomposition else 0.
+    features[SUBNET_N_INV_TRAN_MEAN] = get_subnet_n_inv_tran_mean(decomposition) if decomposition else get_n_inv_tran(pn)
+    features[SUBNET_N_INV_TRAN_STD] = get_subnet_n_inv_tran_std(decomposition) if decomposition else 0.
+    features[SUBNET_N_DUP_TRAN_MEAN] = get_subnet_n_dup_tran_mean(decomposition) if decomposition else get_n_dup_tran(pn)
+    features[SUBNET_N_DUP_TRAN_STD] = get_subnet_n_dup_tran_std(decomposition) if decomposition else 0.
+    features[SUBNET_N_UNIQ_TRAN_MEAN] = get_subnet_n_uniq_tran_mean(decomposition) if decomposition else get_n_uniq_tran(pn)
+    features[SUBNET_N_UNIQ_TRAN_STD] = get_subnet_n_uniq_tran_std(decomposition) if decomposition else 0.
+    features[SUBNET_N_PLACE_MEAN] = get_subnet_n_place_mean(decomposition) if decomposition else get_n_place(pn)
+    features[SUBNET_N_PLACE_STD] = get_subnet_n_place_std(decomposition) if decomposition else 0.
+    features[SUBNET_N_ARC_MEAN] = get_subnet_n_arc_mean(decomposition) if decomposition else get_n_arc(pn)
+    features[SUBNET_N_ARC_STD] = get_subnet_n_arc_std(decomposition) if decomposition else 0.
 
     return features
 
