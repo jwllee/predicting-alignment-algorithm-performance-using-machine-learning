@@ -3,14 +3,15 @@
 
 import podspy.log as logpkg
 from podspy.conformance import alignment
-import pytest
+import pytest, time
 import numpy as np
 import pandas as pd
+import multiprocessing as mp
 
 from . import net_feature_extract, utils
 
 
-@utils.timeit()
+@utils.timeit(on=False)
 def extract_features(trace_name, trace, net, init, final):
     # build snp
     trace_net, trace_init, trace_final = alignment.to_trace_net(trace_name, trace)
@@ -23,19 +24,45 @@ def extract_features(trace_name, trace, net, init, final):
     return feature_dict
 
 
+def trace_to_feature_series(trace, net, init, final):
+    trace_id = trace[logpkg.CASEID].values[0]
+    events = trace[logpkg.ACTIVITY]
+    feature_dict = extract_features(trace_id, events, net, init, final)
+    feature_ss = pd.Series(feature_dict)
+    return feature_ss
+
+
+def _apply_df(args):
+    df, net, init, final, log_time = args
+    n_caseids = df[logpkg.CASEID].unique().shape[0]
+    start = time.time()
+    feature_df = df.groupby(logpkg.CASEID, as_index=False).apply(lambda df: trace_to_feature_series(df, net, init, final))
+    end = time.time()
+    if log_time:
+        print('Extracting feature from {} caseids took: {:.2f}s'.format(n_caseids, end - start))
+    return feature_df
+
+
 @utils.timeit()
-def extract_features_from_logtable(logtable, net, init, final):
+def extract_features_from_logtable(logtable, net, init, final, parallelize=False):
     assert isinstance(logtable, logpkg.LogTable)
 
-    def trace_to_feature_series(trace, net, init, final):
-        trace_id = trace[logpkg.CASEID].values[0]
-        events = trace[logpkg.ACTIVITY]
-        feature_dict = extract_features(trace_id, events, net, init, final)
-        feature_ss = pd.Series(feature_dict)
-        return feature_ss
+    if parallelize:
+        caseids = logtable.event_df[logpkg.CASEID].unique()
+        n_proc = mp.cpu_count() - 1
+        caseid_partitions = np.array_split(caseids, n_proc, axis=0)
 
-    feature_df = logtable.event_df.groupby(logpkg.CASEID, as_index=False).apply(lambda df: trace_to_feature_series(df, net, init, final))
-    feature_df = feature_df.reset_index(drop=False)
+        pool = mp.Pool(processes=n_proc)
+        event_df = logtable.event_df
+        args = [(
+            event_df.loc[(event_df[logpkg.CASEID].isin(caseid_partitions[i])),:],
+            net, init, final, True
+        ) for i in range(n_proc)]
+        result = pool.map(_apply_df, args)
+        feature_df = pd.concat(result, axis=0)
+    else:
+        feature_df = logtable.event_df.groupby(logpkg.CASEID, as_index=False).apply(lambda df: trace_to_feature_series(df, net, init, final))
+
     col_order = [
         logpkg.CASEID,
         net_feature_extract.N_TRAN,
