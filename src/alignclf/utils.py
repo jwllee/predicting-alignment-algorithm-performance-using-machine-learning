@@ -10,7 +10,8 @@ logger = logging.getLogger(__file__)
 __all__ = [
     'setup_logging',
     'timeit',
-    'check_isinstance'
+    'check_isinstance',
+    'raise_assert_detail'
 ]
 
 
@@ -110,3 +111,12 @@ def check_isinstance(obj, cls):
     if not isinstance(obj, cls):
         raise AssertionError(err_msg.format(name=cls_name, exp_type=cls,
                                             act_type=type(obj)))
+
+
+def raise_assert_detail(message, obj, cls):
+    msg = """Problem with {obj} ({cls})
+    
+    {message}
+    """.format(message=message, obj=obj, cls=cls)
+
+    raise AssertionError(msg)
