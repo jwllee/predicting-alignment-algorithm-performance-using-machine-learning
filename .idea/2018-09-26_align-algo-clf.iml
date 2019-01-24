@@ -7,7 +7,7 @@
       <excludeFolder url="file://$MODULE_DIR$/results" />
       <excludeFolder url="file://$MODULE_DIR$/results-agg" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.5 (2018-09-26_align-algo-clf)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.6 (alignment-algorithm-classifier)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PackageRequirementsSettings">
