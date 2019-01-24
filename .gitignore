@@ -349,3 +349,5 @@ results/
 results-agg/
 times.txt
 alignclf-venv/
+configs/
+cluster/
