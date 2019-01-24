@@ -1072,7 +1072,7 @@ class RecomposeReplayResultProcessor:
 
         return log_stats_df
 
-    @timeit
+    @timeit()
     def process_sub_replay_iter_stats(self, iter_no, iter_dirpath, trace_caseids):
         """Process decomposed replay results of a particular iteration. The additional value of this method is to output
         the dataframe as a csv file if necessary.
@@ -1092,7 +1092,7 @@ class RecomposeReplayResultProcessor:
 
         return sub_df_list
 
-    @timeit
+    @timeit()
     def process_replay_iter_directory(self, iter_no, iter_dirpath, trace_caseids):
         """Process replay results of a particular iteration with aggregation. The additional value of this method is to
         output the dataframe as a csv file if necessary.
@@ -1112,7 +1112,7 @@ class RecomposeReplayResultProcessor:
 
         return iter_df
 
-    @timeit
+    @timeit()
     def process_replay_iter_directories(self, replay_dirpath, trace_caseids):
         """Process replay results of all recomposing replay iterations.
 
@@ -1145,7 +1145,7 @@ class RecomposeReplayResultProcessor:
 
         return df
 
-    @timeit
+    @timeit()
     def process_trace_stats(self, replay_dirpath, trace_caseids):
         """Process replay results of all recomposing replay iterations and aggregate them to get alignment statistics on
         the trace level. The additional value of this method is to output the aggregated results as a csv file if
@@ -1165,7 +1165,7 @@ class RecomposeReplayResultProcessor:
 
         return trace_stats_df
 
-    @timeit
+    @timeit()
     def process_directory(self, dirpath):
         """Process replay results of replay experiments on different pairs of models and logs. The additional value of
         this method is the aggregation of the results of different model-log pairs into a single dataframe. Also, it
