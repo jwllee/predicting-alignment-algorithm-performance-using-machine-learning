@@ -87,7 +87,7 @@ def _make_multilevel_column(columns):
         level_1.append(col_level_1)
 
     tuples = list(zip(level_0, level_1))
-    index = pd.MultiIndex.from_tuples(tuples, names=['one', 'two'])
+    index = pd.MultiIndex.from_tuples(tuples)
     return index
 
 
@@ -133,5 +133,14 @@ def to_clf_df(df_dict):
         for algo_type in key_list:
             reorder_cols.append((col, algo_type))
     merged_df = merged_df.loc[:,reorder_cols]
+
+    to_drop = [
+        Col.SP_LABEL.value, IS_VALID, N_SYNC_MOVE, Col.ALIGNMENT_COST.value,
+        N_LOG_MOVE, N_MODEL_MOVE, N_INVIS_MOVE, RESULT_DIR
+    ]
+    dropped_df = merged_df.drop(to_drop, axis=1, level=0)
+    grouped = dropped_df.groupby(level=0, axis=1).apply(lambda df: df.apply(lambda row: row.idxmin()[1], axis = 1))
+    grouped.columns = pd.MultiIndex.from_product([['Min'], grouped.columns])
+    merged_df = pd.concat([merged_df, grouped], axis=1)
 
     return merged_df
