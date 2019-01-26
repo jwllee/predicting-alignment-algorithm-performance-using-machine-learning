@@ -1,0 +1,7 @@
+,Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s)
+,astar,astar,astar,astar,inc3,inc3,inc3,inc3,recomp-astar,recomp-astar,recomp-astar,recomp-astar,recomp-inc3,recomp-inc3,recomp-inc3,recomp-inc3
+,count,mean,std,se,count,mean,std,se,count,mean,std,se,count,mean,std,se
+CLASSIC,176992.00,0.00,0.00,0.00,156375.00,0.40,7.05,0.02,176992.00,0.09,1.14,0.00,102280.00,0.30,5.09,0.02
+CLASSIC-SP,39386.00,9.78,19.48,0.10,39386.00,0.00,0.00,0.00,39386.00,8.11,16.25,0.08,20988.00,0.88,6.91,0.05
+RECOMPOSE,22202.00,2.27,14.57,0.10,16864.00,3.07,18.93,0.15,22202.00,0.00,0.00,0.00,11469.00,2.15,15.57,0.15
+RECOMPOSE-SP,13057.00,17.31,24.98,0.22,13057.00,2.04,8.28,0.07,13057.00,15.62,23.74,0.21,13057.00,0.00,0.00,0.00
