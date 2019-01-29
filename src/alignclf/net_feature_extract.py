@@ -274,7 +274,7 @@ def get_inv_tran_in_deg_mean(pn, in_deg_list=None):
 @utils.timeit(on=False, verbose=False)
 def get_inv_tran_in_deg_std(pn, in_deg_list=None):
     in_deg_list = in_deg_list if in_deg_list else get_inv_tran_in_deg_list(pn)
-    return np.std(in_deg_list, ddof=1) if in_deg_list else 0.
+    return np.std(in_deg_list, ddof=1) if len(in_deg_list) > 1 else 0.
 
 
 @utils.timeit(on=False, verbose=False)
@@ -286,7 +286,7 @@ def get_inv_tran_out_deg_mean(pn, out_deg_list=None):
 @utils.timeit(on=False, verbose=False)
 def get_inv_tran_out_deg_std(pn, out_deg_list=None):
     out_deg_list = out_deg_list if out_deg_list else get_inv_tran_out_deg_list(pn)
-    return np.std(out_deg_list, ddof=1) if out_deg_list else 0.
+    return np.std(out_deg_list, ddof=1) if len(out_deg_list) > 1 else 0.
 
 
 @utils.timeit(on=False, verbose=False)
@@ -320,7 +320,7 @@ def get_uniq_tran_in_deg_mean(pn, in_deg_list=None):
 @utils.timeit(on=False, verbose=False)
 def get_uniq_tran_in_deg_std(pn, in_deg_list=None):
     in_deg_list = in_deg_list if in_deg_list else get_uniq_tran_in_deg_list(pn)
-    return np.std(in_deg_list, ddof=1) if in_deg_list else 0.
+    return np.std(in_deg_list, ddof=1) if len(in_deg_list) > 1 else 0.
 
 
 @utils.timeit(on=False, verbose=False)
@@ -332,7 +332,7 @@ def get_uniq_tran_out_deg_mean(pn, out_deg_list=None):
 @utils.timeit(on=False, verbose=False)
 def get_uniq_tran_out_deg_std(pn, out_deg_list=None):
     out_deg_list = out_deg_list if out_deg_list else get_uniq_tran_out_deg_list(pn)
-    return np.std(out_deg_list, ddof=1) if out_deg_list else 0.
+    return np.std(out_deg_list, ddof=1) if len(out_deg_list) > 1 else 0.
 
 
 @utils.timeit(on=False, verbose=False)
@@ -366,7 +366,7 @@ def get_dup_tran_in_deg_mean(pn, in_deg_list=None):
 @utils.timeit(on=False, verbose=False)
 def get_dup_tran_in_deg_std(pn, in_deg_list=None):
     in_deg_list = in_deg_list if in_deg_list else get_dup_tran_in_deg_list(pn)
-    return np.std(in_deg_list, ddof=1) if in_deg_list else 0.
+    return np.std(in_deg_list, ddof=1) if len(in_deg_list) > 1 else 0.
 
 
 @utils.timeit(on=False, verbose=False)
@@ -378,7 +378,7 @@ def get_dup_tran_out_deg_mean(pn, out_deg_list=None):
 @utils.timeit(on=False, verbose=False)
 def get_dup_tran_out_deg_std(pn, out_deg_list=None):
     out_deg_list = out_deg_list if out_deg_list else get_dup_tran_out_deg_list(pn)
-    return np.std(out_deg_list, ddof=1) if out_deg_list else 0.
+    return np.std(out_deg_list, ddof=1) if len(out_deg_list) > 1 else 0.
 
 
 @utils.timeit(on=False, verbose=False)
@@ -410,7 +410,7 @@ def get_place_in_deg_mean(pn, in_deg_list=None):
 @utils.timeit(on=False, verbose=False)
 def get_place_in_deg_std(pn, in_deg_list=None):
     in_deg_list = in_deg_list if in_deg_list else get_place_in_deg_list(pn)
-    return np.std(in_deg_list, ddof=1) if in_deg_list else 0.
+    return np.std(in_deg_list, ddof=1) if len(in_deg_list) > 1 else 0.
 
 
 @utils.timeit(on=False, verbose=False)
@@ -422,7 +422,7 @@ def get_place_out_deg_mean(pn, out_deg_list=None):
 @utils.timeit(on=False, verbose=False)
 def get_place_out_deg_std(pn, out_deg_list=None):
     out_deg_list = out_deg_list if out_deg_list else get_place_out_deg_list(pn)
-    return np.std(out_deg_list, ddof=1) if out_deg_list else 0.
+    return np.std(out_deg_list, ddof=1) if len(out_deg_list) > 1 else 0.
 
 
 def pn_to_undirected(pn):

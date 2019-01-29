@@ -67,8 +67,10 @@ def get_act_repeat_mean(trace):
 
 def get_act_repeat_std(trace):
     if isinstance(trace, pd.Series):
-        result = trace.value_counts().std()
+        counts = trace.value_counts()
+        result = counts.std() if len(counts) > 1 else 0.
     else:
         counter = cols.Counter(trace)
-        result = np.std(list(counter.values()), ddof=1)
+        counts = list(counter.values())
+        result = np.std(counts, ddof=1) if len(counts) > 1 else 0.
     return result
