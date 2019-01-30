@@ -1,7 +1,7 @@
-,Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s)
-,astar,astar,astar,astar,inc3,inc3,inc3,inc3,recomp-astar,recomp-astar,recomp-astar,recomp-astar,recomp-inc3,recomp-inc3,recomp-inc3,recomp-inc3
-,count,mean,std,se,count,mean,std,se,count,mean,std,se,count,mean,std,se
-CLASSIC,176992.00,0.00,0.00,0.00,156375.00,0.40,7.05,0.02,176992.00,0.09,1.14,0.00,102280.00,0.30,5.09,0.02
-CLASSIC-SP,39386.00,9.78,19.48,0.10,39386.00,0.00,0.00,0.00,39386.00,8.11,16.25,0.08,20988.00,0.88,6.91,0.05
-RECOMPOSE,22202.00,2.27,14.57,0.10,16864.00,3.07,18.93,0.15,22202.00,0.00,0.00,0.00,11469.00,2.15,15.57,0.15
-RECOMPOSE-SP,13057.00,17.31,24.98,0.22,13057.00,2.04,8.28,0.07,13057.00,15.62,23.74,0.21,13057.00,0.00,0.00,0.00
+,Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s),Total Time including setup (s)
+,astar,astar,astar,astar,astar,inc3,inc3,inc3,inc3,inc3,recomp-astar,recomp-astar,recomp-astar,recomp-astar,recomp-astar,recomp-inc3,recomp-inc3,recomp-inc3,recomp-inc3,recomp-inc3
+,count,mean,std,n_invalid,se,count,mean,std,n_invalid,se,count,mean,std,n_invalid,se,count,mean,std,n_invalid,se
+CLASSIC,174794.00,0.00,0.00,0.00,0.00,174770.00,0.29,5.03,24.00,0.01,174794.00,0.04,0.51,0.00,0.00,174794.00,0.31,5.12,0.00,0.01
+CLASSIC-SP,39630.00,9.55,18.93,22.00,0.10,39652.00,0.00,0.00,0.00,0.00,39652.00,8.14,16.67,0.00,0.08,39652.00,0.74,5.31,0.00,0.03
+RECOMPOSE,17029.00,1.07,8.39,32.00,0.06,17045.00,2.43,14.14,16.00,0.11,17061.00,0.00,0.00,0.00,0.00,17061.00,2.76,16.50,0.00,0.13
+RECOMPOSE-SP,19947.00,15.87,22.83,24.00,0.16,19957.00,1.43,5.92,14.00,0.04,19971.00,13.95,22.10,0.00,0.16,19971.00,0.00,0.00,0.00,0.00

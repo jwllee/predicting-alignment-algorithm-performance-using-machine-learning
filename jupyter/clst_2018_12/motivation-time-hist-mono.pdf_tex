@@ -1,6 +1,6 @@
 %% Creator: Inkscape inkscape 0.91, www.inkscape.org
 %% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
-%% Accompanies image file 'class-dist.pdf' (pdf, eps, ps)
+%% Accompanies image file 'motivation-time-hist-mono.pdf' (pdf, eps, ps)
 %%
 %% To include the image in your LaTeX document, write
 %%   \input{<filename>.pdf_tex}
@@ -36,7 +36,7 @@
   }%
   \providecommand\rotatebox[2]{#2}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{561.449716bp}%
+    \setlength{\unitlength}{712.065625bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -48,7 +48,7 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,0.62831206)%
-    \put(0,0){\includegraphics[width=\unitlength,page=1]{class-dist.pdf}}%
+  \begin{picture}(1,0.59557362)%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{motivation-time-hist-mono.pdf}}%
   \end{picture}%
 \endgroup%
