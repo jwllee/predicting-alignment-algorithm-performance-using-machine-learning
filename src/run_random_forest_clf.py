@@ -53,7 +53,7 @@ def get_uniq_count(l):
     return dict(zip(uniq, count))
 
 
-def run_test(X, y):
+def train_forest(X, y):
     n_procs = mp.cpu_count() - 1
     class_weight = 'balanced'
 
@@ -88,6 +88,15 @@ def run_test(X, y):
     })
 
     return best_clf, oob_err_df
+
+
+def perform_test(X, y, clf, file=sys.stdout):
+    print('Detailed classification report:\n', file=file)
+    print('The model is trained on the full development set.', file=file)
+    print('The scores are computed on the full evaluation set.\n', file=file)
+    y_true, y_pred = y, clf.predict(X)
+    print(classification_report(y_true, y_pred), file=file)
+    print(file=file)
 
 
 if __name__ == '__main__':
@@ -143,7 +152,11 @@ if __name__ == '__main__':
     X = df.loc[:, idx['model_trace_features', :]]
     y = df.loc[:, ('Min', 'Total Time including setup (s)')].map(class_map)
 
-    best_clf, oob_err_df = run_test(X, y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, file=file)
+
+    best_clf, oob_err_df = train_forest(X_train, y_train)
+
+    perform_test(X_test, y_test, best_clf)
 
     # save trained model
     with open(forest_fp, 'wb') as f:
