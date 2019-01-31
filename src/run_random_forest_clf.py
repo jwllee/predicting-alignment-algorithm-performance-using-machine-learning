@@ -152,7 +152,7 @@ if __name__ == '__main__':
     X = df.loc[:, idx['model_trace_features', :]]
     y = df.loc[:, ('Min', 'Total Time including setup (s)')].map(class_map)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, file=file)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=0)
 
     best_clf, oob_err_df = train_forest(X_train, y_train)
 
