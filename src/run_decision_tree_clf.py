@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-import os, sys, argparse
+import os, sys, argparse, pickle, time
 import pandas as pd
 import numpy as np
 from sklearn import tree
@@ -9,8 +9,8 @@ import sklearn
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.metrics import classification_report
 import graphviz
-import time
 import multiprocessing as mp
+from datetime import datetime
 
 
 from alignclf import utils
@@ -22,7 +22,8 @@ idx = pd.IndexSlice
 # ranges of parameters to grid search
 CRITERION = ['gini', 'entropy']
 MAX_DEPTH = list(range(3, 10))
-MIN_SAMPLES_SPLIT = [2, ] + list(range(5, 100, 5))
+MIN_SAMPLES_SPLIT = list(range(50, 1100, 100))
+MIN_SAMPLES_LEAF = list(range(100, 1100, 100))
 
 
 def ns_to_s(df):
@@ -62,7 +63,8 @@ def perform_gridsearch(X, y, n_folds=5, file=sys.stdout):
     params = {
         'criterion': CRITERION,
         'max_depth': MAX_DEPTH,
-        'min_samples_split': MIN_SAMPLES_SPLIT
+        # 'min_samples_split': MIN_SAMPLES_SPLIT,
+        'min_samples_leaf': MIN_SAMPLES_LEAF
     }
 
     print('Param search space: \n{!r}\n'.format(params), file=file)
@@ -78,13 +80,13 @@ def perform_gridsearch(X, y, n_folds=5, file=sys.stdout):
           'proportion: {!r}, '
           'class_weight: {}'.format(n_folds, n_proc, value_count, proportions, class_weight), file=file)
 
-    tree_clf = tree.DecisionTreeClassifier(class_weight=class_weight)
+    tree_clf = tree.DecisionTreeClassifier(class_weight=class_weight, random_state=0)
     clf = GridSearchCV(tree_clf, params, n_jobs=n_proc, cv=n_folds)
     clf.fit(X=X, y=y)
 
     print('Best parameter set found on development set\n', file=file)
     print(clf.best_params_, file=file)
-    print(file=file)
+    print('Best score: {:.3f}\n'.format(clf.best_score_), file=file)
     print('Grid scores on development set: \n', file=file)
     means = clf.cv_results_['mean_test_score']
     stds = clf.cv_results_['std_test_score']
@@ -114,23 +116,30 @@ if __name__ == '__main__':
                         dest='n_folds',
                         help='Number of folds in cross validation')
     parser.add_argument('-o', action='store',
-                        dest='out_fp',
-                        help='File path of print output')
-    parser.add_argument('-dot_fp', action='store',
-                        dest='dot_fp',
-                        help='File path of tree dot file')
+                        dest='outdir',
+                        help='Output directory')
 
     args = parser.parse_args()
 
-    if args.fp is None or args.n_folds is None or args.out_fp is None or args.dot_fp is None:
-        print('Run as python ./run_decision_tree_clf.py -f [data.csv] -n [n_folds] -o [out_fp] -dot [dot_fp]')
+    if args.fp is None or args.n_folds is None or args.outdir is None:
+        print('Run as python ./run_decision_tree_clf.py -f [data.csv] -n [n_folds] -o [outdir]')
         exit(0)
 
     if not os.path.isfile(args.fp):
         print('{} is not a file'.format(args.fp))
         exit(0)
 
-    file = open(args.out_fp, 'w')
+    # create a folder
+    dt = datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f')
+    outdir = '_'.join([dt, 'tree'])
+    outdir = os.path.join(args.outdir, outdir)
+
+    os.makedirs(outdir)
+
+    print_fp = os.path.join(outdir, 'printout.txt')
+    dot_fp = os.path.join(outdir, 'tree.dot')
+    tree_fp = os.path.join(outdir, 'gridsearch.sav')
+    file = open(print_fp, 'w')
     start = time.time()
 
     class_map = {
@@ -143,7 +152,7 @@ if __name__ == '__main__':
     print('Mapping from algorithm to int: {}\n'.format(class_map), file=file)
 
     df = import_data(args.fp, convert_time=True)
-    df = df.iloc[:10000, :]
+    # df = df.iloc[:10000, :]
 
     # print(df.columns[3])
 
@@ -161,14 +170,18 @@ if __name__ == '__main__':
     # export tree
     feature_names = X.columns.get_level_values(level=1)
     target_names = ['CLASSIC', 'CLASSIC-SP', 'RECOMPOSE', 'RECOMPOSE-SP']
-    tree.export_graphviz(clf.best_estimator_, out_file=args.dot_fp,
+    tree.export_graphviz(clf.best_estimator_, out_file=dot_fp,
                          feature_names=feature_names,
                          class_names=target_names,
                          filled=True, rounded=True,
                          special_characters=True)
 
+    # save trained model
+    with open(tree_fp, 'wb') as f:
+        pickle.dump(clf, f)
 
     end = time.time()
+    print('Experiment took: {:.2f}s'.format(end - start), file=file)
     print('Experiment took: {:.2f}s'.format(end - start))
     file.close()
 
