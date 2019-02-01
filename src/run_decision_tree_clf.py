@@ -21,9 +21,9 @@ idx = pd.IndexSlice
 
 # ranges of parameters to grid search
 CRITERION = ['gini', 'entropy']
-MAX_DEPTH = list(range(3, 10))
+MAX_DEPTH = list(range(3, 15))
 MIN_SAMPLES_SPLIT = list(range(50, 1100, 100))
-MIN_SAMPLES_LEAF = list(range(100, 1100, 100))
+MIN_SAMPLES_LEAF = list(range(10, 110, 10))
 
 
 def ns_to_s(df):
@@ -130,7 +130,7 @@ if __name__ == '__main__':
         exit(0)
 
     # create a folder
-    dt = datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f')
+    dt = datetime.now().strftime('%Y-%m-%d_%H-%M-%S-%f')
     outdir = '_'.join([dt, 'tree'])
     outdir = os.path.join(args.outdir, outdir)
 

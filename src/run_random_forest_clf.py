@@ -123,7 +123,7 @@ if __name__ == '__main__':
         exit(0)
 
     # create a folder
-    dt = datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f')
+    dt = datetime.now().strftime('%Y-%m-%d_%H-%M-%S-%f')
     outdir = '_'.join([dt, 'random-forest'])
     outdir = os.path.join(args.outdir, outdir)
 
