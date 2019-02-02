@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
             # print(feature_df.head())
 
-            out_fp = os.path.join(net_dir, '{}-extra-feature.csv'.format(net_name))
+            out_fp = os.path.join(net_dir, '{}-extra-extra-feature.csv'.format(net_name))
             feature_df.to_csv(out_fp, index=False)
 
             net_end = time.time()

@@ -35,8 +35,50 @@ PLACE_OUT_DEG_MEAN = 'place_out_deg_mean'
 PLACE_OUT_DEG_STD = 'place_out_deg_std'
 PLACE_OUT_DEG_MIN = 'place_out_deg_min'
 PLACE_OUT_DEG_MAX = 'place_out_deg_max'
+INV_TRAN_IN_DEG_MIN = 'inv_tran_in_deg_min'
+INV_TRAN_IN_DEG_MAX = 'inv_tran_in_deg_max'
+INV_TRAN_OUT_DEG_MIN = 'inv_tran_out_deg_min'
+INV_TRAN_OUT_DEG_MAX = 'inv_tran_out_deg_max'
+DUP_TRAN_IN_DEG_MIN = 'dup_tran_in_deg_min'
+DUP_TRAN_IN_DEG_MAX = 'dup_tran_in_deg_max'
+DUP_TRAN_OUT_DEG_MIN = 'dup_tran_out_deg_min'
+DUP_TRAN_OUT_DEG_MAX = 'dup_tran_out_deg_max'
+UNIQ_TRAN_IN_DEG_MIN = 'uniq_tran_in_deg_min'
+UNIQ_TRAN_IN_DEG_MAX = 'uniq_tran_in_deg_max'
+UNIQ_TRAN_OUT_DEG_MIN = 'uniq_tran_out_deg_min'
+UNIQ_TRAN_OUT_DEG_MAX = 'uniq_tran_out_deg_max'
 N_PLACE_ONE_IN_DEG = 'n_place_one_in_deg'
 N_PLACE_ONE_OUT_DEG = 'n_place_one_out_deg'
+N_PLACE_TWO_IN_DEG = 'n_place_two_in_deg'
+N_PLACE_TWO_OUT_DEG = 'n_place_two_out_deg'
+N_PLACE_THREE_IN_DEG = 'n_place_three_in_deg'
+N_PLACE_THREE_OUT_DEG = 'n_place_three_out_deg'
+N_PLACE_MORE_THAN_FIVE_IN_DEG = 'n_place_more_than_five_in_deg'
+N_PLACE_MORE_THAN_FIVE_OUT_DEG = 'n_place_more_than_five_out_deg'
+N_INV_TRAN_ONE_IN_DEG = 'n_inv_tran_one_in_deg'
+N_INV_TRAN_ONE_OUT_DEG = 'n_inv_tran_one_out_deg'
+N_INV_TRAN_TWO_IN_DEG = 'n_inv_tran_two_in_deg'
+N_INV_TRAN_TWO_OUT_DEG = 'n_inv_tran_two_out_deg'
+N_INV_TRAN_THREE_IN_DEG = 'n_inv_tran_three_in_deg'
+N_INV_TRAN_THREE_OUT_DEG = 'n_inv_tran_three_out_deg'
+N_INV_TRAN_MORE_THAN_FIVE_IN_DEG = 'n_inv_tran_more_than_five_in_deg'
+N_INV_TRAN_MORE_THAN_FIVE_OUT_DEG = 'n_inv_tran_more_than_five_out_deg'
+N_DUP_TRAN_ONE_IN_DEG = 'n_dup_tran_one_in_deg'
+N_DUP_TRAN_ONE_OUT_DEG = 'n_dup_tran_one_out_deg'
+N_DUP_TRAN_TWO_IN_DEG = 'n_dup_tran_two_in_deg'
+N_DUP_TRAN_TWO_OUT_DEG = 'n_dup_tran_two_out_deg'
+N_DUP_TRAN_THREE_IN_DEG = 'n_dup_tran_three_in_deg'
+N_DUP_TRAN_THREE_OUT_DEG = 'n_dup_tran_three_out_deg'
+N_DUP_TRAN_MORE_THAN_FIVE_IN_DEG = 'n_dup_tran_more_than_five_in_deg'
+N_DUP_TRAN_MORE_THAN_FIVE_OUT_DEG = 'n_dup_tran_more_than_five_out_deg'
+N_UNIQ_TRAN_ONE_IN_DEG = 'n_uniq_tran_one_in_deg'
+N_UNIQ_TRAN_ONE_OUT_DEG = 'n_uniq_tran_one_out_deg'
+N_UNIQ_TRAN_TWO_IN_DEG = 'n_uniq_tran_two_in_deg'
+N_UNIQ_TRAN_TWO_OUT_DEG = 'n_uniq_tran_two_out_deg'
+N_UNIQ_TRAN_THREE_IN_DEG = 'n_uniq_tran_three_in_deg'
+N_UNIQ_TRAN_THREE_OUT_DEG = 'n_uniq_tran_three_out_deg'
+N_UNIQ_TRAN_MORE_THAN_FIVE_IN_DEG = 'n_uniq_tran_more_than_five_in_deg'
+N_UNIQ_TRAN_MORE_THAN_FIVE_OUT_DEG = 'n_uniq_tran_more_than_five_out_deg'
 N_PLACE = 'n_place'
 N_ARC = 'n_arc'
 N_AND_SPLIT = 'n_and_split'
@@ -71,15 +113,15 @@ def extract_features(pn):
     # features[N_PLACE] = get_n_place(pn)
     # features[N_ARC] = get_n_arc(pn)
     #
-    # inv_tran_list = get_inv_tran_list(pn)
-    # dup_tran_list = get_dup_tran_list(pn)
-    # uniq_tran_list = get_uniq_tran_list(pn)
-    # inv_tran_in_deg_list = get_inv_tran_in_deg_list(pn, inv_tran_list)
-    # inv_tran_out_deg_list = get_inv_tran_out_deg_list(pn, inv_tran_list)
-    # dup_tran_in_deg_list = get_dup_tran_in_deg_list(pn, dup_tran_list)
-    # dup_tran_out_deg_list = get_dup_tran_out_deg_list(pn, dup_tran_list)
-    # uniq_tran_in_deg_list = get_uniq_tran_in_deg_list(pn, uniq_tran_list)
-    # uniq_tran_out_deg_list = get_uniq_tran_out_deg_list(pn, uniq_tran_list)
+    inv_tran_list = get_inv_tran_list(pn)
+    dup_tran_list = get_dup_tran_list(pn)
+    uniq_tran_list = get_uniq_tran_list(pn)
+    inv_tran_in_deg_list = get_inv_tran_in_deg_list(pn, inv_tran_list)
+    inv_tran_out_deg_list = get_inv_tran_out_deg_list(pn, inv_tran_list)
+    dup_tran_in_deg_list = get_dup_tran_in_deg_list(pn, dup_tran_list)
+    dup_tran_out_deg_list = get_dup_tran_out_deg_list(pn, dup_tran_list)
+    uniq_tran_in_deg_list = get_uniq_tran_in_deg_list(pn, uniq_tran_list)
+    uniq_tran_out_deg_list = get_uniq_tran_out_deg_list(pn, uniq_tran_list)
     place_in_deg_list = get_place_in_deg_list(pn)
     place_out_deg_list = get_place_out_deg_list(pn)
     #
@@ -120,8 +162,54 @@ def extract_features(pn):
     features[PLACE_IN_DEG_MAX] = get_place_in_deg_max(pn, place_in_deg_list)
     features[PLACE_OUT_DEG_MIN] = get_place_out_deg_min(pn, place_out_deg_list)
     features[PLACE_OUT_DEG_MAX] = get_place_out_deg_max(pn, place_out_deg_list)
-    features[N_PLACE_ONE_IN_DEG] = get_n_place_one_in_deg(pn, place_in_deg_list)
-    features[N_PLACE_ONE_OUT_DEG] = get_n_place_one_out_deg(pn, place_out_deg_list)
+    features[INV_TRAN_IN_DEG_MIN] = get_inv_tran_in_deg_min(pn, inv_tran_in_deg_list)
+    features[INV_TRAN_IN_DEG_MAX] = get_inv_tran_in_deg_max(pn, inv_tran_in_deg_list)
+    features[INV_TRAN_OUT_DEG_MIN] = get_inv_tran_out_deg_min(pn, inv_tran_out_deg_list)
+    features[INV_TRAN_OUT_DEG_MAX] = get_inv_tran_out_deg_max(pn, inv_tran_out_deg_list)
+    features[DUP_TRAN_IN_DEG_MIN] = get_dup_tran_in_deg_min(pn, dup_tran_in_deg_list)
+    features[DUP_TRAN_IN_DEG_MAX] = get_dup_tran_in_deg_max(pn, dup_tran_in_deg_list)
+    features[DUP_TRAN_OUT_DEG_MIN] = get_dup_tran_out_deg_min(pn, dup_tran_out_deg_list)
+    features[DUP_TRAN_OUT_DEG_MAX] = get_dup_tran_out_deg_max(pn, dup_tran_out_deg_list)
+    features[UNIQ_TRAN_IN_DEG_MIN] = get_uniq_tran_in_deg_min(pn, uniq_tran_in_deg_list)
+    features[UNIQ_TRAN_IN_DEG_MAX] = get_uniq_tran_in_deg_max(pn, uniq_tran_in_deg_list)
+    features[UNIQ_TRAN_OUT_DEG_MIN] = get_uniq_tran_out_deg_min(pn, uniq_tran_out_deg_list)
+    features[UNIQ_TRAN_OUT_DEG_MAX] = get_uniq_tran_out_deg_max(pn, uniq_tran_out_deg_list)
+
+    features[N_PLACE_ONE_IN_DEG] = get_n_place_k_in_deg(pn, 1, place_in_deg_list)
+    features[N_PLACE_ONE_OUT_DEG] = get_n_place_k_out_deg(pn, 1, place_out_deg_list)
+    features[N_PLACE_TWO_IN_DEG] = get_n_place_k_out_deg(pn, 2, place_in_deg_list)
+    features[N_PLACE_TWO_OUT_DEG] = get_n_place_k_out_deg(pn, 2, place_out_deg_list)
+    features[N_PLACE_THREE_IN_DEG] = get_n_place_k_in_deg(pn, 3, place_in_deg_list)
+    features[N_PLACE_THREE_OUT_DEG] = get_n_place_k_out_deg(pn, 3, place_out_deg_list)
+    features[N_PLACE_MORE_THAN_FIVE_IN_DEG] = get_n_place_more_than_k_in_deg(pn, 5, place_in_deg_list)
+    features[N_PLACE_MORE_THAN_FIVE_OUT_DEG] = get_n_place_more_than_k_out_deg(pn, 5, place_out_deg_list)
+
+    features[N_INV_TRAN_ONE_IN_DEG] = get_n_inv_tran_k_in_deg(pn, 1, inv_tran_in_deg_list)
+    features[N_INV_TRAN_ONE_OUT_DEG] = get_n_inv_tran_k_out_deg(pn, 1, inv_tran_out_deg_list)
+    features[N_INV_TRAN_TWO_IN_DEG] = get_n_inv_tran_k_in_deg(pn, 2, inv_tran_in_deg_list)
+    features[N_INV_TRAN_TWO_OUT_DEG] = get_n_inv_tran_k_out_deg(pn, 2, inv_tran_out_deg_list)
+    features[N_INV_TRAN_THREE_IN_DEG] = get_n_inv_tran_k_in_deg(pn, 3, inv_tran_in_deg_list)
+    features[N_INV_TRAN_THREE_OUT_DEG] = get_n_inv_tran_k_out_deg(pn, 3, inv_tran_out_deg_list)
+    features[N_INV_TRAN_MORE_THAN_FIVE_IN_DEG] = get_n_inv_tran_more_than_k_in_deg(pn, 5, inv_tran_in_deg_list)
+    features[N_INV_TRAN_MORE_THAN_FIVE_OUT_DEG] = get_n_inv_tran_more_than_k_out_deg(pn, 5, inv_tran_out_deg_list)
+
+    features[N_DUP_TRAN_ONE_IN_DEG] = get_n_dup_tran_k_in_deg(pn, 1, dup_tran_in_deg_list)
+    features[N_DUP_TRAN_ONE_OUT_DEG] = get_n_dup_tran_k_out_deg(pn, 1, dup_tran_out_deg_list)
+    features[N_DUP_TRAN_TWO_IN_DEG] = get_n_dup_tran_k_in_deg(pn, 2, dup_tran_in_deg_list)
+    features[N_DUP_TRAN_TWO_OUT_DEG] = get_n_dup_tran_k_out_deg(pn, 2, dup_tran_out_deg_list)
+    features[N_DUP_TRAN_THREE_IN_DEG] = get_n_dup_tran_k_in_deg(pn, 3, dup_tran_in_deg_list)
+    features[N_DUP_TRAN_THREE_OUT_DEG] = get_n_dup_tran_k_out_deg(pn, 3, dup_tran_out_deg_list)
+    features[N_DUP_TRAN_MORE_THAN_FIVE_IN_DEG] = get_n_dup_tran_more_than_k_in_deg(pn, 5, dup_tran_in_deg_list)
+    features[N_DUP_TRAN_MORE_THAN_FIVE_OUT_DEG] = get_n_dup_tran_more_than_k_out_deg(pn, 5, dup_tran_out_deg_list)
+
+    features[N_UNIQ_TRAN_ONE_IN_DEG] = get_n_uniq_tran_k_in_deg(pn, 1, uniq_tran_in_deg_list)
+    features[N_UNIQ_TRAN_ONE_OUT_DEG] = get_n_uniq_tran_k_out_deg(pn, 1, uniq_tran_out_deg_list)
+    features[N_UNIQ_TRAN_TWO_IN_DEG] = get_n_uniq_tran_k_in_deg(pn, 2, uniq_tran_in_deg_list)
+    features[N_UNIQ_TRAN_TWO_OUT_DEG] = get_n_uniq_tran_k_out_deg(pn, 2, uniq_tran_out_deg_list)
+    features[N_UNIQ_TRAN_THREE_IN_DEG] = get_n_uniq_tran_k_in_deg(pn, 3, uniq_tran_in_deg_list)
+    features[N_UNIQ_TRAN_THREE_OUT_DEG] = get_n_uniq_tran_k_out_deg(pn, 3, uniq_tran_out_deg_list)
+    features[N_UNIQ_TRAN_MORE_THAN_FIVE_IN_DEG] = get_n_uniq_tran_more_than_k_in_deg(pn, 5, uniq_tran_in_deg_list)
+    features[N_UNIQ_TRAN_MORE_THAN_FIVE_OUT_DEG] = get_n_uniq_tran_more_than_k_out_deg(pn, 5, uniq_tran_out_deg_list)
 
     return features
 
@@ -463,17 +551,187 @@ def get_place_out_deg_max(pn, out_deg_list=None):
 
 
 @utils.timeit(on=False, verbose=False)
-def get_n_place_one_in_deg(pn, in_deg_list=None):
-    in_deg_list = in_deg_list if in_deg_list else get_place_in_deg_list(pn)
-    one_deg_places = list(filter(lambda deg: deg == 1, in_deg_list))
-    return len(one_deg_places)
+def get_inv_tran_in_deg_min(pn, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_inv_tran_in_deg_list(pn)
+    return np.min(in_deg_list) if in_deg_list else 0
 
 
 @utils.timeit(on=False, verbose=False)
-def get_n_place_one_out_deg(pn, out_deg_list=None):
+def get_inv_tran_in_deg_max(pn, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_inv_tran_in_deg_list(pn)
+    return np.max(in_deg_list) if in_deg_list else 0
+
+
+@utils.timeit(on=False, verbose=False)
+def get_inv_tran_out_deg_min(pn, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_inv_tran_out_deg_list(pn)
+    return np.min(out_deg_list) if out_deg_list else 0
+
+
+@utils.timeit(on=False, verbose=False)
+def get_inv_tran_out_deg_max(pn, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_inv_tran_out_deg_list(pn)
+    return np.max(out_deg_list) if out_deg_list else 0
+
+
+@utils.timeit(on=False, verbose=False)
+def get_dup_tran_in_deg_min(pn, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_dup_tran_in_deg_list(pn)
+    return np.min(in_deg_list) if in_deg_list else 0
+
+
+@utils.timeit(on=False, verbose=False)
+def get_dup_tran_in_deg_max(pn, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_dup_tran_in_deg_list(pn)
+    return np.max(in_deg_list) if in_deg_list else 0
+
+
+@utils.timeit(on=False, verbose=False)
+def get_dup_tran_out_deg_min(pn, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_dup_tran_out_deg_list(pn)
+    return np.min(out_deg_list) if out_deg_list else 0
+
+
+@utils.timeit(on=False, verbose=False)
+def get_dup_tran_out_deg_max(pn, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_dup_tran_out_deg_list(pn)
+    return np.max(out_deg_list) if out_deg_list else 0
+
+
+@utils.timeit(on=False, verbose=False)
+def get_uniq_tran_in_deg_min(pn, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_uniq_tran_in_deg_list(pn)
+    return np.min(in_deg_list) if in_deg_list else 0
+
+
+@utils.timeit(on=False, verbose=False)
+def get_uniq_tran_in_deg_max(pn, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_uniq_tran_in_deg_list(pn)
+    return np.max(in_deg_list) if in_deg_list else 0
+
+
+@utils.timeit(on=False, verbose=False)
+def get_uniq_tran_out_deg_min(pn, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_uniq_tran_out_deg_list(pn)
+    return np.min(out_deg_list) if out_deg_list else 0
+
+
+@utils.timeit(on=False, verbose=False)
+def get_uniq_tran_out_deg_max(pn, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_uniq_tran_out_deg_list(pn)
+    return np.max(out_deg_list) if out_deg_list else 0
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_place_k_in_deg(pn, k, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_place_in_deg_list(pn)
+    k_deg_places = list(filter(lambda deg: deg == k, in_deg_list))
+    return len(k_deg_places)
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_place_k_out_deg(pn, k, out_deg_list=None):
     out_deg_list = out_deg_list if out_deg_list else get_place_out_deg_list(pn)
-    one_deg_places = list(filter(lambda deg: deg == 1, out_deg_list))
-    return len(one_deg_places)
+    k_deg_places = list(filter(lambda deg: deg == k, out_deg_list))
+    return len(k_deg_places)
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_place_more_than_k_in_deg(pn, k, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_place_in_deg_list(pn)
+    more_than_k_deg_places = list(filter(lambda deg: deg > k, in_deg_list))
+    return len(more_than_k_deg_places)
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_place_more_than_k_out_deg(pn, k, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_place_out_deg_list(pn)
+    more_than_k_deg_places = list(filter(lambda deg: deg > k, out_deg_list))
+    return len(more_than_k_deg_places)
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_inv_tran_k_in_deg(pn, k, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_inv_tran_in_deg_list(pn)
+    k_deg_trans = list(filter(lambda deg: deg == k, in_deg_list))
+    return len(k_deg_trans)
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_inv_tran_k_out_deg(pn, k, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_inv_tran_out_deg_list(pn)
+    k_deg_trans = list(filter(lambda deg: deg == k, out_deg_list))
+    return len(k_deg_trans)
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_inv_tran_more_than_k_in_deg(pn, k, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_inv_tran_in_deg_list(pn)
+    more_than_k_deg_trans = list(filter(lambda deg: deg > k, in_deg_list))
+    return len(more_than_k_deg_trans)
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_inv_tran_more_than_k_out_deg(pn, k, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_inv_tran_out_deg_list(pn)
+    more_than_k_deg_trans = list(filter(lambda deg: deg > k, out_deg_list))
+    return len(more_than_k_deg_trans)
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_dup_tran_k_in_deg(pn, k, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_dup_tran_in_deg_list(pn)
+    k_deg_trans = list(filter(lambda deg: deg == k, in_deg_list))
+    return len(k_deg_trans)
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_dup_tran_k_out_deg(pn, k, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_dup_tran_out_deg_list(pn)
+    k_deg_trans = list(filter(lambda deg: deg == k, out_deg_list))
+    return len(k_deg_trans)
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_dup_tran_more_than_k_in_deg(pn, k, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_dup_tran_in_deg_list(pn)
+    more_than_k_deg_trans = list(filter(lambda deg: deg > k, in_deg_list))
+    return len(more_than_k_deg_trans)
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_dup_tran_more_than_k_out_deg(pn, k, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_dup_tran_out_deg_list(pn)
+    more_than_k_deg_trans = list(filter(lambda deg: deg > k, out_deg_list))
+    return len(more_than_k_deg_trans)
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_uniq_tran_k_in_deg(pn, k, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_uniq_tran_in_deg_list(pn)
+    k_deg_trans = list(filter(lambda deg: deg == k, in_deg_list))
+    return len(k_deg_trans)
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_uniq_tran_k_out_deg(pn, k, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_uniq_tran_out_deg_list(pn)
+    k_deg_trans = list(filter(lambda deg: deg == k, out_deg_list))
+    return len(k_deg_trans)
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_uniq_tran_more_than_k_in_deg(pn, k, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_uniq_tran_in_deg_list(pn)
+    more_than_k_deg_trans = list(filter(lambda deg: deg > k, in_deg_list))
+    return len(more_than_k_deg_trans)
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_uniq_tran_more_than_k_out_deg(pn, k, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_uniq_tran_out_deg_list(pn)
+    more_than_k_deg_trans = list(filter(lambda deg: deg > k, out_deg_list))
+    return len(more_than_k_deg_trans)
 
 
 def pn_to_undirected(pn):
