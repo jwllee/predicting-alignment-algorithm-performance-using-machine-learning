@@ -29,8 +29,14 @@ DUP_TRAN_OUT_DEG_MEAN = 'dup_transition_out_degree_mean'
 DUP_TRAN_OUT_DEG_STD = 'dup_transition_out_degree_std'
 PLACE_IN_DEG_MEAN = 'place_in_deg_mean'
 PLACE_IN_DEG_STD = 'place_in_deg_std'
+PLACE_IN_DEG_MIN = 'place_in_deg_min'
+PLACE_IN_DEG_MAX = 'place_in_deg_max'
 PLACE_OUT_DEG_MEAN = 'place_out_deg_mean'
 PLACE_OUT_DEG_STD = 'place_out_deg_std'
+PLACE_OUT_DEG_MIN = 'place_out_deg_min'
+PLACE_OUT_DEG_MAX = 'place_out_deg_max'
+N_PLACE_ONE_IN_DEG = 'n_place_one_in_deg'
+N_PLACE_ONE_OUT_DEG = 'n_place_one_out_deg'
 N_PLACE = 'n_place'
 N_ARC = 'n_arc'
 N_AND_SPLIT = 'n_and_split'
@@ -61,54 +67,61 @@ def extract_features(pn):
     :return: dictionary of extracted features
     """
     features = dict()
-    features[N_TRAN] = get_n_tran(pn)
-    features[N_PLACE] = get_n_place(pn)
-    features[N_ARC] = get_n_arc(pn)
-
-    inv_tran_list = get_inv_tran_list(pn)
-    dup_tran_list = get_dup_tran_list(pn)
-    uniq_tran_list = get_uniq_tran_list(pn)
-    inv_tran_in_deg_list = get_inv_tran_in_deg_list(pn, inv_tran_list)
-    inv_tran_out_deg_list = get_inv_tran_out_deg_list(pn, inv_tran_list)
-    dup_tran_in_deg_list = get_dup_tran_in_deg_list(pn, dup_tran_list)
-    dup_tran_out_deg_list = get_dup_tran_out_deg_list(pn, dup_tran_list)
-    uniq_tran_in_deg_list = get_uniq_tran_in_deg_list(pn, uniq_tran_list)
-    uniq_tran_out_deg_list = get_uniq_tran_out_deg_list(pn, uniq_tran_list)
+    # features[N_TRAN] = get_n_tran(pn)
+    # features[N_PLACE] = get_n_place(pn)
+    # features[N_ARC] = get_n_arc(pn)
+    #
+    # inv_tran_list = get_inv_tran_list(pn)
+    # dup_tran_list = get_dup_tran_list(pn)
+    # uniq_tran_list = get_uniq_tran_list(pn)
+    # inv_tran_in_deg_list = get_inv_tran_in_deg_list(pn, inv_tran_list)
+    # inv_tran_out_deg_list = get_inv_tran_out_deg_list(pn, inv_tran_list)
+    # dup_tran_in_deg_list = get_dup_tran_in_deg_list(pn, dup_tran_list)
+    # dup_tran_out_deg_list = get_dup_tran_out_deg_list(pn, dup_tran_list)
+    # uniq_tran_in_deg_list = get_uniq_tran_in_deg_list(pn, uniq_tran_list)
+    # uniq_tran_out_deg_list = get_uniq_tran_out_deg_list(pn, uniq_tran_list)
     place_in_deg_list = get_place_in_deg_list(pn)
     place_out_deg_list = get_place_out_deg_list(pn)
+    #
+    # # inv_tran_list = None
+    # # dup_tran_list = None
+    # # uniq_tran_list = None
+    # # inv_tran_in_deg_list = None
+    # # inv_tran_out_deg_list = None
+    # # dup_tran_in_deg_list = None
+    # # dup_tran_out_deg_list = None
+    # # uniq_tran_in_deg_list = None
+    # # uniq_tran_out_deg_list = None
+    #
+    # features[N_INV_TRAN] = get_n_inv_tran(pn, inv_tran_list)
+    # features[N_DUP_TRAN] = get_n_dup_tran(pn, dup_tran_list)
+    # features[N_UNIQ_TRAN] = get_n_uniq_tran(pn, uniq_tran_list)
+    # features[N_AND_SPLIT] = get_n_and_split(pn)
+    # features[N_XOR_SPLIT] = get_n_xor_split(pn)
+    # features[N_BICONNECTED_COMPONENT] = get_n_biconnected_component(pn)
+    # features[INV_TRAN_IN_DEG_MEAN] = get_inv_tran_in_deg_mean(pn, inv_tran_in_deg_list)
+    # features[INV_TRAN_IN_DEG_STD] = get_inv_tran_in_deg_std(pn, inv_tran_in_deg_list)
+    # features[INV_TRAN_OUT_DEG_MEAN] = get_inv_tran_out_deg_mean(pn, inv_tran_out_deg_list)
+    # features[INV_TRAN_OUT_DEG_STD] = get_inv_tran_out_deg_std(pn, inv_tran_out_deg_list)
+    # features[UNIQ_TRAN_IN_DEG_MEAN] = get_uniq_tran_in_deg_mean(pn, uniq_tran_in_deg_list)
+    # features[UNIQ_TRAN_IN_DEG_STD] = get_uniq_tran_in_deg_std(pn, uniq_tran_in_deg_list)
+    # features[UNIQ_TRAN_OUT_DEG_MEAN] = get_uniq_tran_out_deg_mean(pn, uniq_tran_out_deg_list)
+    # features[UNIQ_TRAN_OUT_DEG_STD] = get_uniq_tran_out_deg_std(pn, uniq_tran_out_deg_list)
+    # features[DUP_TRAN_IN_DEG_MEAN] = get_dup_tran_in_deg_mean(pn, dup_tran_in_deg_list)
+    # features[DUP_TRAN_IN_DEG_STD] = get_dup_tran_in_deg_std(pn, dup_tran_in_deg_list)
+    # features[DUP_TRAN_OUT_DEG_MEAN] = get_dup_tran_out_deg_mean(pn, dup_tran_out_deg_list)
+    # features[DUP_TRAN_OUT_DEG_STD] = get_dup_tran_out_deg_std(pn, dup_tran_out_deg_list)
+    # features[PLACE_IN_DEG_MEAN] = get_place_in_deg_mean(pn, place_in_deg_list)
+    # features[PLACE_IN_DEG_STD] = get_place_in_deg_std(pn, place_in_deg_list)
+    # features[PLACE_OUT_DEG_MEAN] = get_place_out_deg_mean(pn, place_out_deg_list)
+    # features[PLACE_OUT_DEG_STD] = get_place_out_deg_std(pn, place_out_deg_list)
 
-    # inv_tran_list = None
-    # dup_tran_list = None
-    # uniq_tran_list = None
-    # inv_tran_in_deg_list = None
-    # inv_tran_out_deg_list = None
-    # dup_tran_in_deg_list = None
-    # dup_tran_out_deg_list = None
-    # uniq_tran_in_deg_list = None
-    # uniq_tran_out_deg_list = None
-
-    features[N_INV_TRAN] = get_n_inv_tran(pn, inv_tran_list)
-    features[N_DUP_TRAN] = get_n_dup_tran(pn, dup_tran_list)
-    features[N_UNIQ_TRAN] = get_n_uniq_tran(pn, uniq_tran_list)
-    features[N_AND_SPLIT] = get_n_and_split(pn)
-    features[N_XOR_SPLIT] = get_n_xor_split(pn)
-    features[N_BICONNECTED_COMPONENT] = get_n_biconnected_component(pn)
-    features[INV_TRAN_IN_DEG_MEAN] = get_inv_tran_in_deg_mean(pn, inv_tran_in_deg_list)
-    features[INV_TRAN_IN_DEG_STD] = get_inv_tran_in_deg_std(pn, inv_tran_in_deg_list)
-    features[INV_TRAN_OUT_DEG_MEAN] = get_inv_tran_out_deg_mean(pn, inv_tran_out_deg_list)
-    features[INV_TRAN_OUT_DEG_STD] = get_inv_tran_out_deg_std(pn, inv_tran_out_deg_list)
-    features[UNIQ_TRAN_IN_DEG_MEAN] = get_uniq_tran_in_deg_mean(pn, uniq_tran_in_deg_list)
-    features[UNIQ_TRAN_IN_DEG_STD] = get_uniq_tran_in_deg_std(pn, uniq_tran_in_deg_list)
-    features[UNIQ_TRAN_OUT_DEG_MEAN] = get_uniq_tran_out_deg_mean(pn, uniq_tran_out_deg_list)
-    features[UNIQ_TRAN_OUT_DEG_STD] = get_uniq_tran_out_deg_std(pn, uniq_tran_out_deg_list)
-    features[DUP_TRAN_IN_DEG_MEAN] = get_dup_tran_in_deg_mean(pn, dup_tran_in_deg_list)
-    features[DUP_TRAN_IN_DEG_STD] = get_dup_tran_in_deg_std(pn, dup_tran_in_deg_list)
-    features[DUP_TRAN_OUT_DEG_MEAN] = get_dup_tran_out_deg_mean(pn, dup_tran_out_deg_list)
-    features[DUP_TRAN_OUT_DEG_STD] = get_dup_tran_out_deg_std(pn, dup_tran_out_deg_list)
-    features[PLACE_IN_DEG_MEAN] = get_place_in_deg_mean(pn, place_in_deg_list)
-    features[PLACE_IN_DEG_STD] = get_place_in_deg_std(pn, place_in_deg_list)
-    features[PLACE_OUT_DEG_MEAN] = get_place_out_deg_mean(pn, place_out_deg_list)
-    features[PLACE_OUT_DEG_STD] = get_place_out_deg_std(pn, place_out_deg_list)
+    features[PLACE_IN_DEG_MIN] = get_place_in_deg_min(pn, place_in_deg_list)
+    features[PLACE_IN_DEG_MAX] = get_place_in_deg_max(pn, place_in_deg_list)
+    features[PLACE_OUT_DEG_MIN] = get_place_out_deg_min(pn, place_out_deg_list)
+    features[PLACE_OUT_DEG_MAX] = get_place_out_deg_max(pn, place_out_deg_list)
+    features[N_PLACE_ONE_IN_DEG] = get_n_place_one_in_deg(pn, place_in_deg_list)
+    features[N_PLACE_ONE_OUT_DEG] = get_n_place_one_out_deg(pn, place_out_deg_list)
 
     return features
 
@@ -423,6 +436,44 @@ def get_place_out_deg_mean(pn, out_deg_list=None):
 def get_place_out_deg_std(pn, out_deg_list=None):
     out_deg_list = out_deg_list if out_deg_list else get_place_out_deg_list(pn)
     return np.std(out_deg_list, ddof=1) if len(out_deg_list) > 1 else 0.
+
+
+@utils.timeit(on=False, verbose=False)
+def get_place_in_deg_min(pn, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_place_in_deg_list(pn)
+    return np.min(in_deg_list) if in_deg_list else 0
+
+
+@utils.timeit(on=False, verbose=False)
+def get_place_in_deg_max(pn, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_place_in_deg_list(pn)
+    return np.max(in_deg_list) if in_deg_list else 0
+
+
+@utils.timeit(on=False, verbose=False)
+def get_place_out_deg_min(pn, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_place_out_deg_list(pn)
+    return np.min(out_deg_list) if out_deg_list else 0
+
+
+@utils.timeit(on=False, verbose=False)
+def get_place_out_deg_max(pn, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_place_out_deg_list(pn)
+    return np.max(out_deg_list) if out_deg_list else 0
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_place_one_in_deg(pn, in_deg_list=None):
+    in_deg_list = in_deg_list if in_deg_list else get_place_in_deg_list(pn)
+    one_deg_places = list(filter(lambda deg: deg == 1, in_deg_list))
+    return len(one_deg_places)
+
+
+@utils.timeit(on=False, verbose=False)
+def get_n_place_one_out_deg(pn, out_deg_list=None):
+    out_deg_list = out_deg_list if out_deg_list else get_place_out_deg_list(pn)
+    one_deg_places = list(filter(lambda deg: deg == 1, out_deg_list))
+    return len(one_deg_places)
 
 
 def pn_to_undirected(pn):

@@ -13,10 +13,14 @@ import podspy.log as logpkg
 
 
 if __name__ == '__main__':
-    for dataset in ['IS2017', 'BPI2018']:
-        data_dir = os.path.join('.', 'data', 'net', dataset)
+    nets_to_run = ['net1', 'net2', 'net3', 'net4', 'net5']
 
-        for net_name in os.listdir(data_dir):
+    for dataset in ['BPI2018', 'IS2017']:
+        data_dir = os.path.join('.', 'data', 'net', dataset)
+        net_names = list(os.listdir(data_dir))
+        net_names = sorted(net_names)
+
+        for net_name in net_names:
             net_dir = os.path.join(data_dir, net_name)
 
             net_start = time.time()
@@ -39,11 +43,11 @@ if __name__ == '__main__':
             decomposition_dir_dict = {key:val for key, val in decomposition_dir_dict.items() if os.path.isdir(val)}
 
             decomposition_dict = dict()
-            for name, dirpath in decomposition_dir_dict.items():
-                apn_array_fp = os.path.join(dirpath, '{}.apna'.format(name))
-                with open(apn_array_fp) as f:
-                    apn_array = petripkg.import_apna(f)
-                decomposition_dict[name] = apn_array
+            # for name, dirpath in decomposition_dir_dict.items():
+            #     apn_array_fp = os.path.join(dirpath, '{}.apna'.format(name))
+            #     with open(apn_array_fp) as f:
+            #         apn_array = petripkg.import_apna(f)
+            #     decomposition_dict[name] = apn_array
 
             feature_df_list = list()
             # lognames = filter(lambda fname: fname.endswith('.xes.gz'), os.listdir(net_dir))
@@ -78,7 +82,7 @@ if __name__ == '__main__':
 
             # print(feature_df.head())
 
-            out_fp = os.path.join(net_dir, '{}-feature.csv'.format(net_name))
+            out_fp = os.path.join(net_dir, '{}-extra-feature.csv'.format(net_name))
             feature_df.to_csv(out_fp, index=False)
 
             net_end = time.time()
