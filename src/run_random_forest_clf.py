@@ -163,7 +163,7 @@ if __name__ == '__main__':
 
     # print(df.columns[3])
 
-    columns = df.loc[:, idx['model_trace_features', :]].colums.get_level_values(level=1)
+    columns = df.loc[:, idx['model_trace_features', :]].columns.get_level_values(level=1)
     columns = get_feature_cols(list(columns))
 
     print('feature columns: \n{}'.format(columns), file=file)
