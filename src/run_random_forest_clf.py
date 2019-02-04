@@ -21,6 +21,20 @@ idx = pd.IndexSlice
 N_ESTIMATORS = list(range(50, 1050, 50))
 
 
+def get_feature_cols(columns):
+    not_min_max = lambda c: not c.endswith('min') and not c.endswith('max')
+    not_one_deg = lambda c: not c.endswith('one_in_deg') and not c.endswith('one_out_deg')
+    not_two_deg = lambda c: not c.endswith('two_in_deg') and not c.endswith('two_out_deg')
+    not_three_deg = lambda c: not c.endswith('three_in_deg') and not c.endswith('three_out_deg')
+    not_more_than_five_deg = lambda c: not c.endswith('five_in_deg') and not c.endswith('five_out_deg')
+
+    joined_filter = lambda c: not_min_max(c) and not_one_deg(c) \
+                              and not_two_deg(c) and not_three_deg(c) \
+                              and not_more_than_five_deg(c)
+
+    return list(filter(joined_filter, columns))
+
+
 def ns_to_s(df):
     time_cols = list(filter(lambda c: 'time' in c.lower(), df.columns.get_level_values(level=1)))
     df.loc[:, idx[tuple(time_cols), :]] /= 1000000
@@ -149,7 +163,12 @@ if __name__ == '__main__':
 
     # print(df.columns[3])
 
-    X = df.loc[:, idx['model_trace_features', :]]
+    columns = df.loc[:, idx['model_trace_features', :]].colums.get_level_values(level=1)
+    columns = get_feature_cols(list(columns))
+
+    print('feature columns: \n{}'.format(columns), file=file)
+
+    X = df.loc[:, idx['model_trace_features', columns]]
     y = df.loc[:, ('Min', 'Total Time including setup (s)')].map(class_map)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=0)
