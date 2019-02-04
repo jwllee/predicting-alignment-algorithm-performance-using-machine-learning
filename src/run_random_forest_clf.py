@@ -18,7 +18,7 @@ from alignclf import utils
 
 idx = pd.IndexSlice
 
-N_ESTIMATORS = list(range(50, 1050, 50))
+N_ESTIMATORS = list(range(1, 101, 1))
 
 
 def get_feature_cols(columns):
@@ -37,7 +37,7 @@ def get_feature_cols(columns):
 
 def ns_to_s(df):
     time_cols = list(filter(lambda c: 'time' in c.lower(), df.columns.get_level_values(level=1)))
-    df.loc[:, idx[tuple(time_cols), :]] /= 1000000
+    df.loc[:, idx[tuple(time_cols), ('astar', 'inc3', 'recomp-astar', 'recomp-inc3')]] /= 1000000
 
     renamed_time_cols = list(map(lambda col: col.replace('(us)', '(s)'), time_cols))
     renamed_cols_dict = dict(zip(time_cols, renamed_time_cols))
@@ -60,6 +60,11 @@ def import_data(fp, convert_time=True):
     df.set_index(['model', 'log', 'decomposition', 'SP label'], inplace=True)
 
     return df
+
+
+def filter_row_by_k_time_diff(df, k):
+    k_diff = df.loc[:, ('Total Time including setup (s)', 'max_diff')] >= k
+    return df.loc[k_diff, :]
 
 
 def get_uniq_count(l):
@@ -129,7 +134,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.fp is None or args.outdir is None:
-        print('Run as python ./run_decision_tree_clf.py -f [data.csv] -o [outdir]')
+        print('Run as python ./run_random_forest.py -f [data.csv] -o [outdir]')
         exit(0)
 
     if not os.path.isfile(args.fp):
@@ -158,20 +163,28 @@ if __name__ == '__main__':
 
     print('Mapping from algorithm to int: {}\n'.format(class_map), file=file)
 
+    k = 2
     df = import_data(args.fp, convert_time=True)
-    # df = df.iloc[:10000, :]
+    print('Before filtering: {} rows'.format(df.shape[0]))
+    df = filter_row_by_k_time_diff(df, k)
+    print('Filter row by requiring at least {} times time difference: {} rows'.format(k, df.shape[0]))
+    df = df.iloc[:10000, :]
 
     # print(df.columns[3])
 
     columns = df.loc[:, idx['model_trace_features', :]].columns.get_level_values(level=1)
     columns = get_feature_cols(list(columns))
 
-    print('feature columns: \n{}'.format(columns), file=file)
+    print('{} feature columns: \n{}'.format(len(columns), columns), file=file)
 
     X = df.loc[:, idx['model_trace_features', columns]]
     y = df.loc[:, ('Min', 'Total Time including setup (s)')].map(class_map)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=0)
+
+    print('Dataset: {} rows'.format(X.shape[0]), file=file)
+    print('Training set: {} rows'.format(X_train.shape[0]), file=file)
+    print('Test set: {} rows'.format(X_test.shape[0]), file=file)
 
     best_clf, oob_err_df = train_forest(X_train, y_train, file)
 
