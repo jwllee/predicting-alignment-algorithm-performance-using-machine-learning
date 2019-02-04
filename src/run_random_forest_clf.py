@@ -165,10 +165,10 @@ if __name__ == '__main__':
 
     k = 2
     df = import_data(args.fp, convert_time=True)
-    print('Before filtering: {} rows'.format(df.shape[0]))
+    print('Before filtering: {} rows'.format(df.shape[0]), file=file)
     df = filter_row_by_k_time_diff(df, k)
-    print('Filter row by requiring at least {} times time difference: {} rows'.format(k, df.shape[0]))
-    df = df.iloc[:10000, :]
+    print('Filter row by requiring at least {} times time difference: {} rows'.format(k, df.shape[0]), file=file)
+    # df = df.iloc[:10000, :]
 
     # print(df.columns[3])
 
