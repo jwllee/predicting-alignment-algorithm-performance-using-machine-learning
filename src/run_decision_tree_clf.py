@@ -42,7 +42,11 @@ def get_feature_cols(columns):
 
 def ns_to_s(df):
     time_cols = list(filter(lambda c: 'time' in c.lower(), df.columns.get_level_values(level=1)))
-    df.loc[:, idx[tuple(time_cols), ('astar', 'inc3', 'recomp-astar', 'recomp-inc3')]] /= 1000000
+    for time_col in time_cols:
+        df.loc[:, (time_col, 'astar')] /= 1000000
+        df.loc[:, (time_col, 'inc3')] /= 1000000
+        df.loc[:, (time_col, 'recomp-astar')] /= 1000000
+        df.loc[:, (time_col, 'recomp-inc3')] /= 1000000
 
     renamed_time_cols = list(map(lambda col: col.replace('(us)', '(s)'), time_cols))
     renamed_cols_dict = dict(zip(time_cols, renamed_time_cols))
