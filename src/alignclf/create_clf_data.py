@@ -36,6 +36,9 @@ cols_to_add = [
     Col.HEURISTICS_COMPUTED.value,
     Col.HEURISTICS_ESTIMATED.value,
     Col.HEURISTICS_DERIVED.value,
+    Col.N_SPLITS.value,
+    Col.N_RESTARTS.value,
+    Col.CONSTRAINTSET_SIZE.value,
     RESULT_DIR
 ]
 
