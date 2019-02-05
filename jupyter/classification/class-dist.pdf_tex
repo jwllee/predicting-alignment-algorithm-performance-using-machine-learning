@@ -36,7 +36,7 @@
   }%
   \providecommand\rotatebox[2]{#2}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{561.449716bp}%
+    \setlength{\unitlength}{568.590625bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -48,7 +48,7 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,0.62831206)%
+  \begin{picture}(1,0.62042111)%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{class-dist.pdf}}%
   \end{picture}%
 \endgroup%

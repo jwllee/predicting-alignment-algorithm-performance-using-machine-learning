@@ -36,7 +36,7 @@
   }%
   \providecommand\rotatebox[2]{#2}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{711.784375bp}%
+    \setlength{\unitlength}{712.612403bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -48,7 +48,7 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,0.79907012)%
+  \begin{picture}(1,0.79814163)%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{important-feature-top-5.pdf}}%
   \end{picture}%
 \endgroup%
