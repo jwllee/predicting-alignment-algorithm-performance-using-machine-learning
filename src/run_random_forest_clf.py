@@ -18,7 +18,7 @@ from alignclf import utils
 
 idx = pd.IndexSlice
 
-N_ESTIMATORS = list(range(1, 101, 1))
+N_ESTIMATORS = list(range(10, 1001, 10))
 
 
 def get_feature_cols(columns):
@@ -86,6 +86,7 @@ def train_forest(X, y, file):
 
     min_err = np.inf
     best_clf = None
+    best_n_est = -1
 
     n_est_list = []
     oob_err_list = []
@@ -104,11 +105,13 @@ def train_forest(X, y, file):
         if oob_error < min_err:
             min_err = oob_error
             best_clf = clf
+            best_n_est = n_est
 
     oob_err_df = pd.DataFrame({
         'n_estimator': n_est_list,
         'oob_error': oob_err_list
     })
+    print('Best n_est: {}'.format(best_n_est), file=file)
 
     return best_clf, oob_err_df
 
@@ -177,7 +180,7 @@ if __name__ == '__main__':
     # print(df.columns[3])
 
     columns = df.loc[:, idx['model_trace_features', :]].columns.get_level_values(level=1)
-    columns = get_feature_cols(list(columns))
+    # columns = get_feature_cols(list(columns))
 
     print('{} feature columns: \n{}'.format(len(columns), columns), file=file)
 
