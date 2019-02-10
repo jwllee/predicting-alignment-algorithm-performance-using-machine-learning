@@ -9,80 +9,54 @@ Repository for code of the paper. Instruction on replicating the experiments is 
 
 *Note:* unfortunately due to the file size limit on GitHub repository, the data and trained predictive model cannot be included.
 
-| Stats to retrieve | Level | Destination | Monolithic | Recomposing |
-| --- | --- | --- | --- | --- |
-| clock time | log | `i\log-stats.csv` | `i\prom.log` | `i\prom.log` |
-| total alignment cost | log | `i\log-stats.csv` | `i\prom.log` | `i\python.log` |
-| replay configurations | iteration trace log | all `i\x-stats.csv` | `i\configs.json` | `i\configs.json` |
-| no. of valid alignments | log | `i\log-stats.csv` | `i\alignment-stats.csv` *remember &#x7c;alignments&#x7c; <= &#x7c;traces&#x7c;* | `i\alignment-stats.csv` *need to equal monolithic stats* |
-| log size | log | `i\log-stats.csv` | `log.xes` | `log.xes` |
-| duplicate alignment flag and id | iteration trace log | `i\trace-x-stats.csv` | no need | read below |
-| no. of rejected alignments | iter-stats log | `i\log-stats.csv` | no need | `i\rejected.csv` filtered by alignment ids |
-| no. of to-align alignments | iter-stats log | `i\log-stats.csv` | no need | `i\to-align.csv` filtered by alignment ids |  
-| no. of valid alignments | iter-stats log | `i\log-stats.csv` | no need | `i\valid.csv` filtered by alignment ids |
-| no. of traces aligned | iter-stats | `i\prom-iter-stats.csv` | no need | done in prom |
-| no. of subnets | `i\prom-iter-stats.csv` | no need | done in prom |
-| no. of recomposing activity | `i\prom-iter-stats.csv` | no need | done in prom |
-| no. of border activity | `i\prom-iter-stats.csv` | no need | done in prom |
-| no. of excluded trace | `i\prom-iter-stats.csv` | no need | done in prom |
-| trace iteration stats | | `i\trace-iter-stats.csv` | no need | `i\iter-1...n` |
-| trace level stats | | `i\trace-stats.csv` | no need | `i\trace-iter-stats.csv` |
-| log level stats | | `i\log-stats.csv` | `i\trace-stats.csv` | `i\trace-stats.csv` | 
+## How to produce performance data?
+1. Install python package into virtual environment
+```
+virtualenv -p python3.6 alignclf-venv
+source alignclf-venv/bin/activate
+python setup.py install
+```
+2. Create configuration files to run alignment algorithms using CLI
+```
+make-configs // follow the instructions
+```
+3. Run the bash scripts to perform alignment experiments
+```
+sh configs/batch.sh
+```
+4. Convert the raw data to useful format
 
-#### How iteration statistics are processed per alignment for recomposing replay 
-| Categories | Stats | Notes |
-| --- | --- | --- |
-| **join by OR**   | Exit code for alignment | alignment is rejected if it is problematic at any iteration, so ORing is ok |
-| **sum**          | Transitions fired | this is only sort of helpful since hide-and-reduce abstraction makes things unmappable between monolithic and decomposed replay |
-|                  | Markings polled from queue | |
-|                  | Markings added to closed set | |
-|                  | Markings queued | | 
-|                  | Markings reached | |
-|                  | Heuristics computed | |
-|                  | Heuristics estimated | |
-|                  | Heuristics derived | |
-|                  | Time to compute alignment (us) | |
-|                  | Time to compute heuristics (us) | |
-|                  | Time to setup algorithm (us) | |
-|                  | Total Time including setup (us) | |
-|                  | Number of splits when splitting marking | |
-|                  | Log move cost of alignment | |
-|                  | Model move cost of alignment | |
-|                  | Synchronous move cost of alignment | |
-|                  | Pre-processing time (us) | |
-|                  | Size of the constraintset | |
-|                  | Number of times replay was restarted | |
-|                  | total Memory (MB) | |
-| **max**          | Maximum queue length (elts) | |
-|                  | Maximum queue capacity (elts) | |
-|                  | Approximate peak memory used (kb) | |
-|                  | max Memory (MB) | |
-| **not included** | Length of the alignment found | |
-|                  | Length of the orignal trace | |
-|                  | Places in the synchronous product | |
-|                  | Transtions in the synchronous product | |
-|                  | Splitpoints | |
+During the alignment experiments, a number of information is stored, e.g., alignment performance data, and the actual alignments.
 
-#### Modification to prom jars
-- [x] add no. of log traces per iteration
-- [x] change alignments.csv to trace-stats.csv for consistency at monolithic replayer
-- [x] change replay parameter names of monolithic replayer for consistency
-- [x] add missing parameter names to monolithic replayer
-- [x] add alignment exit codes to alignment csv files
-- [x] add representative alignment id to alignment csv files
-- [x] add hide-and-reduce subnets per iteration
-- [x] update log alignment prom jar
-- [x] update recomposing prom jar
-- [x] update monolithic prom jar 
+Due to a mistake of mine, each alignment is stored in a separate json. Having many small files is bad for storage, so run the following python script to join directories of alignment json files as one single file:
+```
+python src/repackage_results.py // remember to go in and replace the directories
+```
+5. Create classification task csv file
+```
+python src/run_create_clf_data.py // once again need to specify the result directories, one thing to note is that a directory should have results of all algorithms
+```
 
-#### Recomposing replay iteration stats
-- no. of log traces: except of the first iteration, log recomposition strategy can exclude some of the log traces
-- duplicate alignment flag and id: decomposed replay can make two different alignments the same, but this can make monolithic and decomposed replay incomparable on the log level. Make sure that all alignments are reported in stats but add a flag if it is a duplicate and add the original alignment id.
-- various statistics about hide-and-reduce subnets and filtered subnets
+## Training predictive models
+- Dummy classifier
+```
+python src/run_dummy_clf.py -f [data.csv] -o [outdir]
+```
+- Decision tree
+```
+python src/run_decision_tree_clf.py -f [data.csv] -n [n_folds] -o [outdir] // can go in file to change what parameters to optimize
+```
+- Random forest
+```
+python src/run_random_forest.py -f [data.csv] -o [outdir] // can go in file to change range of number of estimators to search through
+```
+
+## Producing confusion matrices
+```
+sh scripts/run_cnf_mat.sh
+```
 
 #### Helpful explanations and reminders
 - us: microseconds
-- spelling mistakes with statistics categories exist to correspond exactly to the actual code. For example, `Length of the orignal trace`.
 - clock time refers to the time from the start of the Java program till the end
 - traces are unique and multiple cases can have the same trace
-- in `prom-iter-stats.csv`, open, valid, and rejected alignment counts should sum to no. of aligned trace 
