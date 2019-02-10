@@ -1,6 +1,13 @@
-# alignment-algorithm-classifier
-A classifier to predict best performing alignment algorithm to compute the alignment between a model and log trace.
+# Predicting Alignment Algorithm Performance Using Machine Learning
+Repository for code of the paper. Instruction on replicating the experiments is included.
 
+## Things included:
+- ProM jars of CLASSIC, CLASSIC-SP, RECOMPOSE, RECOMPOSE-SP algorithms
+- Experimental setup for running experiments using the algorithms
+- Experimental setup for training predictive algorithms
+- Jupyter notebooks for the statistics and images of the paper
+
+*Note:* unfortunately due to the file size limit on GitHub repository, the data and trained predictive model cannot be included.
 
 | Stats to retrieve | Level | Destination | Monolithic | Recomposing |
 | --- | --- | --- | --- | --- |

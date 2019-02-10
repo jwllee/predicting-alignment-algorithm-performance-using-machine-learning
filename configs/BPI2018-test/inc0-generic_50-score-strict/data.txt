@@ -1,3 +1,0 @@
-net1,net1,net1-0-0-l1000
-net1,net1,net1-0-0-l2000
-net1,net1,net1-0-0-l5000

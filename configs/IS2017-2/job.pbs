@@ -1,0 +1,8 @@
+#PBS -N IS2017-2
+#PBS -q full
+#PBS -l ncpus=8
+#PBS -l mem=32
+#PBS -l walltime=720:00:00
+
+cd /home2/wllee/2018/alignment-algorithm-classifier
+sh configs/IS2017-2/batch.sh
