@@ -42,6 +42,9 @@ python src/run_create_clf_data.py // once again need to specify the result direc
 python src/run_extract_feature.py // change the directories in the file if necessary
 ```
 
+## Merge feature data and performance data
+Run the jupyter notebook jupyter/merge-feature-data-and-performance-data.ipynb
+
 ## Training predictive models
 - Dummy classifier
 ```
