@@ -46,7 +46,7 @@ if __name__ == '__main__':
     # # get an overall result directory
     # result_dir = get_dirname(cnt)
 
-    dt = datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f')
+    dt = datetime.now().strftime('%Y-%m-%d_%H-%M-%S-%f')
 
     # make the out directory for this run
     outdir = '_'.join([dt, configs[EXPERIMENT_NAME]])
