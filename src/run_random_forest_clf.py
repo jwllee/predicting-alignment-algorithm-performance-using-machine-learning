@@ -36,7 +36,7 @@ def get_feature_cols(columns):
 
 
 def ns_to_s(df):
-    time_cols = list(filter(lambda c: 'time' in c.lower(), df.columns.get_level_values(level=1)))
+    time_cols = list(filter(lambda c: 'time' in c.lower() and not 'number of times' in c.lower(), df.columns.get_level_values(level=1)))
     for time_col in time_cols:
         df.loc[:, (time_col, 'astar')] /= 1000000
         df.loc[:, (time_col, 'inc3')] /= 1000000
