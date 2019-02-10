@@ -37,6 +37,11 @@ python src/repackage_results.py // remember to go in and replace the directories
 python src/run_create_clf_data.py // once again need to specify the result directories, one thing to note is that a directory should have results of all algorithms
 ```
 
+## Extract the model-trace features
+```
+python src/run_extract_feature.py // change the directories in the file if necessary
+```
+
 ## Training predictive models
 - Dummy classifier
 ```
