@@ -83,7 +83,12 @@ def plot_confusion_matrix(cm, classes, normalized=False, cmap=plt.cm.Blues):
     print(cm)
 
     fig, ax = plt.subplots(figsize=(10, 8))
-    img = ax.imshow(cm, interpolation='nearest', cmap=cmap)
+
+    if normalized:
+        img = ax.imshow(cm, interpolation='nearest', cmap=cmap, vmin=0.0, vmax=1.0)
+    else:
+        img = ax.imshow(cm, interpolation='nearest', cmap=cmap)
+
     cbar = fig.colorbar(img)
     cbar.ax.tick_params(labelsize=15)
     tick_marks = np.arange(len(classes))
