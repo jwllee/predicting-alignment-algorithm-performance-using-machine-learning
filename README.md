@@ -9,6 +9,39 @@ Repository for code of the paper. Instruction on replicating the experiments is 
 
 *Note:* unfortunately due to the file size limit on GitHub repository, the data and trained predictive model cannot be included.
 
+## Settings for alignment algorithms
+### General settings
+- move_on_log_costs: 10
+- move_on_model_costs: 4
+- move_sort: false
+- prefer_exact: true
+- n_threads: 1
+- use_int: false
+- queue_sort: true
+- maximum_number_of_states: MAX_INT
+- cost_upper_bound: MAX_INT
+
+### A\* algorithm
+- just using the general seetings
+
+### SP algorithm
+- initial_split: 3
+
+### Recomposing A\* algorithm
+- alignment_percentage: 100
+- use_hide_and_reduction_abstraction: true
+- global_duration: 300000000
+- local_duration: 300000
+- alignment_percentage: 100
+- add_conflict_only_once: true
+- log_creation_strategy: strict exclude by conflicts
+- max_conflicts: 100
+- interval_absolute: 0
+- timeout_per_trace_in_secs: 300
+
+### Recomposing SP algorithm
+- combination of both SP algorithm and recomposing A\* algorithm configurations
+
 ## How to produce performance data?
 1. Install python package into virtual environment
 ```
